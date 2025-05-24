@@ -1,7 +1,47 @@
 div.header {
   height: 150px;
   display: flex;
-  flex-direction: row;
-  justify-content: space-between;
+  /*flex-direction: row;
+  justify-content: space-between;*/
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
   padding: 20px;
+  align-items: center;
+}
+
+div.session-id {
+  display: flex;
+  justify-content: center;
+}
+
+.bold {
+  font-weight: bold;
+  font-size: 20px;
+}
+
+div.header-buttons {
+  display: flex;
+  flex-direction: row;
+  justify-content: right;
+}
+
+button.session {
+  height: 50px;
+  width: 120px;
+  border: 1px solid;
+  border-color: #C6A79E;
+  border-radius: 8px;
+  background-color: #E1DEE3;
+  margin: 10px;
+  padding: 0;
+  transition: 0.3s;
+}
+
+button.session:hover {
+  background-color: #C6A79E;
+  transform: scale(1.1);
+}
+
+img.logo {
+  height: 150px;
 }
