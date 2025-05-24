@@ -2,7 +2,7 @@ import React from 'react';
 import './Header.css';
 import logo from './assets/MWF_logo.png';
 
-function Header() {
+function Header({setBody}) {
   return (
     <div className='header'>
       <img src={logo} className='logo'></img>

@@ -38,6 +38,7 @@ button.session {
 }
 
 button.session:hover {
+  cursor: pointer;
   background-color: #C6A79E;
   transform: scale(1.1);
 }
