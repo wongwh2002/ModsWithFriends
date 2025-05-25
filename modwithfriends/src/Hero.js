@@ -1,9 +1,15 @@
 import React from 'react';
-import './Body.css';
+import './Hero.css';
 import hero from'./assets/Hero.png';
 import arrow from './assets/arrow.png';
 
-function Body({body}) {
+
+function Body({setCreateSession}) {
+
+  const createSession = () => {
+    setCreateSession(true);
+  }
+
   return (
     <div className='body'>
       <div className='hero-content'>
@@ -14,7 +20,7 @@ function Body({body}) {
           Create sessions with friends to input your preferences and modules to take
           together and all your possible timetables will be generated for you.
         </p>
-        <button className='hero-button'>
+        <button className='hero-button' onClick={createSession}>
           <div className='button-content'>
             <p>
               New Session

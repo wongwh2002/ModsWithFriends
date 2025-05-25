@@ -1,17 +1,23 @@
 import React from 'react';
 import './HomePage.css';
 import Header from './Header';
-import Body from './Body'
+import Hero from './Hero'
 import {useState} from 'react';
+import NewSessionOverlay from './NewSessionOverlay';
 
 function HomePage() {
 
-  const [body, setBody] = useState('home');
+  const [body, setBody] = useState('-');
+  const [createSession, setCreateSession] = useState(false);
 
   return (
     <div className="background-color">
-      <Header setBody={setBody}/>
-      <Body body={body} />
+      <Header setCreateSession={setCreateSession} body={body}/>
+      {body == '-' ? 
+      <Hero setCreateSession={setCreateSession}/>
+      : <></>}
+      {createSession ? <NewSessionOverlay setBody={setBody} setCreateSession={setCreateSession}/>
+      : <></>}
     </div>
   )
 }

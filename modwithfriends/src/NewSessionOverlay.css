@@ -1,0 +1,97 @@
+div.dim {
+  position: fixed;
+  height: 100vh;
+  width: 100vw;
+  top: 0;
+  left: 0;
+  background-color: rgba(0, 0, 0, 0.5);
+  z-index: 10;
+}
+
+div.overlay {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 550px;
+  height: 350px;
+  border-radius: 15px;
+  background-color: #C6A79E;
+  box-shadow: 0 5px 20px rgba(0,0,0,0.3);
+  display: flex;
+  flex-direction: column;
+  z-index: 10;
+}
+
+div.close {
+  display: flex;
+  flex-direction: row;
+  justify-content: right;
+  padding-right: 15px;
+  padding-top: 10px;
+}
+
+img.x:hover {
+  cursor: pointer;
+}
+
+img.x {
+  height: 15px;
+}
+
+div.form {
+  display: flex;
+  flex-direction: row;
+  padding: 25px 50px;
+  position: relative;
+}
+
+div.create-session {
+  display: flex;
+  flex-direction: row;
+  justify-content: right;
+  padding: 20px 50px;
+}
+
+button.create-session {
+  border: 0;
+  height: 30px;
+  width: 150px;
+  border-radius: 5px;
+  background-color: #DECFCE;
+}
+
+button.create-session:hover {
+  cursor: pointer;
+}
+
+p.session-type {
+  font-size: 20px;
+  margin: 0;
+}
+
+p.fill {
+  position: absolute;
+  font-size: 20px;
+  transform: translateY(-25px);
+  transition: 0.6s ease-in-out;
+  color: rgb(85, 85, 85);
+  font-weight: 300;
+}
+
+input.input {
+  font-size: 20px;
+  border: 0;
+  border-bottom: 2px solid #DECFCE;
+  background-color: rgba(0,0,0,0);
+  z-index: 3;
+}
+
+input.input:focus {
+  outline: none;
+}
+
+div.form:focus-within p.fill {
+  transform: translateY(-30px);
+  font-size: 12px;
+}

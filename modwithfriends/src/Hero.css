@@ -77,6 +77,8 @@ div.img-container {
 img.hero-img {
   max-height: 100%;
   max-width: 100%;
-  object-fit: contain;
+  min-height: 340px;
+  min-width: 425px;
+  /*object-fit: contain;*/
   padding: 30px;
 }
