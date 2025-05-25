@@ -79,6 +79,11 @@ p.fill {
   font-weight: 300;
 }
 
+p.filled {
+  transform: translateY(-30px);
+  font-size: 12px;
+}
+
 input.input {
   font-size: 20px;
   border: 0;
