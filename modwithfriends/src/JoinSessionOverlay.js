@@ -3,19 +3,20 @@ import {useState} from 'react';
 import './Overlay.css';
 import x from './assets/x.png';
 
-function NewSessionOverlay({setBody, setCreateSession}) {
-
+function JoinSessionOverlay({setJoinSession, setBody}) {
+  
+  const [sessionID, setSessionID] = useState("");
   const [name, setName] = useState("");
   const [password, setPassword] = useState("");
 
   const generateID = () => {
     //replace with generation of id 
     setBody('000001');
-    setCreateSession(false);
+    setJoinSession(false);
   }
 
   const closeOverlay = () => {
-    setCreateSession(false);
+    setJoinSession(false);
   }
 
   return (
@@ -25,7 +26,8 @@ function NewSessionOverlay({setBody, setCreateSession}) {
           <img src={x} className='x' onClick={closeOverlay}></img>
         </div>
         <div className='form'>
-          <p className='session-type'>Session ID: </p>
+          <p className={sessionID ? 'filled fill' : 'fill'}>Session ID</p>
+          <input className='input' value={sessionID} onChange={(e) => {setSessionID(e.target.value)}}></input>
         </div>
         <div className='form'>
           <p className={name ? 'filled fill' : 'fill'}>Name</p>
@@ -36,11 +38,11 @@ function NewSessionOverlay({setBody, setCreateSession}) {
           <input className='input' value={password} onChange={(e) => {setPassword(e.target.value)}}></input>
         </div>
         <div className='create-session'>
-          <button className='create-session' onClick={generateID}>Create Session</button>
+          <button className='create-session' onClick={generateID}>Join Session</button>
         </div>
       </div>
     </div>
   )
 }
 
-export default NewSessionOverlay;
+export default JoinSessionOverlay;

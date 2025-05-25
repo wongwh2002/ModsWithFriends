@@ -2,10 +2,14 @@ import React from 'react';
 import './Header.css';
 import logo from './assets/MWF_logo.png';
 
-function Header({setCreateSession, body}) {
+function Header({setCreateSession, setJoinSession, body}) {
 
   const createSession = () => {
     setCreateSession(true);
+  }
+
+  const joinSession = () => {
+    setJoinSession(true);
   }
 
   return (
@@ -18,11 +22,8 @@ function Header({setCreateSession, body}) {
       </div>
       <div className='header-buttons'>
         <button className='session' onClick={createSession}>New Session</button>
-        <button className='session'>
-          {body == '-' ?
-          'Join Session'
-          : 'Share Session'}
-        </button>
+        {body == '-' ? <button className='session' onClick={joinSession}>Join Session</button>
+        : <button className='session'>Share Session</button>}
       </div>
     </div>
   )
