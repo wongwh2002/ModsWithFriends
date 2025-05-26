@@ -5,6 +5,7 @@ import Hero from './Hero'
 import {useState} from 'react';
 import NewSessionOverlay from './NewSessionOverlay';
 import JoinSessionOverlay from './JoinSessionOverlay';
+import Preference from './Preference';
 
 function HomePage() {
 
@@ -17,7 +18,7 @@ function HomePage() {
       <Header setCreateSession={setCreateSession} setJoinSession={setJoinSession} body={body}/>
       {body == '-' ? 
       <Hero setCreateSession={setCreateSession}/>
-      : <></>}
+      : <Preference />}
       {createSession ? <NewSessionOverlay setBody={setBody} setCreateSession={setCreateSession}/>
       : <></>}
       {joinSession ? <JoinSessionOverlay setBody={setBody} setJoinSession={setJoinSession}/>
