@@ -5,3 +5,8 @@ div.dropdown-item-container {
   padding: 10px 20px;
   overflow-wrap: break-word;
 }
+
+div.dropdown-item-container:hover {
+  cursor: pointer;
+  background-color: rgba(0,0,0,0.08);
+}

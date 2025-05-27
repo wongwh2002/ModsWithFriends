@@ -1,4 +1,4 @@
-p {
+p.text {
   margin: 0;
 }
 
@@ -28,6 +28,9 @@ div.add-modules {
   display: flex;
   flex-direction: row;
   align-items: center;
+  width: 70vw;
+  flex-wrap: wrap;
+  row-gap: 20px;
 }
 
 p.module {
@@ -38,6 +41,7 @@ input.search-module {
   margin-left: 10px;
   border: 0;
   padding: 10px 0;
+  margin-right: 20px;
   font-size: 18px;
   border-radius: 5px;
   background-color: #E1DEE3;

@@ -3,12 +3,14 @@ import {useState, useEffect} from 'react';
 import './Preference.css';
 import './DropdownItem';
 import DropdownItem from './DropdownItem';
+import SelectedMods from './SelectedMods';
 
 function Preference() {
   
   const [searchValue, setSearchValue] = useState("");
   const [moduleData, setModuleData] = useState([]);
-  const [ac, setAc] = useState([])
+  const [ac, setAc] = useState([]);
+  const [selectedMods, setSelectedMods] = useState([]);
 
   useEffect(() => {
     fetch('/modules.json')
@@ -34,17 +36,20 @@ function Preference() {
   return (
     <div className='preference-wrapper'>
       <div className='preference-body'>
-        <p className='title'>Preference</p>
+        <p className='title text'>Preference</p>
         <div className='add-modules'>
-          <p className='module'>Modules: </p>
+          <p className='module text'>Modules: </p>
           <div className='dropdown-container'>
             <input className='search-module' value={searchValue} onChange={(e) => autocomplete(e.target.value)}></input>
             <div className={ac.length != 0 ? 'dropdown' : 'invisible dropdown'}>
               {ac.map(mod => {
-                return <DropdownItem mod={mod} />
+                return <DropdownItem mod={mod} setSelectedMods={setSelectedMods} />
               })}
             </div>
           </div>
+          {selectedMods.map(selectedMod => {
+            return <SelectedMods selectedMod={selectedMod} />
+          })}
         </div>
       </div>
     </div>

@@ -1,0 +1,11 @@
+div.selected-mods-container {
+  width: fit-content;
+  height: 40px;
+  border-radius: 20px;
+  background-color: #E1DEE3;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 0 15px;
+  margin: 0 5px;
+}
