@@ -48,7 +48,7 @@ function Preference() {
             </div>
           </div>
           {selectedMods.map(selectedMod => {
-            return <SelectedMods selectedMod={selectedMod} />
+            return <SelectedMods selectedMod={selectedMod} setSelectedMods={setSelectedMods}/>
           })}
         </div>
       </div>
