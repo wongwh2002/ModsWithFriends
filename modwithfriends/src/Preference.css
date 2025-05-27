@@ -41,8 +41,30 @@ input.search-module {
   font-size: 18px;
   border-radius: 5px;
   background-color: #E1DEE3;
+  width: 300px;
 }
 
 input.search-module:focus {
   outline: none;
+}
+
+div.dropdown-container {
+  display: flex;
+  flex-direction: column;
+}
+
+div.dropdown {
+  width: 300px;
+  height: 200px;
+  background-color: #E1DEE3;
+  position: absolute;
+  transform: translate3d(10px,35px,0);
+  border-radius: 0 0 5px 5px;
+  display: flex;
+  flex-direction: column;
+  overflow-y: auto;
+}
+
+div.invisible {
+  background-color: rgba(0,0,0,0);
 }

@@ -1,0 +1,7 @@
+div.dropdown-item-container {
+  width: 240px;
+  display: flex;
+  align-items: center;
+  padding: 10px 20px;
+  overflow-wrap: break-word;
+}
