@@ -2,9 +2,6 @@ from deserialiseUrk import deserialise_timetable
 from api import get_module_info
 from pprint import pprint
 
-LINK = "https://nusmods.com/timetable/sem-2/share?CDE2000=TUT:A26&CG2023=LAB:03,LEC:02&CG2028=TUT:03,LAB:02,LEC:01&IE2141=TUT:14,LEC:2&LAM1201=LEC:6"
-YEAR = 2024
-
 def group_timetable_by_lesson_type(timetable_data):
     grouped = {}
 
@@ -28,7 +25,7 @@ def group_timetable_by_lesson_type(timetable_data):
         grouped[lesson_type][class_no].append(grouped_session)
     return grouped
 
-def get_filtered_timetable(module_code, semester):
+def get_filtered_timetable(module_code, semester, YEAR):
     module_info = get_module_info(YEAR, module_code.upper())
     if not module_info:
         return None
@@ -56,17 +53,16 @@ def get_filtered_timetable(module_code, semester):
     #     all_timetables[module] += {"examDate": target_semester_info["examDate"],
     #                             "examDuration": target_semester_info["examDuration"]}
 
-      
-
-def main():
+def filter_timetable(LINK = "https://nusmods.com/timetable/sem-2/share?CDE2000=TUT:A26&CG2023=LAB:03,LEC:02&CG2028=TUT:03,LAB:02,LEC:01&IE2141=TUT:14,LEC:2&LAM1201=LEC:6", 
+         YEAR = 2024):
     semester, timetable = deserialise_timetable(LINK)
     semester = int(semester)
     all_timetables = {}
     for module_code, selected_classes in timetable.items():
-        module_data = get_filtered_timetable(module_code, semester)
+        module_data = get_filtered_timetable(module_code, semester, YEAR)
         if module_data:
             all_timetables[module_code] = module_data
-
-    pprint(all_timetables)
+    return(all_timetables)
 if __name__ == "__main__":
-    main()
+    pprint(filter_timetable())
+
