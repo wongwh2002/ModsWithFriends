@@ -4,6 +4,7 @@ import './Preference.css';
 import './DropdownItem';
 import DropdownItem from './DropdownItem';
 import SelectedMods from './SelectedMods';
+import Days from './Days';
 
 function Preference() {
   
@@ -11,6 +12,12 @@ function Preference() {
   const [moduleData, setModuleData] = useState([]);
   const [ac, setAc] = useState([]);
   const [selectedMods, setSelectedMods] = useState([]);
+  const [days, setDays] = useState([
+    {"day":"Mon", "selected":false}, 
+    {"day":"Tues", "selected":false},
+    {"day":"Weds", "selected":false}, 
+    {"day":"Thurs", "selected":false}, 
+    {"day":"Fri", "selected":false}]);
 
   useEffect(() => {
     fetch('/modules.json')
@@ -43,12 +50,18 @@ function Preference() {
             <input className='search-module' value={searchValue} onChange={(e) => autocomplete(e.target.value)}></input>
             <div className={ac.length != 0 ? 'dropdown' : 'invisible dropdown'}>
               {ac.map(mod => {
-                return <DropdownItem mod={mod} setSelectedMods={setSelectedMods} />
+                return <DropdownItem mod={mod} selectedMods={selectedMods} setSelectedMods={setSelectedMods} />
               })}
             </div>
           </div>
           {selectedMods.map(selectedMod => {
             return <SelectedMods selectedMod={selectedMod} setSelectedMods={setSelectedMods}/>
+          })}
+        </div>
+        <div className='attending-container'>
+          <p className='dwm'>Days without modules: </p> 
+          {days.map(day => {
+            return <Days day={day} setDays={setDays} />
           })}
         </div>
       </div>

@@ -1,10 +1,12 @@
 import React from 'react';
 import './DropdownItem.css';
 
-function DropdownItem({mod, setSelectedMods}) {
+function DropdownItem({mod, selectedMods, setSelectedMods}) {
   
   const addSelectedMods = () => {
-    setSelectedMods(selectedMods => [...selectedMods, mod]);
+    if (selectedMods.includes(mod) == false) {
+      setSelectedMods(selectedMods => [...selectedMods, mod]);
+    }
   }
 
   return (
