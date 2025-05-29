@@ -1,7 +1,7 @@
 div.header {
   height: 150px;
-  display: flex;
-  /*flex-direction: row;
+  /*display: flex;
+  flex-direction: row;
   justify-content: space-between;*/
   display: grid;
   grid-template-columns: 1fr 1fr 1fr;
@@ -39,7 +39,7 @@ button.session {
 
 button.session:hover {
   cursor: pointer;
-  background-color: #C6A79E;
+  background-color: #DECFCE;
   transform: scale(1.1);
 }
 

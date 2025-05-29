@@ -40,7 +40,7 @@ p.module {
 input.search-module {
   margin-left: 10px;
   border: 0;
-  padding: 10px 0;
+  padding: 10px;
   margin-right: 20px;
   font-size: 18px;
   border-radius: 5px;
@@ -58,7 +58,7 @@ div.dropdown-container {
 }
 
 div.dropdown {
-  width: 300px;
+  width: 320px;
   height: 200px;
   background-color: #E1DEE3;
   position: absolute;

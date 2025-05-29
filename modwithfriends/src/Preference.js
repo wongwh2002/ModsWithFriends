@@ -33,7 +33,7 @@ function Preference() {
     } else {
       setAc([])
       for (let i in moduleData) {
-        if (moduleData[i]["moduleCode"].toLowerCase().match(value.toLowerCase())) {
+        if (moduleData[i]["moduleCode"].toLowerCase().startsWith(value.toLowerCase())) {
           setAc(ac => [...ac, moduleData[i]]);
         }
       }

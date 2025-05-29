@@ -12,12 +12,13 @@ div.days-container {
 
 div.days-container:hover, div.selected{
   cursor: pointer;
-  border: 1px solid grey;
-  padding: 9.2px 19.3px;
+  background-color: #d1cdd3;
+
 }
 
 div.selected {
-  background-color: #d1cdd3;
+  border: 1px solid grey;
+  padding: 9.2px 19.3px;  
 }
 
 p.day {

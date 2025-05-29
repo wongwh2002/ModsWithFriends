@@ -87,7 +87,7 @@ p.filled {
 input.input {
   font-size: 20px;
   border: 0;
-  border-bottom: 2px solid #DECFCE;
+  border-bottom: 2px solid rgba(85, 85, 85, 0.5);
   background-color: rgba(0,0,0,0);
   z-index: 3;
 }
