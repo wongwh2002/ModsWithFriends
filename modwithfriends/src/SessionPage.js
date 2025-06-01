@@ -1,20 +1,14 @@
 import React from 'react';
-import './HomePage.css';
 import Header from './Header';
-import Hero from './Hero'
-import {useState} from 'react';
+import Preference from './Preference';
 import NewSessionOverlay from './NewSessionOverlay';
 import JoinSessionOverlay from './JoinSessionOverlay';
-import Preference from './Preference';
 
-function HomePage({body, setBody, createSession, setCreateSession, joinSession, setJoinSession}) {
-
+function SessionPage({createSession, setCreateSession, joinSession, setJoinSession, body, setBody}) {
   return (
-    <div className="background-color">
+    <div>
       <Header setCreateSession={setCreateSession} setJoinSession={setJoinSession} body={body}/>
-      {body == '-' ? 
-      <Hero setCreateSession={setCreateSession}/>
-      : <Preference />}
+      <Preference />
       {createSession ? <NewSessionOverlay setBody={setBody} setCreateSession={setCreateSession}/>
       : <></>}
       {joinSession ? <JoinSessionOverlay setBody={setBody} setJoinSession={setJoinSession}/>
@@ -23,4 +17,4 @@ function HomePage({body, setBody, createSession, setCreateSession, joinSession, 
   )
 }
 
-export default HomePage;
+export default SessionPage;

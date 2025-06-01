@@ -2,6 +2,7 @@ import React from 'react';
 import {useState} from 'react';
 import './Overlay.css';
 import x from './assets/x.png';
+import { Link } from 'react-router-dom';
 
 function JoinSessionOverlay({setJoinSession, setBody}) {
   
@@ -37,9 +38,11 @@ function JoinSessionOverlay({setJoinSession, setBody}) {
           <p className={password ? 'filled fill' : 'fill'}>Password</p>
           <input className='input' value={password} onChange={(e) => {setPassword(e.target.value)}}></input>
         </div>
-        <div className='create-session'>
-          <button className='create-session' onClick={generateID}>Join Session</button>
-        </div>
+        <Link to='/session' className='link'> 
+          <div className='create-session'>
+            <button className='create-session' onClick={generateID}>Join Session</button>
+          </div>
+        </Link>
       </div>
     </div>
   )

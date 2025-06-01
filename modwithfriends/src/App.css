@@ -1,3 +1,7 @@
 html {
   background-color: #E1DEE3;
 }
+
+.link {
+  text-decoration: none;
+}
