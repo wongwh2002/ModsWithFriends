@@ -84,8 +84,24 @@ div.attending-container {
   row-gap: 20px;
 }
 
-p.dwm {
+div.start-time {
+  padding-top: 30px;
+}
+
+p.dwm, p.st, p.et, p.lo, p.lt {
   margin: 0;
   padding-right: 20px;
   font-size: 18px;
+}
+
+div.end-time {
+  padding-top: 30px;
+}
+
+div.lunch-option {
+  padding-top: 30px;
+}
+
+div.lunch-timing {
+  padding-top: 30px;
 }

@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useRef } from 'react';
 import {useState, useEffect} from 'react';
 import './Preference.css';
 import './DropdownItem';
@@ -7,6 +7,8 @@ import SelectedMods from './SelectedMods';
 import Days from './Days';
 
 function Preference() {
+
+  const dropDownRef = useRef();
   
   const [searchValue, setSearchValue] = useState("");
   const [moduleData, setModuleData] = useState([]);
@@ -23,6 +25,19 @@ function Preference() {
     fetch('/modules.json')
       .then(response => response.json())
       .then(data => setModuleData(data));
+
+    function handleClickOutside(e) {
+      if (dropDownRef.current && !dropDownRef.current.contains(e.target)) {
+        setAc([]);
+        setSearchValue("");
+      }
+    }
+
+    document.addEventListener("mousedown", handleClickOutside);
+
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    }
   }, []);
 
   const autocomplete = (value) => {
@@ -46,7 +61,7 @@ function Preference() {
         <p className='title text'>Preference</p>
         <div className='add-modules'>
           <p className='module text'>Modules: </p>
-          <div className='dropdown-container'>
+          <div className='dropdown-container' ref={dropDownRef}>
             <input className='search-module' value={searchValue} onChange={(e) => autocomplete(e.target.value)}></input>
             <div className={ac.length != 0 ? 'dropdown' : 'invisible dropdown'}>
               {ac.map(mod => {
@@ -63,6 +78,18 @@ function Preference() {
           {days.map(day => {
             return <Days day={day} setDays={setDays} />
           })}
+        </div>
+        <div className='start-time'>
+          <p className='st'>Earliest start class timing: </p>
+        </div>
+        <div className='end-time'>
+          <p className='et'>Lastest end class timing:</p>
+        </div>
+        <div className='lunch-option'>
+          <p className='lo'>Lunch?</p>
+        </div>
+        <div className='lunch-timing'>
+          <p className='lt'>Prefered lunch timing: </p>
         </div>
       </div>
     </div>
