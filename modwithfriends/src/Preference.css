@@ -2,6 +2,11 @@ p.text {
   margin: 0;
 }
 
+div.preference-overall {
+  display: flex;
+  flex-direction: column;
+}
+
 div.preference-wrapper {
   display: flex;
   flex-direction: row;
@@ -13,7 +18,7 @@ div.preference-body {
   /*border: 1px solid #C6A79E;*/
   background-color: #DECFCE;
   border-radius: 15px;
-  padding: 3%;
+  padding: 50px;
   display: flex;
   flex-direction: column;
 }
@@ -75,11 +80,14 @@ div.invisible {
   z-index: -10;
 }
 
-div.attending-container {
-  padding-top: 30px;
+div.flex-row {
   display: flex;
   flex-direction: row;
   align-items: center;
+}
+
+div.attending-container {
+  padding-top: 30px;
   flex-wrap: wrap;
   row-gap: 20px;
 }
@@ -102,6 +110,37 @@ div.lunch-option {
   padding-top: 30px;
 }
 
+input.lo-checkbox {
+  margin: 0;
+  transform: translateY(2px);
+  accent-color: #E1DEE3;
+  height: 15px;
+  width: 15px;
+}
+
 div.lunch-timing {
   padding-top: 30px;
+}
+
+div.generate-button-wrapper {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  padding-top: 20px;
+}
+
+div.generate-button-container {
+  width: calc(80vw + 80px);
+  display: flex;
+  flex-direction: row;
+  justify-content: right;
+}
+
+button.generate-button {
+  border: 0;
+  width: 120px;
+  height: 40px;
+  border-radius: 8px;
+  background-color: #DECFCE;
+  margin-bottom: 30px;
 }
