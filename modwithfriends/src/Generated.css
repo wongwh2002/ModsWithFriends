@@ -1,0 +1,16 @@
+div.generated-wrapper {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+}
+
+div.generated-container {
+  margin-bottom: 50px;
+  width: 80vw;
+  padding: 50px;
+  background-color: #DECFCE;
+  border-radius: 15px;
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+}
