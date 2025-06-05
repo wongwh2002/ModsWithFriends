@@ -6,6 +6,7 @@ import DropdownItem from './DropdownItem';
 import SelectedMods from './SelectedMods';
 import Days from './Days';
 import dropdown from './assets/dropdown.png';
+import { Link } from 'react-router-dom';
 
 function Preference() {
 
@@ -131,11 +132,13 @@ function Preference() {
           </div> : <></>}
         </div>
       </div>
-      <div className='generate-button-wrapper'>
-        <div className='generate-button-container'>
-          <button className='generate-button'>Generate</button>
+      <Link to='/generate' className='link'>
+        <div className='generate-button-wrapper'>
+          <div className='generate-button-container'>
+            <button className='generate-button'>Generate</button>
+          </div>
         </div>
-      </div>
+      </Link>
     </div>
   )
 }

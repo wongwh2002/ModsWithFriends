@@ -3,6 +3,7 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import HomePage from './HomePage';
 import SessionPage from './SessionPage';
 import { useState } from 'react';
+import GeneratePage from './GeneratePage';
 
 function App() {
   const [body, setBody] = useState('-');
@@ -17,6 +18,9 @@ function App() {
         joinSession={joinSession} setJoinSession={setJoinSession}/>} />
         <Route path='/session' element={<SessionPage createSession={createSession}
         setCreateSession={setCreateSession} joinSession={joinSession}
+        setJoinSession={setJoinSession} body={body} setBody={setBody}/>} />
+        <Route path='/generate' element={<GeneratePage createSession={createSession}
+        setCreateSession={setCreateSession} joinSession={joinSession} 
         setJoinSession={setJoinSession} body={body} setBody={setBody}/>} />
       </Routes>
     </BrowserRouter>

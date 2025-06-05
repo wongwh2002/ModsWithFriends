@@ -136,6 +136,10 @@ div.generate-button-container {
   justify-content: right;
 }
 
+button.generate-button:hover {
+  cursor: pointer;
+}
+
 button.generate-button {
   border: 0;
   width: 120px;
