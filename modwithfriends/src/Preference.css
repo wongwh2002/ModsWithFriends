@@ -144,3 +144,41 @@ button.generate-button {
   background-color: #DECFCE;
   margin-bottom: 30px;
 }
+
+div.select-time {
+  height: 20px;
+  width: 100px;
+  padding: 10px;
+  background-color: #E1DEE3;
+  display: flex;
+  flex-direction: row;
+  justify-content: right;
+  align-items: center;
+  border-radius: 5px;
+  position: relative;
+}
+
+div.select-time:hover {
+  cursor: pointer;
+}
+
+img.dd {
+  height: 10px;
+  width: 10px;
+}
+
+div.time-dd {
+  position: absolute;
+  width: 120px;
+  height: 120px;
+  transform: translate3d(10px, 70px, 0);
+}
+
+div.time-container:hover {
+  background-color: rgba(0,0,0,0.08);
+}
+
+p.time {
+  padding: 10px;
+  margin: 0;
+}

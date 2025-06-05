@@ -5,6 +5,7 @@ import './DropdownItem';
 import DropdownItem from './DropdownItem';
 import SelectedMods from './SelectedMods';
 import Days from './Days';
+import dropdown from './assets/dropdown.png';
 
 function Preference() {
 
@@ -21,6 +22,13 @@ function Preference() {
     {"day":"Thurs", "selected":false}, 
     {"day":"Fri", "selected":false}]);
   const [lunchCheck, setLunchCheck] = useState(false);
+  const [clickStartTime, setClickStartTime] = useState(false);
+  const [clickEndTime, setClickEndTime] = useState(false);
+  const [startTime, setStartTime] = useState("");
+  const [endTime, setEndTime] = useState("");
+  
+  const timeOptions = ['8:00AM', '9:00AM', '10:00AM', '11:00AM', '12:00PM', '1:00PM', 
+    '2:00PM', '3:00PM', '4:00PM', '5:00PM', '6:00PM'];
 
   useEffect(() => {
     fetch('/modules.json')
@@ -83,9 +91,35 @@ function Preference() {
           </div>
           <div className='start-time flex-row'>
             <p className='st'>Earliest start class timing: </p>
+            <div className='select-time' onClick={() => {setClickStartTime(!clickStartTime); setClickEndTime(false)}}>
+              {clickStartTime ? <div className='time-dd dropdown'>
+                {timeOptions.map(time => {
+                  return (
+                    <div className='time-container' onClick = {() => setStartTime(time)}>
+                      <p className='time'>{time}</p>
+                    </div>
+                  )
+                })}
+              </div> : <></>}
+              <p className='time'> {startTime} </p>
+              <img className='dd' src={dropdown} />
+            </div>
           </div>
           <div className='end-time flex-row'>
             <p className='et'>Lastest end class timing:</p>
+            <div className='select-time' onClick={() => {setClickEndTime(!clickEndTime); setClickStartTime(false)}}>
+              {clickEndTime ? <div className='time-dd dropdown'>
+                {timeOptions.map(time => {
+                  return (
+                    <div className='time-container' onClick={() => setEndTime(time)}>
+                      <p className='time'>{time}</p>
+                    </div>
+                  )
+                })}     
+              </div> : <></>}
+              <p className='time'> {endTime} </p>
+              <img className='dd' src={dropdown} />
+            </div>
           </div>
           <div className='lunch-option flex-row'>
             <p className='lo'>Lunch?</p>
