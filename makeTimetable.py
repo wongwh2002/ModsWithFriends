@@ -1,7 +1,8 @@
-from timetable import filter_timetable
+from get_timetable import filter_timetable
 from ortools.sat.python import cp_model
 from pprint import pprint
 from collections import defaultdict
+from api import get_module_info
 
 def time_to_minutes(time_str):
     """Convert time string (e.g., '0900') to minutes since midnight"""
@@ -15,10 +16,8 @@ def minutes_to_time(minutes):
 
 def main():
     # Your timetable data
+    timetable_data = filter_timetable(link = False)
 
-    timetable_data = filter_timetable()
-    timetable_data = {"CG2023" : timetable_data["CG2023"],
-                      "CG2028" : timetable_data["CG2028"]}
     # pprint(timetable_data)
 
     # Initialize model
@@ -77,6 +76,9 @@ def main():
                         time_intervals[(session_data['day'], week)].append(interval_var)
 
                     session_id += 1
+    pprint(timetable_data["CG2023"])
+    # pprint(all_sessions)
+    # pprint(all_sessions)
 
     # 2. Add constraints
     # 2.1 Must select exactly one of each required lesson type per module
@@ -96,6 +98,7 @@ def main():
     solver = cp_model.CpSolver()
     solver.parameters.max_time_in_seconds = 30.0
     status = solver.Solve(model)
+    # solver.parameters.enumerate_all_solutions = True
 
     # 4. Print solution
     if status == cp_model.OPTIMAL or status == cp_model.FEASIBLE:
