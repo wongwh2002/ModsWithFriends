@@ -298,13 +298,13 @@ function Preference() {
           {createRoom ? <NewRoomOverlay setCreateRoom={setCreateRoom} selectedMods={selectedMods}/> : <></>}
         </div>}
       </div>
-      <Link to='/generate' className='link'>
-        <div className='generate-button-wrapper'>
-          <div className='generate-button-container'>
+      <div className='generate-button-wrapper'>
+        <div className='generate-button-container'>
+          <Link to='/generate' className='link'>
             <button className='button'>Generate</button>
-          </div>
+          </Link>
         </div>
-      </Link>
+      </div>
     </div>
   )
 }

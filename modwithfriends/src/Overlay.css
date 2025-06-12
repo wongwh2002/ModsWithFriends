@@ -120,10 +120,18 @@ div.module-list {
   row-gap: 10px;
 }
 
-p.module {
+p.modules {
   font-weight: bold;
   font-size: 18px;
   margin: 0;
+}
+
+p.no-mods {
+  margin: 0;
+  font-style: italic;
+  color: grey;
+  padding-top: 50px;
+  align-self: center;
 }
 
 div.create-room-container {
