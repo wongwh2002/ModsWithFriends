@@ -1,17 +1,20 @@
 import React from 'react';
 import Header from './Header';
 import NewSessionOverlay from './NewSessionOverlay';
-import JoinSessionOverlay from './JoinSessionOverlay';
 import Generated from './Generated';
+import ShareSessionOverlay from './ShareSessionOverlay';
+import JoinSessionOverlay from './JoinSessionOverlay';
 
-function GeneratePage({createSession, setCreateSession, joinSession, setJoinSession, body, setBody}) {
+function GeneratePage({createSession, setCreateSession, joinSession, setJoinSession, shareSession, setShareSession, body, setBody}) {
   return (
     <div>
-      <Header setCreateSession={setCreateSession} setJoinSession={setJoinSession} body={body}/>
+      <Header setCreateSession={setCreateSession} setJoinSession={setJoinSession} setShareSession={setShareSession} setBody={setBody} body={body}/>
       <Generated />
       {createSession ? <NewSessionOverlay setBody={setBody} setCreateSession={setCreateSession}/>
       : <></>}
       {joinSession ? <JoinSessionOverlay setBody={setBody} setJoinSession={setJoinSession}/>
+      : <></>}
+      {shareSession ? <ShareSessionOverlay setShareSession={setShareSession}/>
       : <></>}
     </div>
   )

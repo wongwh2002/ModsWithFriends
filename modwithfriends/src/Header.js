@@ -1,8 +1,9 @@
 import React from 'react';
 import './Header.css';
 import logo from './assets/MWF_logo.png';
+import { Link } from 'react-router-dom';
 
-function Header({setCreateSession, setJoinSession, body}) {
+function Header({setCreateSession, setJoinSession, setShareSession, setBody, body}) {
 
   const createSession = () => {
     setCreateSession(true);
@@ -12,9 +13,15 @@ function Header({setCreateSession, setJoinSession, body}) {
     setJoinSession(true);
   }
 
+  const shareSession = () => {
+    setShareSession(true);
+  }
+
   return (
     <div className='header'>
-      <img src={logo} className='logo'></img>
+      <Link to="/" onClick={() => setBody('-')}>
+        <img src={logo} className='logo'></img>
+      </Link>
       <div className='session-id'>
         <p className='bold'>
           Session ID: {body}
@@ -23,7 +30,7 @@ function Header({setCreateSession, setJoinSession, body}) {
       <div className='header-buttons'>
         <button className='session' onClick={createSession}>New Session</button>
         {body == '-' ? <button className='session' onClick={joinSession}>Join Session</button>
-        : <button className='session'>Share Session</button>}
+        : <button className='session' onClick={shareSession}>Share Session</button>}
       </div>
     </div>
   )

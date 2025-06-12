@@ -23,6 +23,11 @@ div.overlay {
   z-index: 10;
 }
 
+div.share-overlay {
+  width: 400px;
+  height: 500px;
+}
+
 div.close {
   display: flex;
   flex-direction: row;

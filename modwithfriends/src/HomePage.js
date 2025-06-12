@@ -7,14 +7,12 @@ import NewSessionOverlay from './NewSessionOverlay';
 import JoinSessionOverlay from './JoinSessionOverlay';
 import Preference from './Preference';
 
-function HomePage({body, setBody, createSession, setCreateSession, joinSession, setJoinSession}) {
+function HomePage({body, setBody, createSession, setCreateSession, joinSession, setJoinSession, shareSession, setShareSession}) {
 
   return (
     <div className="background-color">
-      <Header setCreateSession={setCreateSession} setJoinSession={setJoinSession} body={body}/>
-      {body == '-' ? 
+      <Header setCreateSession={setCreateSession} setJoinSession={setJoinSession} shareSession={shareSession} setShareSession={setShareSession} setBody={setBody} body={body}/>
       <Hero setCreateSession={setCreateSession}/>
-      : <Preference />}
       {createSession ? <NewSessionOverlay setBody={setBody} setCreateSession={setCreateSession}/>
       : <></>}
       {joinSession ? <JoinSessionOverlay setBody={setBody} setJoinSession={setJoinSession}/>
