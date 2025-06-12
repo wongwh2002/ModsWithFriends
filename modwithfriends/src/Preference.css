@@ -53,6 +53,10 @@ input.search-module {
   width: 300px;
 }
 
+input.search-module::placeholder {
+  font-size: 15px;
+}
+
 input.search-module:focus {
   outline: none;
 }
@@ -96,7 +100,7 @@ div.start-time {
   padding-top: 30px;
 }
 
-p.dwm, p.st, p.et, p.lo, p.lt {
+p.dwm, p.st, p.et, p.lo, p.lt, p.duration {
   margin: 0;
   padding-right: 20px;
   font-size: 18px;
@@ -185,4 +189,12 @@ div.time-container:hover {
 p.time {
   padding: 10px;
   margin: 0;
+}
+
+p.dash {
+  padding: 0 15px;
+}
+
+div.lunch-duration {
+  padding-top: 20px;
 }

@@ -11,6 +11,11 @@ import { Link } from 'react-router-dom';
 function Preference() {
 
   const dropDownRef = useRef();
+  const startTimeRef = useRef();
+  const endTimeRef = useRef();
+  const lunchStartRef = useRef();
+  const lunchEndRef = useRef();
+  const durationRef = useRef();
   
   const [searchValue, setSearchValue] = useState("");
   const [moduleData, setModuleData] = useState([]);
@@ -27,9 +32,32 @@ function Preference() {
   const [clickEndTime, setClickEndTime] = useState(false);
   const [startTime, setStartTime] = useState("");
   const [endTime, setEndTime] = useState("");
+  const [clickLunchStart, setClickLunchStart] = useState(false);
+  const [clickLunchEnd, setClickLunchEnd] = useState(false);
+  const [lunchStart, setLunchStart] = useState("");
+  const [lunchEnd, setLunchEnd] = useState("");
+  const [clickDuration, setClickDuration] = useState(false);
+  const [duration, setDuration] = useState("");
   
   const timeOptions = ['8:00AM', '9:00AM', '10:00AM', '11:00AM', '12:00PM', '1:00PM', 
     '2:00PM', '3:00PM', '4:00PM', '5:00PM', '6:00PM'];
+
+  const durationOptions = ['1HR', '2HR', '3HR'];
+
+  const getURL = async (url) => {
+    const encoded = encodeURIComponent(url);
+    const response = await fetch(`http://localhost:4000/expand?url=${encoded}` )
+    const data = await response.json();
+    return data.expandedUrl;
+  }
+
+  const closeAll = () => {
+    setClickEndTime(false);
+    setClickStartTime(false);
+    setClickLunchEnd(false);
+    setClickLunchStart(false);
+    setClickDuration(false);
+  }
 
   useEffect(() => {
     fetch('/modules.json')
@@ -37,13 +65,33 @@ function Preference() {
       .then(data => setModuleData(data));
 
     function handleClickOutside(e) {
-      if (dropDownRef.current && !dropDownRef.current.contains(e.target)) {
+      const refs = [
+        dropDownRef.current,
+        startTimeRef.current,
+        endTimeRef.current,
+        lunchStartRef.current,
+        lunchEndRef.current,
+        durationRef.current
+      ];
+    
+      const clickedInsideAny = refs
+        .filter(ref => ref) // Remove null or unmounted refs
+        .some(ref => ref.contains(e.target));
+    
+      if (!clickedInsideAny) {
         setAc([]);
         setSearchValue("");
+        closeAll();
       }
     }
 
     document.addEventListener("mousedown", handleClickOutside);
+
+    //getURL("https://shorten.nusmods.com?shortUrl=pfayfa")
+    //.then( data => console.log(data))
+
+    //getURL("https://nusmods.com/timetable/sem-2/share?CDE2000=TUT:A4&CDE2310=LEC:1,LAB:1&CDE3301=LEC:1,LAB:G10&CG2023=LEC:03,LAB:05&CG2271=LAB:02,LEC:01&CS3240=LEC:1,TUT:3&EE2026=TUT:05,LEC:01,LAB:03&EE4204=PLEC:01,PTUT:01&IE2141=TUT:09,LEC:2&ta=CDE2310(LAB:1),CG2271(LAB:02)")
+    //.then(data => console.log(data))
 
     return () => {
       document.removeEventListener("mousedown", handleClickOutside);
@@ -64,6 +112,22 @@ function Preference() {
       }
     }
   }
+
+  const handleLink = async (e) => {
+    const pastedText = e.clipboardData.getData('text');
+    if(pastedText.includes("http")) {
+      const url = await getURL(pastedText);
+      if (url === undefined) {
+        setSearchValue("");
+        return;
+      }
+      const matches = [...url.matchAll(/([A-Z]{2,4}[0-9]{4})/g)];
+      const moduleCodes = new Set(matches.map(match => match[1]));
+      const pastedMods = Array.from(moduleCodes).map(code => ({ moduleCode: code }));
+      setSelectedMods(pastedMods);
+    }
+    setSearchValue("");
+  }
   
   return (
     <div className='preference-overall'>
@@ -73,14 +137,16 @@ function Preference() {
           <div className='add-modules'>
             <p className='module text'>Modules: </p>
             <div className='dropdown-container' ref={dropDownRef}>
-              <input className='search-module' value={searchValue} onChange={(e) => autocomplete(e.target.value)}></input>
+              <input className='search-module' placeholder='Search Module / Paste NUSMODS link' 
+                value={searchValue} onChange={(e) => autocomplete(e.target.value)}
+                onPaste={e => handleLink(e)}></input>
               <div className={ac.length != 0 ? 'dropdown' : 'invisible dropdown'}>
                 {ac.map(mod => {
                   return <DropdownItem mod={mod} selectedMods={selectedMods} setSelectedMods={setSelectedMods} />
                 })}
               </div>
             </div>
-            {selectedMods.map(selectedMod => {
+            {selectedMods.map((selectedMod, index) => {
               return <SelectedMods selectedMod={selectedMod} setSelectedMods={setSelectedMods}/>
             })}
           </div>
@@ -92,7 +158,7 @@ function Preference() {
           </div>
           <div className='start-time flex-row'>
             <p className='st'>Earliest start class timing: </p>
-            <div className='select-time' onClick={() => {setClickStartTime(!clickStartTime); setClickEndTime(false)}}>
+            <div className='select-time' ref={startTimeRef} onClick={() => {closeAll(); setClickStartTime(!clickStartTime);}}>
               {clickStartTime ? <div className='time-dd dropdown'>
                 {timeOptions.map(time => {
                   return (
@@ -108,7 +174,7 @@ function Preference() {
           </div>
           <div className='end-time flex-row'>
             <p className='et'>Lastest end class timing:</p>
-            <div className='select-time' onClick={() => {setClickEndTime(!clickEndTime); setClickStartTime(false)}}>
+            <div className='select-time' ref={endTimeRef} onClick={() => {closeAll(); setClickEndTime(!clickEndTime);}}>
               {clickEndTime ? <div className='time-dd dropdown'>
                 {timeOptions.map(time => {
                   return (
@@ -126,10 +192,53 @@ function Preference() {
             <p className='lo'>Lunch?</p>
             <input className='lo-checkbox' type="checkbox" onClick={() => {setLunchCheck(!lunchCheck)}}></input>
           </div>
-          {lunchCheck ?
+          {lunchCheck ? <>
           <div className='lunch-timing flex-row'>
             <p className='lt'>Prefered lunch timing: </p>
-          </div> : <></>}
+            <div className='select-time' ref={lunchStartRef} onClick={() => {closeAll(); setClickLunchStart(!clickLunchStart);}}>
+              {clickLunchStart ? <div className='time-dd dropdown'>
+                {timeOptions.map(time => {
+                  return (
+                    <div className='time-container' onClick={() => setLunchStart(time)}>
+                      <p className='time'>{time}</p>
+                    </div>
+                  )
+                })}     
+              </div> : <></>}
+              <p className='time'> {lunchStart} </p>
+              <img className='dd' src={dropdown} />
+            </div>
+            <p className='dash'>-</p>
+            <div className='select-time' ref={lunchEndRef} onClick={() => {closeAll(); setClickLunchEnd(!clickLunchEnd);}}>
+              {clickLunchEnd ? <div className='time-dd dropdown'>
+                {timeOptions.map(time => {
+                  return (
+                    <div className='time-container' onClick={() => setLunchEnd(time)}>
+                      <p className='time'>{time}</p>
+                    </div>
+                  )
+                })}     
+              </div> : <></>}
+              <p className='time'> {lunchEnd} </p>
+              <img className='dd' src={dropdown} />
+            </div>
+          </div> 
+          <div className="lunch-duration flex-row">
+            <p className='duration'>Duration:</p>
+            <div className='select-time' ref={durationRef} onClick={() => {closeAll(); setClickDuration(!clickDuration);}}>
+              {clickDuration ? <div className='time-dd dropdown'>
+                {durationOptions.map(duration => {
+                  return (
+                    <div className='time-container' onClick={() => setDuration(duration)}>
+                      <p className='time'>{duration}</p>
+                    </div>
+                  )
+                })}     
+              </div> : <></>}
+              <p className='time'> {duration} </p>
+              <img className='dd' src={dropdown} />
+            </div>
+          </div> </> : <></>}
         </div>
       </div>
       <Link to='/generate' className='link'>
