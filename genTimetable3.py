@@ -6,9 +6,9 @@ from api import get_module_info
 import json
 
 CONFIG = {
-    "earliest_start": 9 * 60,  # 24hr clock
+    "earliest_start": 10 * 60,  # 24hr clock
     "latest_end": 18 * 60,
-    "want_lunch_break": True,
+    "want_lunch_break": False,
     "lunch_window": (11 * 60, 12 * 60),  # start, end
     "lunch_duration": 60,
     "lunch_except_days": [4],
@@ -19,19 +19,174 @@ CONFIG = {
         "day_length_penalty": -0.1,
         "day_present_penalty": -10,
     },
-    "enable_early_start": True,  # Toggle for 9am constraint
-    "enable_early_end": True,  # Toggle for 6pm constraint
+    "enable_early_start": False,  # Toggle for 9am constraint
+    "enable_early_end": False,  # Toggle for 6pm constraint
     "enable_compact": False,  # Toggle for compact schedule
 }
+
+
+# Solution printer callback
+class TimetableSolutionPrinter(cp_model.CpSolverSolutionCallback):
+    def __init__(self, class_vars, class_groups, all_sessions, semester, limit):
+        cp_model.CpSolverSolutionCallback.__init__(self)
+        self._class_vars = class_vars
+        self._class_groups = class_groups
+        self._all_sessions = all_sessions
+        self._semester = semester
+        self._solution_count = 0
+        self._solution_limit = limit
+        self.solutions = []
+        self.lesson_dict = {
+            "Laboratory": "LAB",
+            "Lecture": "LEC",
+            "Tutorial": "TUT",
+            "Sectional Teaching": "SEC",
+            "Packaged Lecture": "PLEC",
+            "Packaged Tutorial": "PTUT",
+        }
+
+    def on_solution_callback(self):
+        self._solution_count += 1
+        selection_dict = {}
+        schedule = defaultdict(list)
+
+        # Process selected classes
+        for class_key, var in self._class_vars.items():
+            if self.Value(var):
+                module, lesson_type, class_no = class_key
+                if module in selection_dict:
+                    selection_dict[module].append(
+                        f"{self.lesson_dict[lesson_type]}:{class_no}"
+                    )
+                else:
+                    selection_dict[module] = [
+                        f"{self.lesson_dict[lesson_type]}:{class_no}"
+                    ]
+
+                # Add to schedule
+                for sid in self._class_groups[class_key]:
+                    if self.Value(self._all_sessions[sid]["id"]):
+                        session = self._all_sessions[sid]
+                        schedule[session["day_name"]].append(
+                            {
+                                "module": module,
+                                "lesson_type": lesson_type,
+                                "class_no": class_no,
+                                "time": f"{session['start']//60:02d}:{session['start']%60:02d}-{session['end']//60:02d}:{session['end']%60:02d}",
+                                "venue": session["venue"],
+                                "weeks": session["weeks"],
+                            }
+                        )
+
+        # Generate NUSMods URL
+        url = f"https://nusmods.com/timetable/sem-{self._semester}/share?"
+        for key, value in selection_dict.items():
+            url += f"{key}={','.join(value)}&"
+        url = url[:-1]  # Remove trailing &
+
+        self.solutions.append(
+            {
+                "solution_number": self._solution_count,
+                "nusmods_link": url,
+                "schedule": dict(schedule),
+                "selected_classes": selection_dict,
+            }
+        )
+
+        if self._solution_count >= self._solution_limit:
+            pprint(list(solution["nusmods_link"] for solution in (self.solutions)))
+            self.StopSearch()
+
+
+def print_and_write_to_file(
+    solution_printer, isPrint, file_path="timetable_solution.txt"
+):
+    if isPrint:
+        print(f"Found {len(solution_printer.solutions)} solutions:")
+        for solution in solution_printer.solutions:
+            print(f"\nSolution {solution['solution_number']}:")
+            print("NUSMods Link:", solution["nusmods_link"])
+            print("Selected Classes:")
+            for module, classes in solution["selected_classes"].items():
+                print(f"  {module}: {', '.join(classes)}")
+            print("\nSchedule:")
+            # for day, sessions in solution['schedule'].items():
+            #     print(f"  {day}:")
+            #     for session in sessions:
+            #         print(f"    {session['time']} {session['module']} {session['lesson_type']} {session['class_no']} at {session['venue']}")
+
+    with open(file_path, "w") as f:
+        toWrite = ""
+
+        for index, solution in enumerate(solution_printer.solutions):
+            toWrite += f"sol num: {index}: {solution["nusmods_link"]}\n"
+
+        f.write(toWrite)
+
+
+def gen_sol_no_minimise(
+    semester,
+    model,
+    class_groups,
+    class_vars,
+    all_sessions,
+    TimetableSolutionPrinter,
+    solver,
+    solution_limit,
+):
+    solution_printer = TimetableSolutionPrinter(
+        class_vars, class_groups, all_sessions, semester, solution_limit
+    )
+    solver.parameters.enumerate_all_solutions = True
+    solver.parameters.random_seed = 88
+    solver.Solve(model, solution_printer)
+    return solution_printer
+
+
+def solve_with_ranking(
+    semester,
+    model,
+    class_groups,
+    class_vars,
+    all_sessions,
+    TimetableSolutionPrinter,
+    solver,
+    objective_var,
+    solution_limit=10,
+    tolerance=30,
+):
+    # First solve to find optimal value
+    solver.parameters.enumerate_all_solutions = False
+    status = solver.Solve(model)
+
+    if status != cp_model.OPTIMAL:
+        return []
+
+    optimal_value = solver.Value(objective_var)
+    print(f"Optimal value found: {optimal_value}")
+
+    # Add constaint that solutions must be within tolerance of optimal
+    model.Add(objective_var <= optimal_value + tolerance)
+
+    # find multiple solutions
+    solution_printer = TimetableSolutionPrinter(
+        class_vars, class_groups, all_sessions, semester, solution_limit
+    )
+    solver.parameters.enumerate_all_solutions = True
+    solver.Solve(model, solution_printer)
+
+    return solution_printer
 
 
 def main(
     link="https://nusmods.com/timetable/sem-2/share?CDE2000=TUT:A26&CG2023=LAB:03,LEC:02&CG2028=TUT:03,LAB:02,LEC:01&IE2141=TUT:14,LEC:2&LAM1201=LEC:6",
     modules=["CS2113", "CG2023", "EE2211", "CDE2501", "EE2026"],
     isLink=False,
+    semester=2,
 ):
+
     # Your timetable data
-    ftt = filter_timetable(modules=modules, isLink=False)
+    ftt = filter_timetable(modules=modules, isLink=isLink, semester=semester)
     timetable_data = ftt["timetable"]
     semester = ftt["semester"]
     model = cp_model.CpModel()
@@ -102,7 +257,15 @@ def main(
 
     # Constraints
     # Add only exactly 1 and no overlap
-    required_lessons = ["Laboratory", "Lecture", "Tutorial"]
+    required_lessons = [
+        "Laboratory",
+        "Lecture",
+        "Tutorial",
+        "Sectional Teaching",
+        "Packaged Lecture",
+        "Packaged Tutorial",
+    ]
+
     for module in timetable_data:
         for lesson_type in required_lessons:
             if lesson_type in timetable_data[module]["timetable"]:
@@ -180,111 +343,26 @@ def main(
                 )
                 model.AddNoOverlap([lunch_interval, session_interval])
 
-    # Solution printer callback
-    class TimetableSolutionPrinter(cp_model.CpSolverSolutionCallback):
-        def __init__(self, class_vars, class_groups, all_sessions, semester, limit):
-            cp_model.CpSolverSolutionCallback.__init__(self)
-            self._class_vars = class_vars
-            self._class_groups = class_groups
-            self._all_sessions = all_sessions
-            self._semester = semester
-            self._solution_count = 0
-            self._solution_limit = limit
-            self.solutions = []
-            self.lesson_dict = {
-                "Laboratory": "LAB",
-                "Lecture": "LEC",
-                "Tutorial": "TUT",
-            }
-
-        def on_solution_callback(self):
-            self._solution_count += 1
-            selection_dict = {}
-            schedule = defaultdict(list)
-
-            # Process selected classes
-            for class_key, var in self._class_vars.items():
-                if self.Value(var):
-                    module, lesson_type, class_no = class_key
-                    if module in selection_dict:
-                        selection_dict[module].append(
-                            f"{self.lesson_dict[lesson_type]}:{class_no}"
-                        )
-                    else:
-                        selection_dict[module] = [
-                            f"{self.lesson_dict[lesson_type]}:{class_no}"
-                        ]
-
-                    # Add to schedule
-                    for sid in self._class_groups[class_key]:
-                        if self.Value(self._all_sessions[sid]["id"]):
-                            session = self._all_sessions[sid]
-                            schedule[session["day_name"]].append(
-                                {
-                                    "module": module,
-                                    "lesson_type": lesson_type,
-                                    "class_no": class_no,
-                                    "time": f"{session['start']//60:02d}:{session['start']%60:02d}-{session['end']//60:02d}:{session['end']%60:02d}",
-                                    "venue": session["venue"],
-                                    "weeks": session["weeks"],
-                                }
-                            )
-
-            # Generate NUSMods URL
-            url = f"https://nusmods.com/timetable/sem-{self._semester}/share?"
-            for key, value in selection_dict.items():
-                url += f"{key}={','.join(value)}&"
-            url = url[:-1]  # Remove trailing &
-
-            self.solutions.append(
-                {
-                    "solution_number": self._solution_count,
-                    "nusmods_link": url,
-                    "schedule": dict(schedule),
-                    "selected_classes": selection_dict,
-                }
-            )
-
-            if self._solution_count >= self._solution_limit:
-                pprint(list(solution["nusmods_link"] for solution in (self.solutions)))
-                self.StopSearch()
-
     # Solve with callback
     solver = cp_model.CpSolver()
     solution_limit = 10  # Number of solutions to find
     # solver.parameters.linearization_level = 0
     # Enumerate all solutions.
     # solver.parameters.enumerate_all_solutions = True
-    solution_printer = TimetableSolutionPrinter(
-        class_vars, class_groups, all_sessions, semester, solution_limit
+    solution_printer = gen_sol_no_minimise(
+        semester,
+        model,
+        class_groups,
+        class_vars,
+        all_sessions,
+        TimetableSolutionPrinter,
+        solver,
+        solution_limit,
     )
-    solver.parameters.enumerate_all_solutions = True
-    solver.parameters.random_seed = 88
-    solver.Solve(model, solution_printer)
 
     isPrint = True
     # Output results
-    if isPrint:
-        print(f"Found {len(solution_printer.solutions)} solutions:")
-        for solution in solution_printer.solutions:
-            print(f"\nSolution {solution['solution_number']}:")
-            print("NUSMods Link:", solution["nusmods_link"])
-            print("Selected Classes:")
-            for module, classes in solution["selected_classes"].items():
-                print(f"  {module}: {', '.join(classes)}")
-            print("\nSchedule:")
-            # for day, sessions in solution['schedule'].items():
-            #     print(f"  {day}:")
-            #     for session in sessions:
-            #         print(f"    {session['time']} {session['module']} {session['lesson_type']} {session['class_no']} at {session['venue']}")
-
-    with open("timetable_solution.txt", "w") as f:
-        toWrite = ""
-
-        for index, solution in enumerate(solution_printer.solutions):
-            toWrite += f"sol num: {index}: {solution["nusmods_link"]}\n"
-
-        f.write(toWrite)
+    print_and_write_to_file(solution_printer, isPrint)
 
 
 if __name__ == "__main__":
@@ -295,7 +373,8 @@ if __name__ == "__main__":
         "EE2211",
         "CDE2501",
         "EE2026",
-        # "CS1010"
+        # "CS1010",
     ]
+    semester = 2
     isLink = False
-    result = main(modules=modules, isLink=isLink)
+    result = main(modules=modules, isLink=isLink, semester=semester)
