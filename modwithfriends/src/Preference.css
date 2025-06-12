@@ -68,7 +68,8 @@ div.dropdown-container {
 
 div.dropdown {
   width: 320px;
-  height: 200px;
+  height: auto;
+  max-height: 200px;
   background-color: #E1DEE3;
   position: absolute;
   transform: translate3d(10px,35px,0);

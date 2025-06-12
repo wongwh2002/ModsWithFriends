@@ -12,7 +12,7 @@ function JoinSessionOverlay({setJoinSession, setBody}) {
 
   const generateID = () => {
     //replace with generation of id 
-    setBody('000001');
+    setBody(sessionID);
     setJoinSession(false);
   }
 

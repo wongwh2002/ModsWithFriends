@@ -30,12 +30,12 @@ function Preference() {
   const [lunchCheck, setLunchCheck] = useState(false);
   const [clickStartTime, setClickStartTime] = useState(false);
   const [clickEndTime, setClickEndTime] = useState(false);
-  const [startTime, setStartTime] = useState("");
-  const [endTime, setEndTime] = useState("");
+  const [startTime, setStartTime] = useState(null);
+  const [endTime, setEndTime] = useState(null);
   const [clickLunchStart, setClickLunchStart] = useState(false);
   const [clickLunchEnd, setClickLunchEnd] = useState(false);
-  const [lunchStart, setLunchStart] = useState("");
-  const [lunchEnd, setLunchEnd] = useState("");
+  const [lunchStart, setLunchStart] = useState(null);
+  const [lunchEnd, setLunchEnd] = useState(null);
   const [clickDuration, setClickDuration] = useState(false);
   const [duration, setDuration] = useState("");
   
@@ -50,6 +50,34 @@ function Preference() {
     const data = await response.json();
     return data.expandedUrl;
   }
+
+  const startTimeOptions = timeOptions.filter((time, index) => {
+    if (endTime) {
+      return index < timeOptions.indexOf(endTime);
+    }
+    return true;
+  });
+
+  const endTimeOptions = timeOptions.filter((time, index) => {
+    if (startTime) {
+      return index > timeOptions.indexOf(startTime);
+    }
+    return true;
+  });
+
+  const lunchStartOptions = timeOptions.filter((time, index) => {
+    if (lunchEnd) {
+      return index > timeOptions.indexOf(lunchEnd);
+    }
+    return true;
+  });
+
+  const lunchEndOptions = timeOptions.filter((time, index) => {
+    if (lunchStart) {
+      return index > timeOptions.indexOf(lunchStart);
+    }
+    return true;
+  });
 
   const closeAll = () => {
     setClickEndTime(false);
@@ -160,7 +188,7 @@ function Preference() {
             <p className='st'>Earliest start class timing: </p>
             <div className='select-time' ref={startTimeRef} onClick={() => {closeAll(); setClickStartTime(!clickStartTime);}}>
               {clickStartTime ? <div className='time-dd dropdown'>
-                {timeOptions.map(time => {
+                {startTimeOptions.map(time => {
                   return (
                     <div className='time-container' onClick = {() => setStartTime(time)}>
                       <p className='time'>{time}</p>
@@ -176,7 +204,7 @@ function Preference() {
             <p className='et'>Lastest end class timing:</p>
             <div className='select-time' ref={endTimeRef} onClick={() => {closeAll(); setClickEndTime(!clickEndTime);}}>
               {clickEndTime ? <div className='time-dd dropdown'>
-                {timeOptions.map(time => {
+                {endTimeOptions.map(time => {
                   return (
                     <div className='time-container' onClick={() => setEndTime(time)}>
                       <p className='time'>{time}</p>
@@ -197,7 +225,7 @@ function Preference() {
             <p className='lt'>Prefered lunch timing: </p>
             <div className='select-time' ref={lunchStartRef} onClick={() => {closeAll(); setClickLunchStart(!clickLunchStart);}}>
               {clickLunchStart ? <div className='time-dd dropdown'>
-                {timeOptions.map(time => {
+                {lunchStartOptions.map(time => {
                   return (
                     <div className='time-container' onClick={() => setLunchStart(time)}>
                       <p className='time'>{time}</p>
@@ -211,7 +239,7 @@ function Preference() {
             <p className='dash'>-</p>
             <div className='select-time' ref={lunchEndRef} onClick={() => {closeAll(); setClickLunchEnd(!clickLunchEnd);}}>
               {clickLunchEnd ? <div className='time-dd dropdown'>
-                {timeOptions.map(time => {
+                {lunchEndOptions.map(time => {
                   return (
                     <div className='time-container' onClick={() => setLunchEnd(time)}>
                       <p className='time'>{time}</p>
