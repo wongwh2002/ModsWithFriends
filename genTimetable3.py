@@ -6,11 +6,12 @@ from api import get_module_info
 import json
 
 CONFIG = {
-    "earliest_start": 9 * 60,  # 9am
-    "latest_end": 18 * 60,  # 5pm
+    "earliest_start": 9 * 60,  # 24hr clock
+    "latest_end": 18 * 60,
     "want_lunch_break": True,
-    "lunch_window": (11 * 60, 15 * 60),  # 11am-2pm
+    "lunch_window": (11 * 60, 12 * 60),  # start, end
     "lunch_duration": 60,
+    "lunch_except_days": [4],
     "optional_classes": {"CS1010": ["Lecture"], "CG2023": ["Tutorial"]},
     "weights": {
         "morning_class": 1,
@@ -143,60 +144,12 @@ def main(
             if CONFIG["enable_compact"]:
                 model.Minimize(day_end - day_start)
 
-    # Add lunch break
-    # if CONFIG["want_lunch_break"]:
-    #     for day in range(5):
-    #         # Get all sessions for this day
-    #         day_sessions = [s for s in all_sessions if s["day"] == day]
-    #         if not day_sessions:
-    #             continue
-
-    #         # Create lunch interval
-    #         lunch_start = model.NewIntVar(
-    #             CONFIG["lunch_window"][0],
-    #             CONFIG["lunch_window"][1] - CONFIG["lunch_duration"],
-    #             f"lunch_start_{day}",
-    #         )
-    #         lunch_end = lunch_start + CONFIG["lunch_duration"]
-    #         lunch_present = model.NewBoolVar(f"lunch_present_{day}")
-
-    #         # Lunch is present if any session is present on this day
-    #         session_present_vars = [session_vars[s["id"]] for s in day_sessions]
-    #         model.Add(sum(session_present_vars) > 0).OnlyEnforceIf(lunch_present)
-    #         model.Add(sum(session_present_vars) == 0).OnlyEnforceIf(lunch_present.Not())
-
-    #         # Only enforce lunch break if there are classes that day
-    #         for s in day_sessions:
-    #             sid = s["id"]
-    #             # Ensure no overlap with lunch
-    #             session_start = s["start"]
-    #             session_end = s["end"]
-
-    #             # Create boolean indicators for the conditions
-    #             before_lunch = model.NewBoolVar(f"before_lunch_{sid}")
-    #             after_lunch = model.NewBoolVar(f"after_lunch_{sid}")
-
-    #             # Define the conditions
-    #             model.Add(session_end <= lunch_start).OnlyEnforceIf(before_lunch)
-    #             model.Add(session_end > lunch_start).OnlyEnforceIf(before_lunch.Not())
-
-    #             model.Add(session_start >= lunch_end).OnlyEnforceIf(after_lunch)
-    #             model.Add(session_start < lunch_end).OnlyEnforceIf(after_lunch.Not())
-
-    #             # Create a boolean variable representing the OR condition
-    #             no_overlap = model.NewBoolVar(f"no_overlap_{sid}")
-    #             model.AddBoolOr([before_lunch, after_lunch]).OnlyEnforceIf(no_overlap)
-    #             model.AddBoolAnd([before_lunch.Not(), after_lunch.Not()]).OnlyEnforceIf(
-    #                 no_overlap.Not()
-    #             )
-
-    #             # Enforce no overlap when both session and lunch are present
-    #             model.AddImplication(session_vars[sid], no_overlap).OnlyEnforceIf(
-    #                 lunch_present
-    #             )
-
     if CONFIG["want_lunch_break"]:
         for day in range(5):  # Monday to Friday
+            if (
+                day in CONFIG["lunch_except_days"]
+            ):  # Except certain days, dont need care about lunch
+                continue
             # Get all sessions for this day
             day_sessions = [s for s in all_sessions if s["day"] == day]
             if not day_sessions:
