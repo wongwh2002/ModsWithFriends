@@ -9,16 +9,110 @@ div.preference-overall {
 
 div.preference-wrapper {
   display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+div.tabs {
+  width: calc(80vw + 40px);
+  padding: 0 30px;
+  height: 50px;
+  border-radius: 15px 15px 0 0;
+  background-color: #DCC4BE;
+  display: flex;
   flex-direction: row;
-  justify-content: center;
+  align-items: end;
+  justify-content: start;
+}
+
+div.ctranslate-1 {
+  transform: translateX(-30px);
+}
+
+div.ctranslate-2 {
+  transform: translateX(200px);
+}
+
+div.ctranslate-3 {
+  transform: translateX(170px);
+}
+
+div.ctranslate-4 {
+  transform: translateX(400px);
+}
+
+div.stranslate-1 {
+  transform: translateX(-15px);
+}
+
+div.stranslate-2 {
+  transform: translateX(200px);
+}
+
+div.stranslate-3 {
+  transform: translateX(185px);
+}
+
+div.stranslate-4 {
+  transform: translateX(400px);
+}
+
+div.circle {
+  background-color: #DCC4BE;
+  position: absolute;
+  height: 30px;
+  width: 30px;
+  border-radius: 15px;
+}
+
+div.square {
+  background-color: #DECFCE;
+  position: absolute;
+  height: 15px;
+  width: 15px;
+}
+
+div.mask-light {
+  background-color: #DECFCE;
+}
+
+div.mask-dark {
+  background-color: #DCC4BE;
+}
+
+div.tab {
+  height: 45px;
+  width: 200px;
+  border-radius: 15px 15px 0 0;
+  background-color: #DECFCE;
+  display: flex;
+  align-items: end;
+  border-right: 1px solid grey;
+}
+
+div.tab:hover {
+  cursor: pointer;
+}
+
+div.inactive {
+  background-color: #DCC4BE;
+}
+
+p.preference, p.rooms {
+  padding: 15px;
+  margin: 0;
+  font-weight:500;
+  font-size: 15px;
+  z-index: 10;
 }
 
 div.preference-body {
   width: 80vw;
   /*border: 1px solid #C6A79E;*/
   background-color: #DECFCE;
-  border-radius: 15px;
+  border-radius: 0 0 15px 15px;
   padding: 50px;
+  padding-top: 10px;
   display: flex;
   flex-direction: column;
 }
@@ -33,7 +127,7 @@ div.add-modules {
   display: flex;
   flex-direction: row;
   align-items: center;
-  width: 70vw;
+  width: 80vw;
   flex-wrap: wrap;
   row-gap: 20px;
 }

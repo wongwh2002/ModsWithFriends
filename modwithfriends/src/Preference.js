@@ -38,6 +38,8 @@ function Preference() {
   const [lunchEnd, setLunchEnd] = useState(null);
   const [clickDuration, setClickDuration] = useState(false);
   const [duration, setDuration] = useState("");
+
+  const [isPreference, setIsPreference] = useState(true);
   
   const timeOptions = ['8:00AM', '9:00AM', '10:00AM', '11:00AM', '12:00PM', '1:00PM', 
     '2:00PM', '3:00PM', '4:00PM', '5:00PM', '6:00PM'];
@@ -160,8 +162,23 @@ function Preference() {
   return (
     <div className='preference-overall'>
       <div className='preference-wrapper'>
+        <div className='tabs'>
+          <div className={isPreference ? 'stranslate-1 square' : 'mask-dark stranslate-1 square'}></div>
+          <div className='ctranslate-1 circle'></div>
+          <div className='stranslate-2 square'></div>
+          <div className={isPreference ? 'ctranslate-2 circle' : 'mask-dark ctranslate-1 circle'}></div>
+          <div className='stranslate-3 square'></div>
+          <div className={isPreference ? 'mask-light ctranslate-3 circle' : 'ctranslate-3 circle'}></div>
+          <div className={isPreference ? 'mask-dark stranslate-4 square' : 'stranslate-4 square'}></div>
+          <div className='ctranslate-4 circle'></div>
+          <div className={isPreference? 'tab' : 'inactive tab'} onClick={() => setIsPreference(true)}>
+            <p className='preference'>Preference</p>
+          </div>
+          <div className={isPreference ? 'inactive tab' : 'tab'} onClick={() => setIsPreference(false)}>
+            <p className='rooms'>Rooms</p>
+          </div>
+        </div>
         <div className='preference-body'>
-          <p className='title text'>Preference</p>
           <div className='add-modules'>
             <p className='module text'>Modules: </p>
             <div className='dropdown-container' ref={dropDownRef}>

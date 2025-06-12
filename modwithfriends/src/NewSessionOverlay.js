@@ -34,7 +34,7 @@ function NewSessionOverlay({setBody, setCreateSession}) {
         </div>
         <div className='form'>
           <p className={password ? 'filled fill' : 'fill'}>Password</p>
-          <input className='input' value={password} onChange={(e) => {setPassword(e.target.value)}}></input>
+          <input className='input' type="password" value={password} onChange={(e) => {setPassword(e.target.value)}}></input>
         </div>
         <Link to='/session' className='link'>
           <div className='create-session'>
