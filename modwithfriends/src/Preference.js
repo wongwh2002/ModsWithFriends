@@ -7,6 +7,7 @@ import SelectedMods from './SelectedMods';
 import Days from './Days';
 import dropdown from './assets/dropdown.png';
 import { Link } from 'react-router-dom';
+import NewRoomOverlay from './NewRoomOverlay';
 
 function Preference() {
 
@@ -38,6 +39,7 @@ function Preference() {
   const [lunchEnd, setLunchEnd] = useState(null);
   const [clickDuration, setClickDuration] = useState(false);
   const [duration, setDuration] = useState("");
+  const [createRoom, setCreateRoom] = useState(false);
 
   const [isPreference, setIsPreference] = useState(true);
   
@@ -45,6 +47,8 @@ function Preference() {
     '2:00PM', '3:00PM', '4:00PM', '5:00PM', '6:00PM'];
 
   const durationOptions = ['1HR', '2HR', '3HR'];
+
+  const roomList = [];
 
   const getURL = async (url) => {
     const encoded = encodeURIComponent(url);
@@ -178,6 +182,7 @@ function Preference() {
             <p className='rooms'>Rooms</p>
           </div>
         </div>
+        {isPreference ? 
         <div className='preference-body'>
           <div className='add-modules'>
             <p className='module text'>Modules: </p>
@@ -284,12 +289,19 @@ function Preference() {
               <img className='dd' src={dropdown} />
             </div>
           </div> </> : <></>}
-        </div>
+        </div> : 
+        <div className='rooms-body'>
+          {roomList.length === 0 ? 
+          <button className='new-room-button button' onClick={() => setCreateRoom(true)}>
+            Create New Room
+          </button> : <></>}
+          {createRoom ? <NewRoomOverlay setCreateRoom={setCreateRoom} selectedMods={selectedMods}/> : <></>}
+        </div>}
       </div>
       <Link to='/generate' className='link'>
         <div className='generate-button-wrapper'>
           <div className='generate-button-container'>
-            <button className='generate-button'>Generate</button>
+            <button className='button'>Generate</button>
           </div>
         </div>
       </Link>

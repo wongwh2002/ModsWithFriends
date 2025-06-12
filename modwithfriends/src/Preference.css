@@ -14,7 +14,7 @@ div.preference-wrapper {
 }
 
 div.tabs {
-  width: calc(80vw + 40px);
+  width: calc(80% + 40px);
   padding: 0 30px;
   height: 50px;
   border-radius: 15px 15px 0 0;
@@ -106,8 +106,8 @@ p.preference, p.rooms {
   z-index: 10;
 }
 
-div.preference-body {
-  width: 80vw;
+div.preference-body, div.rooms-body{
+  width: 80%;
   /*border: 1px solid #C6A79E;*/
   background-color: #DECFCE;
   border-radius: 0 0 15px 15px;
@@ -115,6 +115,10 @@ div.preference-body {
   padding-top: 10px;
   display: flex;
   flex-direction: column;
+}
+
+div.rooms.body{
+  flex-direction: row;
 }
 
 p.title {
@@ -235,17 +239,25 @@ div.generate-button-container {
   justify-content: right;
 }
 
-button.generate-button:hover {
+button.button:hover {
   cursor: pointer;
 }
 
-button.generate-button {
+button.button {
   border: 0;
   width: 120px;
   height: 40px;
   border-radius: 8px;
   background-color: #DECFCE;
   margin-bottom: 30px;
+}
+
+button.new-room-button {
+  background-color: #DCC4BE;
+  margin: 0;
+  margin-top: 20px;
+  align-self: center;
+  width: 200px;
 }
 
 div.select-time {

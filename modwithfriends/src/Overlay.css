@@ -105,3 +105,45 @@ div.form:focus-within p.fill {
   transform: translateY(-30px);
   font-size: 12px;
 }
+
+div.selection {
+  padding: 0 30px;
+  display: flex;
+  flex-direction: column;
+}
+
+div.module-list {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  padding-top: 20px;
+  row-gap: 10px;
+}
+
+p.module {
+  font-weight: bold;
+  font-size: 18px;
+  margin: 0;
+}
+
+div.create-room-container {
+  position: absolute;
+  bottom: 0;
+  width: 100%;
+  display: flex;
+  flex-direction: row;
+  justify-content: right;
+}
+
+button.create-room {
+  height: 40px;
+  width: 120px;
+  margin: 20px;
+  background-color: #DECFCE;
+  border: 0;
+  border-radius: 8px;
+}
+
+button.create-room:hover {
+  cursor: pointer;
+}
