@@ -305,3 +305,31 @@ p.dash {
 div.lunch-duration {
   padding-top: 20px;
 }
+
+div.pad-top {
+  padding-top: 50px;
+  flex-direction: row;
+  flex-wrap: wrap;
+  row-gap: 20px;
+}
+
+div.circle-button {
+  height: 70px;
+  width: 70px;
+  border-radius: 35px;
+  background-color: rgba(163, 163, 163, 0.5);
+  align-self: center;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+div.circle-button:hover {
+  cursor: pointer;
+}
+
+p.plus {
+  margin: 0;
+  font-size: 30px;
+  transform: translateY(-3px);
+}

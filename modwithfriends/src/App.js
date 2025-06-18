@@ -10,6 +10,7 @@ function App() {
   const [createSession, setCreateSession] = useState(false);
   const [joinSession, setJoinSession] = useState(false);
   const [shareSession, setShareSession] = useState(false);
+  const [username, setUsername] = useState("");
 
   return (
     <BrowserRouter>
@@ -17,15 +18,18 @@ function App() {
         <Route path='/' element={<HomePage body={body} setBody={setBody} 
         createSession={createSession} setCreateSession={setCreateSession}
         joinSession={joinSession} setJoinSession={setJoinSession}
-        shareSession={shareSession} setShareSession={setShareSession}/>} />
+        shareSession={shareSession} setShareSession={setShareSession}
+        username={username} setUsername={setUsername}/>} />
         <Route path='/session' element={<SessionPage createSession={createSession}
         setCreateSession={setCreateSession} joinSession={joinSession}
         setJoinSession={setJoinSession} shareSession={shareSession}
-        setShareSession={setShareSession} body={body} setBody={setBody}/>} />
+        setShareSession={setShareSession} body={body} setBody={setBody}
+        username={username} setUsername={setUsername}/>} />
         <Route path='/generate' element={<GeneratePage createSession={createSession}
         setCreateSession={setCreateSession} joinSession={joinSession} 
         setJoinSession={setJoinSession} shareSession={shareSession}
-        setShareSession={setShareSession} body={body} setBody={setBody}/>} />
+        setShareSession={setShareSession} body={body} setBody={setBody}
+        username={username} setUsername={setUsername}/>} />
       </Routes>
     </BrowserRouter>
   );

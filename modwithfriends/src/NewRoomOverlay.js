@@ -3,7 +3,7 @@ import './Overlay.css';
 import x from './assets/x.png';
 import Days from './Days';
 
-function NewRoomOverlay({setCreateRoom, selectedMods}) {
+function NewRoomOverlay({setCreateRoom, selectedMods, setRooms, username}) {
 
   const [modList, setModList] = useState([]);
 
@@ -16,6 +16,18 @@ function NewRoomOverlay({setCreateRoom, selectedMods}) {
   }, [])
 
   const closeOverlay = () => {
+    setCreateRoom(false);
+  }
+
+  const createRoom = () => {
+    const mods = modList.filter(mod => 
+      mod["selected"] == true).map(selected => selected["day"])
+    const roomDetails = 
+    {
+      "modules": mods,
+      "users": [username]
+    }
+    setRooms(rooms => [...rooms, roomDetails]);
     setCreateRoom(false);
   }
 
@@ -35,7 +47,7 @@ function NewRoomOverlay({setCreateRoom, selectedMods}) {
           </div>
         </div>
         <div className='create-room-container'>
-          <button className='create-room'>Create Room</button>
+          <button className='create-room' onClick = {() => createRoom()}>Create Room</button>
         </div>
       </div>
     </div>

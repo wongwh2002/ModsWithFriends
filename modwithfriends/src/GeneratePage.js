@@ -5,7 +5,8 @@ import Generated from './Generated';
 import ShareSessionOverlay from './ShareSessionOverlay';
 import JoinSessionOverlay from './JoinSessionOverlay';
 
-function GeneratePage({createSession, setCreateSession, joinSession, setJoinSession, shareSession, setShareSession, body, setBody}) {
+function GeneratePage({createSession, setCreateSession, joinSession, setJoinSession, 
+  shareSession, setShareSession, body, setBody, username, setUsername}) {
   return (
     <div>
       <Header setCreateSession={setCreateSession} setJoinSession={setJoinSession} setShareSession={setShareSession} setBody={setBody} body={body}/>

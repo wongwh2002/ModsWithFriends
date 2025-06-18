@@ -8,8 +8,9 @@ import Days from './Days';
 import dropdown from './assets/dropdown.png';
 import { Link } from 'react-router-dom';
 import NewRoomOverlay from './NewRoomOverlay';
+import RoomCard from './RoomCard';
 
-function Preference() {
+function Preference({username}) {
 
   const dropDownRef = useRef();
   const startTimeRef = useRef();
@@ -40,15 +41,13 @@ function Preference() {
   const [clickDuration, setClickDuration] = useState(false);
   const [duration, setDuration] = useState("");
   const [createRoom, setCreateRoom] = useState(false);
-
+  const [rooms, setRooms] = useState([])
   const [isPreference, setIsPreference] = useState(true);
   
   const timeOptions = ['8:00AM', '9:00AM', '10:00AM', '11:00AM', '12:00PM', '1:00PM', 
     '2:00PM', '3:00PM', '4:00PM', '5:00PM', '6:00PM'];
 
   const durationOptions = ['1HR', '2HR', '3HR'];
-
-  const roomList = [];
 
   const getURL = async (url) => {
     const encoded = encodeURIComponent(url);
@@ -290,12 +289,20 @@ function Preference() {
             </div>
           </div> </> : <></>}
         </div> : 
-        <div className='rooms-body'>
-          {roomList.length === 0 ? 
+        <div className={rooms.length === 0 ? 'rooms-body': 'pad-top rooms-body'}>
+          {rooms.length === 0 ? 
           <button className='new-room-button button' onClick={() => setCreateRoom(true)}>
             Create New Room
           </button> : <></>}
-          {createRoom ? <NewRoomOverlay setCreateRoom={setCreateRoom} selectedMods={selectedMods}/> : <></>}
+          {rooms.map(room => {
+            return (<RoomCard roomInfo={room} />)
+          })}
+          {rooms.length === 0 ? <></> : 
+          <div className='circle-button' onClick={() => setCreateRoom(true)}>
+            <p className='plus'>+</p>
+          </div>}
+          {createRoom ? <NewRoomOverlay setCreateRoom={setCreateRoom} selectedMods={selectedMods}
+            setRooms={setRooms} username={username}/> : <></>}
         </div>}
       </div>
       <div className='generate-button-wrapper'>

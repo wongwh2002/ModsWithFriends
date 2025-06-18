@@ -4,7 +4,7 @@ import './Overlay.css';
 import x from './assets/x.png';
 import { Link } from 'react-router-dom';
 
-function JoinSessionOverlay({setJoinSession, setBody}) {
+function JoinSessionOverlay({setJoinSession, setBody, setUsername}) {
   
   const [sessionID, setSessionID] = useState("");
   const [name, setName] = useState("");
@@ -13,6 +13,7 @@ function JoinSessionOverlay({setJoinSession, setBody}) {
   const generateID = () => {
     //replace with generation of id 
     setBody(sessionID);
+    setUsername(name);
     setJoinSession(false);
   }
 
