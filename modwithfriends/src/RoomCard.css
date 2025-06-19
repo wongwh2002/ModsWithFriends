@@ -9,6 +9,7 @@ div.room-card-container {
   flex-direction: column;
   justify-content: space-between;
   margin-right: 30px;
+  box-shadow: 3px 3px 2px rgb(186, 186, 186);
 }
 
 p.mod-title {

@@ -146,6 +146,10 @@ function Preference({username}) {
     }
   }
 
+  const findModule = (code) => {
+    return moduleData.find(mod => mod.moduleCode === code)
+  }
+
   const handleLink = async (e) => {
     const pastedText = e.clipboardData.getData('text');
     if(pastedText.includes("http")) {
@@ -156,7 +160,7 @@ function Preference({username}) {
       }
       const matches = [...url.matchAll(/([A-Z]{2,4}[0-9]{4})/g)];
       const moduleCodes = new Set(matches.map(match => match[1]));
-      const pastedMods = Array.from(moduleCodes).map(code => ({ moduleCode: code }));
+      const pastedMods = Array.from(moduleCodes).map(code => findModule(code));
       setSelectedMods(pastedMods);
     }
     setSearchValue("");
@@ -195,10 +199,13 @@ function Preference({username}) {
                 })}
               </div>
             </div>
+          </div>
+          {selectedMods.length === 0 ? <></> :
+          <div className='sm-container'>
             {selectedMods.map((selectedMod, index) => {
               return <SelectedMods selectedMod={selectedMod} setSelectedMods={setSelectedMods}/>
             })}
-          </div>
+          </div>}
           <div className='attending-container flex-row'>
             <p className='dwm'>Days without modules: </p> 
             {days.map(day => {

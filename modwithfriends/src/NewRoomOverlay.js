@@ -6,6 +6,7 @@ import Days from './Days';
 function NewRoomOverlay({setCreateRoom, selectedMods, setRooms, username}) {
 
   const [modList, setModList] = useState([]);
+  const [hasSelected, setHasSelected] = useState(false);
 
   useEffect(() => {
     const moduleCodes = selectedMods.map(mod => ({
@@ -15,11 +16,27 @@ function NewRoomOverlay({setCreateRoom, selectedMods, setRooms, username}) {
     setModList(moduleCodes);
   }, [])
 
+  useEffect(() => {
+    let changed = false;
+    for (let mod of modList) {
+      if (mod["selected"] == true) {
+        setHasSelected(true);
+        changed = true;
+      }
+    }
+    if (changed == false) {
+      setHasSelected(false);
+    }
+  }, [modList])
+
   const closeOverlay = () => {
     setCreateRoom(false);
   }
 
   const createRoom = () => {
+    if (hasSelected == false) {
+      return
+    }
     const mods = modList.filter(mod => 
       mod["selected"] == true).map(selected => selected["day"])
     const roomDetails = 
@@ -47,7 +64,7 @@ function NewRoomOverlay({setCreateRoom, selectedMods, setRooms, username}) {
           </div>
         </div>
         <div className='create-room-container'>
-          <button className='create-room' onClick = {() => createRoom()}>Create Room</button>
+          <button className={hasSelected ? 'create-room' : 'greyed-out create-room'} onClick = {() => createRoom()}>Create Room</button>
         </div>
       </div>
     </div>

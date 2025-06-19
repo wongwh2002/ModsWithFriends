@@ -131,9 +131,15 @@ div.add-modules {
   display: flex;
   flex-direction: row;
   align-items: center;
+}
+
+div.sm-container {
+  padding-top: 30px;
   width: 80vw;
+  display: flex;
+  flex-direction: row;
   flex-wrap: wrap;
-  row-gap: 20px;
+  row-gap: 15px;
 }
 
 p.module {

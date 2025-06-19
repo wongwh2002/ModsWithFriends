@@ -1,14 +1,12 @@
 div.selected-mods-container {
   position: relative;
-  width: fit-content;
-  height: 40px;
+  width: 200px;
+  height: 100px;
   border-radius: 20px;
   background-color: #E1DEE3;
-  display: flex;
-  justify-content: center;
-  align-items: center;
   padding: 0 15px;
-  margin: 0 5px;
+  margin: 0 6px;
+  box-shadow: 3px 3px 2px rgb(186, 186, 186)
 }
 
 div.selected-mods-container:hover div.sm-overlay {
@@ -34,4 +32,62 @@ p.close {
   margin: 0;
   padding: 0;
   transform: translateY(-3px);
+}
+
+p.mod-name {
+  margin: 0;
+  margin-top: 15px;
+  font-weight: 500;
+}
+
+p.mod-description {
+  margin: 0;
+  font-weight: 300;
+  font-size: 13px;
+}
+
+div.bin-container {
+  position: absolute;
+  height: 20px;
+  width: 20px;
+  margin: 0 15px;
+  bottom: 10px;
+  right: 0;
+  display: flex;
+  justify-content: center;
+  align-items: end;
+  overflow: hidden;
+}
+
+div.bin-container:hover {
+  cursor: pointer;
+}
+
+img.bin {
+  width: 20px;
+  height: 20px;
+  transform: translateY(20px);
+}
+
+div.selected-mods-container:hover img.bin {
+  transform: translateY(0);
+  animation: 1s 1 bin-jump;
+}
+
+@keyframes bin-jump {
+  0% {
+    transform: translateY(-5px);
+  }
+
+  30% {
+    transform: translateY(15px);
+  }
+
+  65% {
+    transform: translateY(8px) rotate(-15deg);
+  }
+
+  100% {
+    transform: translateY(0) rotate(0);
+  }
 }

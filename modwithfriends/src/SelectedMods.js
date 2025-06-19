@@ -1,5 +1,6 @@
 import React from 'react';
 import './SelectedMods.css';
+import bin from './assets/bin.png';
 
 function SelectedMods({selectedMod, setSelectedMods}) {
 
@@ -9,9 +10,10 @@ function SelectedMods({selectedMod, setSelectedMods}) {
 
   return (
     <div className='selected-mods-container'>
-      <p>{selectedMod["moduleCode"]}</p>
-      <div className='sm-overlay' onClick={removeMod}>
-        <p className='close'>x</p>
+      <p className='mod-name'>{selectedMod["moduleCode"]}</p>
+      <p className='mod-description'>{selectedMod["title"]}</p>
+      <div className='bin-container' onClick={removeMod}>
+        <img className='bin' src={bin} />
       </div>
     </div>
   )

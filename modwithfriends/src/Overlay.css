@@ -155,3 +155,11 @@ button.create-room {
 button.create-room:hover {
   cursor: pointer;
 }
+
+button.greyed-out {
+   background-color: rgb(186,186,186);
+}
+
+button.greyed-out:hover {
+  cursor: not-allowed;
+}
