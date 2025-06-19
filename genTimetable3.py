@@ -11,7 +11,7 @@ CONFIG = {
     "latest_end": 18 * 60,  # Latest class end time (6:00 PM in minutes)
     "lunch_window": (11 * 60, 14 * 60),  # Preferred lunch window (11AM-1PM)
     "lunch_duration": 60,  # Lunch break duration (60 minutes)
-    "lunch_except_days": [],  # Days where lunch break isn't required
+    "days_without_lunch": [],  # Days where lunch break isn't required
     "days_without_class": [],
     "optional_classes": {  # Classes that can be optionally included
         # "EE2026": ["Lecture"],
@@ -33,7 +33,7 @@ CONFIG = {
         "day_present_penalty": -10,  # Penalty for having classes on a day
     },
     "enable_lunch_break": False,  # Whether to enforce lunch breaks
-    "enable_early_start": False,  # Whether to enforce earliest start time
+    "enable_late_start": False,  # Whether to enforce earliest start time
     "enable_early_end": False,  # Whether to enforce latest end time
     "enable_weights": True,  # Whether to minimize day length
 }
@@ -377,7 +377,7 @@ def main(link=None, modules=None, isLink=False, semester=2):
         if day_sessions:
             # Create day start/end variables
             min_start = (
-                0 if not CONFIG["enable_early_start"] else CONFIG["earliest_start"]
+                0 if not CONFIG["enable_late_start"] else CONFIG["earliest_start"]
             )
             max_end = (
                 24 * 60 if not CONFIG["enable_early_end"] else CONFIG["latest_end"]
@@ -424,7 +424,7 @@ def main(link=None, modules=None, isLink=False, semester=2):
     # 3. Lunch break constraints (if enabled)
     if CONFIG["enable_lunch_break"]:
         for day in range(5):  # Monday to Friday
-            if day in CONFIG["lunch_except_days"]:
+            if day in CONFIG["days_without_lunch"]:
                 continue  # Skip days where lunch isn't required
 
             # Get non-optional sessions for this day
