@@ -9,16 +9,18 @@ import json
 CONFIG = {
     "earliest_start": 10 * 60,  # Earliest class start time (10:00 AM in minutes)
     "latest_end": 18 * 60,  # Latest class end time (6:00 PM in minutes)
-    "lunch_window": (11 * 60, 13 * 60),  # Preferred lunch window (11AM-1PM)
+    "lunch_window": (11 * 60, 14 * 60),  # Preferred lunch window (11AM-1PM)
     "lunch_duration": 60,  # Lunch break duration (60 minutes)
     "lunch_except_days": [],  # Days where lunch break isn't required
     "days_without_class": [],
     "optional_classes": {  # Classes that can be optionally included
-        "EE2026": ["Lecture"],
-        "EE2211": ["Lecture"],
-        "IE2141": ["Lecture"],
+        # "EE2026": ["Lecture"],
+        # "EE2211": ["Lecture"],
+        # "IE2141": ["Lecture"],
         "CG2027": ["Lecture"],
         "CG2028": ["Lecture"],
+        "GESS1002": ["Lecture"],
+        # "CS3281": ["Lecture"],
     },
     "compulsory_classes": {
         "CG2023": {"Lecture": "01"},
@@ -33,7 +35,7 @@ CONFIG = {
     "enable_lunch_break": False,  # Whether to enforce lunch breaks
     "enable_early_start": False,  # Whether to enforce earliest start time
     "enable_early_end": False,  # Whether to enforce latest end time
-    "enable_compact": False,  # Whether to minimize day length
+    "enable_weights": True,  # Whether to minimize day length
 }
 
 
@@ -211,6 +213,7 @@ class TimetableSolutionPrinter(cp_model.CpSolverSolutionCallback):
 
         # Calculate score for this solution
         score = self.calculate_solution_score(selection_dict, schedule)
+        # print("AHHHHHH", self.ObjectiveValue())
 
         # Store solution
         self.solutions.append(
@@ -219,7 +222,7 @@ class TimetableSolutionPrinter(cp_model.CpSolverSolutionCallback):
                 "nusmods_link": url,
                 "schedule": dict(schedule),
                 "selected_classes": selection_dict,
-                "score": score,  # Include the calculated score
+                "score": round(score, 2),  # Include the calculated score
             }
         )
 
@@ -241,7 +244,7 @@ def main(link=None, modules=None, isLink=False, semester=2):
         modules = ["CS2113", "CG2023", "EE2211", "CDE2501", "EE2026", "CS1010"]
 
     # Get timetable data
-    ftt = filter_timetable(modules=modules, isLink=isLink, semester=semester)
+    ftt = filter_timetable(link=link, modules=modules, isLink=isLink, semester=semester)
     timetable_data = ftt["timetable"]
     semester = ftt["semester"]
 
@@ -459,8 +462,19 @@ def main(link=None, modules=None, isLink=False, semester=2):
                 )
                 model.AddNoOverlap([lunch_interval, session_interval])
 
+    def int_sum(objective_terms):
+        sum = 0
+        print("HFUIEAFBF")
+        pprint(objective_terms)
+        for i in objective_terms:
+            sum += i
+        return int(sum)
+
+    # print("YESSS", print(sum(objective_terms)), type(sum(objective_terms)))
+
     # Set objective to maximize
-    model.Maximize(sum(objective_terms))
+    if CONFIG["enable_weights"]:
+        model.maximize(sum(objective_terms))
 
     # Solve the model
     solver = cp_model.CpSolver()
@@ -471,59 +485,69 @@ def main(link=None, modules=None, isLink=False, semester=2):
     solver.parameters.random_seed = 88  # For reproducibility
     num_runs = 3
 
-    # # Create and use solution printer
-    # solution_printer = TimetableSolutionPrinter(
-    #     class_vars, class_groups, all_sessions, semester, solution_limit, CONFIG
-    # )
+    # Create and use solution printer
+    solution_printer = TimetableSolutionPrinter(
+        class_vars, class_groups, all_sessions, semester, solution_limit, CONFIG
+    )
+    status = solver.Solve(model, solution_printer)
+
+    # if status == cp_model.OPTIMAL:
+    #     best_val = solver.ObjectiveValue()
+
+    # pprint(best_val)
+
+    # model.Add(sum(objective_terms) >= int(best_val))
+    # model.ClearObjective()
+
+    # solver.parameters.enumerate_all_solutions = True
     # solver.Solve(model, solution_printer)
+    # Output results
+    print_and_write_to_file(solution_printer, isPrint=True)
+
+    # all_solutions = []
+
+    # for run in range(num_runs):
+    #     print(f"\nRunning optimization attempt {run+1}/{num_runs}")
+
+    #     # Configure solver parameters with different random seeds
+    #     solver.parameters.enumerate_all_solutions = True
+    #     solver.parameters.random_seed = 88 + run  # Different seed each run
+
+    #     # Create solution printer
+    #     solution_printer = TimetableSolutionPrinter(
+    #         class_vars, class_groups, all_sessions, semester, solution_limit, CONFIG
+    #     )
+
+    #     # Solve the model
+    #     status = solver.Solve(model, solution_printer)
+
+    #     if status == cp_model.OPTIMAL:
+    #         print(f"Run {run+1} found {len(solution_printer.solutions)} solutions")
+    #         all_solutions.extend(solution_printer.solutions)
+    #     else:
+    #         print(f"Run {run+1} did not find optimal solution")
+
+    # unique_solutions = []
+    # seen = set()
+    # for sol in all_solutions:
+    #     # Create a unique identifier for the solution
+    #     ident = tuple(sorted((k, tuple(v)) for k, v in sol["selected_classes"].items()))
+    #     if ident not in seen:
+    #         seen.add(ident)
+    #         unique_solutions.append(sol)
+    # all_solutions = unique_solutions
+
+    # # Sort all solutions by score (highest first)
+    # all_solutions.sort(key=lambda x: x["score"], reverse=True)
+
+    # # Create a final solution printer with the sorted solutions
+    # final_printer = TimetableSolutionPrinter(
+    #     class_vars, class_groups, all_sessions, semester, len(all_solutions), CONFIG
+    # )
+    # final_printer.solutions = all_solutions
 
     # # Output results
-    # print_and_write_to_file(solution_printer, isPrint=True)
-
-    all_solutions = []
-
-    for run in range(num_runs):
-        print(f"\nRunning optimization attempt {run+1}/{num_runs}")
-
-        # Configure solver parameters with different random seeds
-        solver.parameters.enumerate_all_solutions = True
-        solver.parameters.random_seed = 88 + run  # Different seed each run
-
-        # Create solution printer
-        solution_printer = TimetableSolutionPrinter(
-            class_vars, class_groups, all_sessions, semester, solution_limit, CONFIG
-        )
-
-        # Solve the model
-        status = solver.Solve(model, solution_printer)
-
-        if status == cp_model.OPTIMAL:
-            print(f"Run {run+1} found {len(solution_printer.solutions)} solutions")
-            all_solutions.extend(solution_printer.solutions)
-        else:
-            print(f"Run {run+1} did not find optimal solution")
-
-    unique_solutions = []
-    seen = set()
-    for sol in all_solutions:
-        # Create a unique identifier for the solution
-        ident = tuple(sorted((k, tuple(v)) for k, v in sol["selected_classes"].items()))
-        if ident not in seen:
-            seen.add(ident)
-            unique_solutions.append(sol)
-    all_solutions = unique_solutions
-
-    # Sort all solutions by score (highest first)
-    all_solutions.sort(key=lambda x: x["score"], reverse=True)
-
-    # Create a final solution printer with the sorted solutions
-    final_printer = TimetableSolutionPrinter(
-        class_vars, class_groups, all_sessions, semester, len(all_solutions), CONFIG
-    )
-    final_printer.solutions = all_solutions
-
-    # Output results
-    print_and_write_to_file(final_printer, isPrint=True)
+    # print_and_write_to_file(final_printer, isPrint=True)
 
 
 if __name__ == "__main__":
@@ -535,12 +559,23 @@ if __name__ == "__main__":
         # "CDE2501",
         # "EE2026",
         # "CS1010",
-        "CG2027",
-        "CG2028",
-        "LAM1201",
-        "CG2023",
-        "CDE2000",
-        "IE2141",
-        "CDE3301",
+        # "CG2027",
+        # "CG2028",
+        # "LAM1201",
+        # "CG2023",
+        # "CDE2000",
+        # "IE2141",
+        # "CDE3301",
+        # "CG2027",
+        # "CG2028",
+        # "CG2023",
+        # "GESS1002",
+        # "MA3205",
+        # "CS3281",
     ]
-    result = main(modules=modules, semester=2)
+    result = main(
+        link="https://nusmods.com/timetable/sem-2/share?CDE2000=TUT:A4&CDE2310=LEC:1,LAB:1&CDE3301=LEC:1,LAB:G10&CG2023=LEC:03,LAB:05&LEC:01&CS3240=LEC:1,TUT:3&EE2026=TUT:05,LEC:01,LAB:03&EE4204=PLEC:01,PTUT:01&IE2141=TUT:09,LEC:2",
+        isLink=True,
+        modules=modules,
+        semester=2,
+    )
