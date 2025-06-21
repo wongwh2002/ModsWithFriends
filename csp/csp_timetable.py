@@ -2,6 +2,7 @@ from collections import defaultdict
 import copy
 import json
 import math
+import os
 from load_modules import load_mods
 from timetable import Timetable
 from config import CONFIG
@@ -37,6 +38,11 @@ class Csp:
         self.data, self.start_time_dict, self.end_time_dict = load_mods(modules)
 
         # For reference
+        folder_path = "storage"
+        try:
+            os.makedirs(folder_path, exist_ok=True)
+        except OSError as e:
+            print(str(e))
         with open("storage/data.json", "w") as f:
             json.dump(self.data, f, indent=2)
         with open("storage/start_time.json", "w") as f:
