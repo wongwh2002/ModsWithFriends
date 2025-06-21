@@ -1,5 +1,4 @@
-# storage/
-storage/*
+storage/
 tele/
 output.txt
 # Byte-compiled / optimized / DLL files
