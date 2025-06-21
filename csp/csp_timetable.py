@@ -35,7 +35,7 @@ weekdays = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday"]
 class Csp:
     def __init__(self, modules, config):
 
-        self.data, self.start_time_dict, self.end_time_dict = load_mods(modules)
+        self.data = load_mods(modules)
 
         # For reference
         folder_path = "storage"
@@ -45,10 +45,10 @@ class Csp:
             print(str(e))
         with open("storage/data.json", "w") as f:
             json.dump(self.data, f, indent=2)
-        with open("storage/start_time.json", "w") as f:
-            json.dump(self.start_time_dict, f, indent=2)
-        with open("storage/end_time.json", "w") as f:
-            json.dump(self.end_time_dict, f, indent=2)
+        # with open("storage/start_time.json", "w") as f:
+        #     json.dump(self.start_time_dict, f, indent=2)
+        # with open("storage/end_time.json", "w") as f:
+        #     json.dump(self.end_time_dict, f, indent=2)
 
         self.config = config
         self.assigned: set[tuple[str, str, str]] = set()

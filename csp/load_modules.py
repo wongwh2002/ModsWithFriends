@@ -1,6 +1,7 @@
 from collections import defaultdict
 import requests
 import json
+import os
 
 
 def load_mods(modules: list[str]) -> tuple[dict, dict, dict]:
@@ -13,8 +14,8 @@ def load_mods(modules: list[str]) -> tuple[dict, dict, dict]:
         "Sectional Teaching": "SEC"
     }
     return_dict = defaultdict(lambda: defaultdict(dict)) 
-    start_time_dict = defaultdict(lambda: defaultdict(list))
-    end_time_dict = defaultdict(lambda: defaultdict(list))
+    # start_time_dict = defaultdict(lambda: defaultdict(list))
+    # end_time_dict = defaultdict(lambda: defaultdict(list))
     for mod in modules:
         print(f"loading data for {mod}")
         data = requests.get(f"https://api.nusmods.com/v2/2024-2025/modules/{mod}.json").json()
@@ -40,17 +41,21 @@ def load_mods(modules: list[str]) -> tuple[dict, dict, dict]:
                 "slots": [slot_info]
             }
 
-            # Starttime dict
-            start_time_dict[lesson["day"]][lesson["startTime"]].append((mod, lessonType_key, lesson["classNo"]))
-            end_time_dict[lesson["day"]][lesson["endTime"]].append((mod, lessonType_key, lesson["classNo"]))
+            # start_time_dict[lesson["day"]][lesson["startTime"]].append((mod, lessonType_key, lesson["classNo"]))
+            # end_time_dict[lesson["day"]][lesson["endTime"]].append((mod, lessonType_key, lesson["classNo"]))
         print(f"loaded data for {mod}")
-    return return_dict, start_time_dict, end_time_dict
+    return return_dict
 
 
 def main():
     modules = ['CS2113', 'CG2023', 'EE2211', 'CDE2501', 'EE2026']
     # modules = ['IE2141', 'CG2023', 'CS3281', 'MA3205', 'CG2027', 'CG2028']
     data = load_mods(modules)
+    folder_path = "storage"
+    try:
+        os.makedirs(folder_path, exist_ok=True)
+    except OSError as e:
+        print(str(e))
     with open("storage/data3.json", "w") as f:
         json.dump(data, f, indent=2)
 
