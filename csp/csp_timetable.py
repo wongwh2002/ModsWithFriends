@@ -29,7 +29,7 @@ def str_to_mins(string: str) -> int:
     return int(hours_str) * 60 + int(mins_str)
 
 
-days_of_the_week = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"]
+weekdays = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday"]
 
 
 class Csp:
@@ -70,7 +70,7 @@ class Csp:
         self.has_lesson_in_window = {}
 
         if self.config["enable_lunch_break"]:
-            self.lunch_days = [days_of_the_week[i] for i in range(7) if i not in self.config["lunch_except_days"]]
+            self.lunch_days = [weekdays[i] for i in range(5) if (i + 1) not in self.config["days_without_lunch"]]
             self.possible_lunch_start_times = self.get_start_times(self.config["lunch_window"])
             for day in self.lunch_days:
                 self.has_lesson_in_window[day] = [False] * len(self.possible_lunch_start_times)
@@ -236,14 +236,14 @@ def main():
 
     csp = Csp(modules, CONFIG)
 
-    earliest_start_time = csp.config["earliest_start"] if csp.config["enable_early_start"] else None
+    earliest_start_time = csp.config["earliest_start"] if csp.config["enable_late_start"] else None
     latest_end_time = csp.config["latest_end"] if csp.config["enable_early_end"] else None
     # Loop through, if domain only has 1 element then assign
     for mod_key, mod_val in csp.domains.items():
         for lesson_type_key, lesson_type_val in mod_val.items():
             
             # Remove slots on days not selected by user
-            school_days_strings = [days_of_the_week[day_index] for day_index in csp.config["school_days"]]
+            school_days_strings = [weekdays[i] for i in range(5) if (i + 1) not in csp.config["days_without_class"]]
             for class_no, score in lesson_type_val[:]:
                 for slot in csp.data[mod_key][lesson_type_key][class_no]["slots"]:
                     if slot["day"] not in school_days_strings:
