@@ -1,0 +1,9 @@
+flask 
+flask_cors 
+requests 
+pyppeteer
+playwright
+
+
+python -m playwright install
+
