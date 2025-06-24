@@ -2,9 +2,9 @@ CONFIG = {
     "semester": 2,
     "users": ["A", "B"],
     "A": {
-        # "modules" : ['GESS1002', 'MA3205', 'CS3281', 'CG2023', 'CG2027', 'CG2028'],
+        "modules" : ['GESS1002', 'MA3205', 'CS3281', 'CG2023', 'CG2027', 'CG2028'],
         # "modules" : ['GESS1002', 'MA3205', 'CS3281', 'EE2211', 'CG2027', 'CG2028'], # invalid
-        "modules" : ['GESS1002', 'MA3205', 'CS3281', 'CG2027', 'CG2028'], 
+        # "modules" : ['GESS1002', 'MA3205', 'CS3281', 'CG2027', 'CG2028'], 
 
         "earliest_start": 10 * 60,  # Earliest class start time (10:00 AM in minutes)
         "latest_end": 18 * 60,  # Latest class end time (6:00 PM in minutes)
@@ -48,9 +48,9 @@ CONFIG = {
         "compulsory_classes": {
             # "CG2023": {"Lecture": "01",
             #         "Laboratory": "05"},
-            "CS2113": {
-                "Tutorial": "10"
-            }
+            # "CS2113": {
+            #     "Tutorial": "10"
+            # }
         },
         "weights": {  # Weights for optimization criteria
             "morning_class": 1,  # Preference for morning classes

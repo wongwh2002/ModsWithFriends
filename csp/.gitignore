@@ -1,6 +1,7 @@
 storage/
 tele/
 output.txt
+solutions.txt
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]

@@ -4,7 +4,7 @@ import json
 import math
 import os
 from load_modules import load_mods, abbreviations, reverse_abbreviations
-from timetable import Timetable
+from solution import Solution
 from config_2 import CONFIG
 
 
@@ -76,7 +76,6 @@ class Csp:
                         for class_no in lesson_type_info:
                             self.domains[user][mod][lesson_type].append((class_no, 0))
         
-        print(f"unassigned: {self.unassigned}\n\ndomains: {json.dumps(self.domains, indent=2)}\n\n")
 
         self.all_solutions = []
         self.reached_states: set[tuple[tuple[str, str, str, str]]] = set()
@@ -88,9 +87,8 @@ class Csp:
                 for lesson_type in optional_lesson_types:
                     self.optional_classes[user].add((module_code, abbreviations[lesson_type]))
         
-        print(f"optional_classes: {self.optional_classes}")
 
-        self.max_solutions = None 
+        self.max_solutions = 1000 
 
         self.lunch_days: dict[str, list[str]] = {}
         for user in self.users:
@@ -111,7 +109,6 @@ class Csp:
                 for day in self.lunch_days[user]:
                     self.has_lesson_in_window[user][day] = [False] * len(self.possible_lunch_start_times[user])
         
-        print(f"lunch_days: {json.dumps(self.lunch_days, indent=2)}\n\npossible_lunch_start_times: {json.dumps(self.possible_lunch_start_times, indent=2)}\n\nhas_lesson_in_window: {json.dumps(self.has_lesson_in_window, indent=2)}")
     
     @staticmethod
     def get_start_times(lunch_window: tuple[int, int]) -> list[str]:
@@ -202,7 +199,6 @@ def has_consecutive_slots(arr: list[bool], n: int) -> bool:
 
 
 def update_domains(csp: Csp, user: str, mod: str, lesson_type: str, class_no: str) -> bool:
-    print(f"\nUpdating domain after assigning {user} {mod} {lesson_type} {class_no}")
     # Returns False if there is a new domain that is empty or no lunch break, True otherwise
     affected_days = [(slot["day"], slot["startTime"], slot["endTime"]) for slot in csp.data[mod][lesson_type][class_no]["slots"]]
     if csp.config[user]["enable_lunch_break"] and (mod, lesson_type) not in csp.optional_classes[user]:
@@ -215,7 +211,6 @@ def update_domains(csp: Csp, user: str, mod: str, lesson_type: str, class_no: st
                     return False
     for (unassigned_user, unassigned_mod, unassigned_lesson_type) in csp.unassigned:
         if unassigned_user == user:
-            print(f"Checking for clashes for {unassigned_user} {unassigned_mod} {unassigned_lesson_type}")
             for unassigned_class_no, score in csp.domains[unassigned_user][unassigned_mod][unassigned_lesson_type][:]:
                 if has_clash(csp, mod, lesson_type, class_no, unassigned_mod, unassigned_lesson_type, unassigned_class_no):
                     csp.domains[user][unassigned_mod][unassigned_lesson_type].remove((unassigned_class_no, score))
@@ -227,10 +222,10 @@ def update_domains(csp: Csp, user: str, mod: str, lesson_type: str, class_no: st
                                     mins_apart = str_to_mins(slot["startTime"]) - str_to_mins(end)
                                 else:
                                     mins_apart = str_to_mins(start) - str_to_mins(slot["endTime"])
-                                for index, domain_item in enumerate(csp.domains[unassigned_mod][unassigned_lesson_type]):
+                                for index, domain_item in enumerate(csp.domains[user][unassigned_mod][unassigned_lesson_type]):
                                     if domain_item[0] == unassigned_class_no:
                                         new_tuple = (unassigned_class_no, domain_item[1] + (1440 - mins_apart))
-                                        csp.domains[unassigned_mod][unassigned_lesson_type][index] = new_tuple
+                                        csp.domains[user][unassigned_mod][unassigned_lesson_type][index] = new_tuple
 
 
             if len(csp.domains[user][unassigned_mod][unassigned_lesson_type]) == 0:
@@ -247,25 +242,25 @@ def backtrack(csp: Csp) -> None:
     if len(csp.unassigned) == 0:
         csp.all_solutions.append((copy.deepcopy(csp.assigned)))
         return
-    curr_mod, curr_lesson_type = next(iter(csp.unassigned)) # Take any element from unassigned
-    csp.domains[curr_mod][curr_lesson_type] = sorted(csp.domains[curr_mod][curr_lesson_type], key=lambda x: -x[1])
-    domain = csp.domains[curr_mod][curr_lesson_type]
+    curr_user, curr_mod, curr_lesson_type = next(iter(csp.unassigned)) # Take any element from unassigned
+    csp.domains[curr_user][curr_mod][curr_lesson_type] = sorted(csp.domains[curr_user][curr_mod][curr_lesson_type], key=lambda x: -x[1])
+    domain = csp.domains[curr_user][curr_mod][curr_lesson_type]
     for class_no, score in domain:
         # Assign
-        assign(csp, curr_mod, curr_lesson_type, class_no)
+        assign(csp, curr_user, curr_mod, curr_lesson_type, class_no)
         if get_current_state(csp.assigned) in csp.reached_states:
             continue
         # Check for empty domains
         prev_domains = copy.deepcopy(csp.domains)
         prev_lunch = copy.deepcopy(csp.has_lesson_in_window)
-        is_valid = update_domains(csp, curr_mod, curr_lesson_type, class_no)
+        is_valid = update_domains(csp, curr_user, curr_mod, curr_lesson_type, class_no)
         # If not empty, continue
         if is_valid:
             csp.reached_states.add(get_current_state(csp.assigned))
             backtrack(csp)
             if csp.max_solutions is not None and len(csp.all_solutions) >= csp.max_solutions:
                 return
-        unassign(csp, curr_mod, curr_lesson_type, class_no)
+        unassign(csp, curr_user, curr_mod, curr_lesson_type, class_no)
         csp.domains.clear()
         csp.domains.update(prev_domains)
         csp.has_lesson_in_window.clear()
@@ -325,16 +320,18 @@ def main():
                         print(f"no solution after assigning {user} {mod_key} {lesson_type_key}")
                         return
             
-    # backtrack(csp)
-    # if len(csp.all_solutions) == 0:
-        # print("no solution, len=0")
-        # return
-    # with open("solutions.txt", "w") as f:
-        # for i, solution in enumerate(csp.all_solutions):
-            # timetable = Timetable(sem)
-            # for assigned_class in solution:
-                # timetable.add_class(assigned_class[0], assigned_class[1], assigned_class[2])
-            # f.write(f"Solution {i + 1}:\n  {timetable.get_url()}\n")
+    backtrack(csp)
+    if len(csp.all_solutions) == 0:
+        print("no solution, len=0")
+        return
+    with open("solutions.txt", "w") as f:
+        for i, solution in enumerate(csp.all_solutions):
+            new_solution = Solution(csp.users, sem)
+            for assigned_class in solution:
+                new_solution.add_class_for_user(assigned_class[0], assigned_class[1], assigned_class[2], assigned_class[3])
+            f.write(f"\n\nSolution {i + 1}:")
+            for user, timetable in new_solution.timetables.items():
+                f.write(f"\n{user}: {timetable.get_url()}")
 
 
 if __name__ == "__main__":
