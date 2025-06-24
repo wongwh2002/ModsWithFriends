@@ -5,7 +5,7 @@ import math
 import os
 from load_modules import load_mods, abbreviations
 from timetable import Timetable
-from config import CONFIG
+from config_2 import CONFIG
 
 
 def mins_to_str(mins: int) -> str:
