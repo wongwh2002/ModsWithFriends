@@ -33,11 +33,11 @@ weekdays = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday"]
 
 
 class Csp:
-    def __init__(self, modules, config):
+    def __init__(self, config):
 
         self.config = config
 
-        self.data = load_mods(modules, self.config["semester"])
+        self.data = load_mods(self.config["modules"], self.config["semester"])
 
         # For reference
         folder_path = "storage"
@@ -237,10 +237,9 @@ def backtrack(csp: Csp) -> None:
     return
 
 def main():
-    modules = CONFIG["modules"]
     sem = CONFIG["semester"]
 
-    csp = Csp(modules, CONFIG)
+    csp = Csp(CONFIG)
 
     earliest_start_time = csp.config["earliest_start"] if csp.config["enable_late_start"] else None
     latest_end_time = csp.config["latest_end"] if csp.config["enable_early_end"] else None
