@@ -230,7 +230,6 @@ def update_domains(csp: Csp, user: str, mod: str, lesson_type: str, class_no: st
 
 
             if len(csp.domains[user][unassigned_mod][unassigned_lesson_type]) == 0:
-                print(f"no possible slots for {unassigned_user} {unassigned_mod} {unassigned_lesson_type} if we assign {user} {mod} {lesson_type} {class_no}")
                 return False
     return True
 
