@@ -25,8 +25,8 @@ CONFIG = {
         "CS3281": ["Lecture"],
     },
     "compulsory_classes": {
-        "CG2023": {"Lecture": "01"},
-        "CDE3301": {"Laboratory": "G10"},
+        "CG2023": {"Lecture": "01",
+                   "Laboratory": "05"},
     },
     "weights": {  # Weights for optimization criteria
         "morning_class": 1,  # Preference for morning classes

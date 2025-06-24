@@ -287,6 +287,14 @@ def main():
                 if not is_valid:
                     print(f"no solution after assigning {mod_key} {lesson_type_key}")
                     return
+            
+    for mod_key, mod_val in csp.config["compulsory_classes"].items():
+        for lesson_type, class_no in mod_val.items():
+            lesson_type_abbr = abbreviations[lesson_type]
+            assign(csp, mod_key, lesson_type_abbr, class_no)
+            is_valid = update_domains(csp, mod_key, lesson_type_abbr, class_no)
+            if not is_valid:
+                print(f"No solution after assigning compulsory class {mod_key} {lesson_type_abbr} {class_no}")
 
 
     backtrack(csp)
