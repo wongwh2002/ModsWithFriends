@@ -3,17 +3,17 @@ import requests
 import json
 import os
 
+abbreviations = {
+    "Lecture": "LEC",
+    "Laboratory": "LAB",
+    "Tutorial": "TUT",
+    "Packaged Lecture": "PLEC",
+    "Packaged Tutorial": "PTUT",
+    "Sectional Teaching": "SEC",
+    "Recitation": "REC"
+}
 
 def load_mods(modules: list[str], semester) -> tuple[dict, dict, dict]:
-    abbreviations = {
-        "Lecture": "LEC",
-        "Laboratory": "LAB",
-        "Tutorial": "TUT",
-        "Packaged Lecture": "PLEC",
-        "Packaged Tutorial": "PTUT",
-        "Sectional Teaching": "SEC",
-        "Recitation": "REC"
-    }
     return_dict = defaultdict(lambda: defaultdict(dict)) 
     # start_time_dict = defaultdict(lambda: defaultdict(list))
     # end_time_dict = defaultdict(lambda: defaultdict(list))

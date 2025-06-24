@@ -3,7 +3,7 @@ import copy
 import json
 import math
 import os
-from load_modules import load_mods
+from load_modules import load_mods, abbreviations
 from timetable import Timetable
 from config import CONFIG
 
@@ -64,6 +64,11 @@ class Csp:
                     self.domains[mod][lesson_type].append((class_no, 0))
         self.all_solutions = []
         self.reached_states: set[tuple[tuple[str, str, str]]] = set()
+
+        self.optional_classes = set()
+        for module_code, optional_lesson_types in self.config["optional_classes"].items():
+            for lesson_type in optional_lesson_types:
+                self.optional_classes.add((module_code, abbreviations[lesson_type]))
 
         self.max_solutions = None 
         self.lunch_days = None
@@ -164,10 +169,10 @@ def has_consecutive_slots(arr: list[bool], n: int) -> bool:
     return False
 
 
-
 def update_domains(csp, mod, lesson_type, class_no) -> bool:
+    # Returns False if there is a new domain that is empty or no lunch break, True otherwise
     affected_days = [(slot["day"], slot["startTime"], slot["endTime"]) for slot in csp.data[mod][lesson_type][class_no]["slots"]]
-    if csp.config["enable_lunch_break"]:
+    if csp.config["enable_lunch_break"] and (mod, lesson_type) not in csp.optional_classes:
         update_lunch_window(csp, affected_days)
         # Check if there is a lunch break within lunch window
         min_no_of_consecutive_slots = math.ceil(csp.config["lunch_duration"] / 30)
@@ -175,12 +180,11 @@ def update_domains(csp, mod, lesson_type, class_no) -> bool:
             if affected_day in csp.lunch_days:
                 if not has_consecutive_slots(csp.has_lesson_in_window[affected_day], min_no_of_consecutive_slots):
                     return False
-    # Returns False if there is a new domain that is empty, True otherwise
     for (unassigned_mod, unassigned_lesson_type) in csp.unassigned:
         for unassigned_class_no, score in csp.domains[unassigned_mod][unassigned_lesson_type][:]:
             if has_clash(csp, mod, lesson_type, class_no, unassigned_mod, unassigned_lesson_type, unassigned_class_no):
                 csp.domains[unassigned_mod][unassigned_lesson_type].remove((unassigned_class_no, score))
-            else:
+            elif (mod, lesson_type) in csp.optional_classes:
                 for slot in csp.data[unassigned_mod][unassigned_lesson_type][unassigned_class_no]["slots"]:
                     for day, start, end in affected_days:
                         if slot["day"] == day:
@@ -240,47 +244,48 @@ def main():
 
     earliest_start_time = csp.config["earliest_start"] if csp.config["enable_late_start"] else None
     latest_end_time = csp.config["latest_end"] if csp.config["enable_early_end"] else None
-    # Loop through, if domain only has 1 element then assign
+    school_days_strings = [weekdays[i] for i in range(5) if (i + 1) not in csp.config["days_without_class"]]
+
     for mod_key, mod_val in csp.domains.items():
         for lesson_type_key, lesson_type_val in mod_val.items():
+            if (mod_key, lesson_type_key) not in csp.optional_classes:
             
-            # Remove slots on days not selected by user
-            school_days_strings = [weekdays[i] for i in range(5) if (i + 1) not in csp.config["days_without_class"]]
-            for class_no, score in lesson_type_val[:]:
-                for slot in csp.data[mod_key][lesson_type_key][class_no]["slots"]:
-                    if slot["day"] not in school_days_strings:
-                        lesson_type_val.remove((class_no, score))
-
-            # Remove slots that violate start and end constraints
-            if earliest_start_time or latest_end_time:
+                # Remove slots on days not selected by user
                 for class_no, score in lesson_type_val[:]:
-                    violates_earliest_start_time = False
-                    violates_latest_end_time = False
-                    start_times = [str_to_mins(slot["startTime"]) for slot in csp.data[mod_key][lesson_type_key][class_no]["slots"]]
-                    end_times = [str_to_mins(slot["endTime"]) for slot in csp.data[mod_key][lesson_type_key][class_no]["slots"]]
-                    if earliest_start_time:
-                        for start_time in start_times:
-                            if start_time < earliest_start_time:
-                                violates_earliest_start_time = True
-                    if latest_end_time:
-                        for end_time in end_times:
-                            if end_time > latest_end_time:
-                                violates_latest_end_time = True
-                    if violates_latest_end_time or violates_earliest_start_time:
-                        lesson_type_val.remove((class_no, score))
+                    for slot in csp.data[mod_key][lesson_type_key][class_no]["slots"]:
+                        if slot["day"] not in school_days_strings:
+                            lesson_type_val.remove((class_no, score))
+
+                # Remove slots that violate start and end constraints
+                if earliest_start_time or latest_end_time:
+                    for class_no, score in lesson_type_val[:]:
+                        violates_earliest_start_time = False
+                        violates_latest_end_time = False
+                        start_times = [str_to_mins(slot["startTime"]) for slot in csp.data[mod_key][lesson_type_key][class_no]["slots"]]
+                        end_times = [str_to_mins(slot["endTime"]) for slot in csp.data[mod_key][lesson_type_key][class_no]["slots"]]
+                        if earliest_start_time:
+                            for start_time in start_times:
+                                if start_time < earliest_start_time:
+                                    violates_earliest_start_time = True
+                        if latest_end_time:
+                            for end_time in end_times:
+                                if end_time > latest_end_time:
+                                    violates_latest_end_time = True
+                        if violates_latest_end_time or violates_earliest_start_time:
+                            lesson_type_val.remove((class_no, score))
             
-            # Check that domain is not empty:
-            if len(lesson_type_val) == 0:
-                print(json.dumps(csp.domains, indent=2))
-                print("no solution")
-                return
+                        # Check that domain is not empty:
+                        if len(lesson_type_val) == 0:
+                            print(f"No slots available for {mod_key} {lesson_type_key}")
+                            print("no solution")
+                            return
 
             # Assign slots that only have 1 possible value
             if len(lesson_type_val) == 1:
                 assign(csp, mod_key, lesson_type_key, lesson_type_val[0][0])
                 is_valid = update_domains(csp, mod_key, lesson_type_key, lesson_type_val[0][0])
                 if not is_valid:
-                    print("no solution after assigning lectures")
+                    print(f"no solution after assigning {mod_key} {lesson_type_key}")
                     return
 
 
