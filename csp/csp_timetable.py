@@ -238,6 +238,16 @@ def get_current_state(assigned: set[tuple[str, str, str]]) -> tuple[tuple[str, s
     return tuple(sorted(assigned))
 
 
+def get_shared_users(csp: Csp, mod: str, user: str) -> list[str]:
+    if mod not in csp.config["shared"]:
+        return [user]
+    for group in csp.config["shared"][mod]:
+        for group_user in group:
+            if group_user == user:
+                return group
+    return [user]
+
+
 def backtrack(csp: Csp) -> None:
     if len(csp.unassigned) == 0:
         csp.all_solutions.append((copy.deepcopy(csp.assigned)))
@@ -245,23 +255,27 @@ def backtrack(csp: Csp) -> None:
     curr_user, curr_mod, curr_lesson_type = next(iter(csp.unassigned)) # Take any element from unassigned
     csp.domains[curr_user][curr_mod][curr_lesson_type] = sorted(csp.domains[curr_user][curr_mod][curr_lesson_type], key=lambda x: -x[1])
     domain = csp.domains[curr_user][curr_mod][curr_lesson_type]
+    shared_users = get_shared_users(csp, curr_mod, curr_user)
     for class_no, score in domain:
-        # Assign
-        assign(csp, curr_user, curr_mod, curr_lesson_type, class_no)
-        if get_current_state(csp.assigned) in csp.reached_states:
-            continue
         prev_domains = copy.deepcopy(csp.domains)
         prev_lunch = copy.deepcopy(csp.has_lesson_in_window)
-        # Check for empty domains
-        is_valid = update_domains(csp, curr_user, curr_mod, curr_lesson_type, class_no)
-        # If not empty, continue dfs
+        # Assign
+        # If it is a shared module, lesson type, and user, once the lesson is assigned, it needs to be assigned for all users in the group. Same for unassigning.
+        is_valid = True
+        for shared_user in shared_users:
+            assign(csp, shared_user, curr_mod, curr_lesson_type, class_no)
+            if update_domains(csp, shared_user, curr_mod, curr_lesson_type, class_no) == False:
+                is_valid = False
+        if get_current_state(csp.assigned) in csp.reached_states:
+            continue
         if is_valid:
             csp.reached_states.add(get_current_state(csp.assigned))
             backtrack(csp)
             if csp.max_solutions is not None and len(csp.all_solutions) >= csp.max_solutions:
                 return
         # Else unassign and restore 
-        unassign(csp, curr_user, curr_mod, curr_lesson_type, class_no)
+        for shared_user in shared_users:
+            unassign(csp, shared_user, curr_mod, curr_lesson_type, class_no)
         csp.domains.clear()
         csp.domains.update(prev_domains)
         csp.has_lesson_in_window.clear()

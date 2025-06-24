@@ -64,6 +64,6 @@ CONFIG = {
         "enable_weights": True,  # Whether to minimize day length
     },
     "shared": {
-        "CG2023": [["A", "B"]],
+        "CG2023": [["A", "B"]], # Assume wont have the case where [["A", "B"], ["A", "C"]] cuz in this case it would be [["A", "B", "C"]]
     }
 }
