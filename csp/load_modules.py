@@ -4,14 +4,15 @@ import json
 import os
 
 
-def load_mods(modules: list[str]) -> tuple[dict, dict, dict]:
+def load_mods(modules: list[str], semester) -> tuple[dict, dict, dict]:
     abbreviations = {
         "Lecture": "LEC",
         "Laboratory": "LAB",
         "Tutorial": "TUT",
         "Packaged Lecture": "PLEC",
         "Packaged Tutorial": "PTUT",
-        "Sectional Teaching": "SEC"
+        "Sectional Teaching": "SEC",
+        "Recitation": "REC"
     }
     return_dict = defaultdict(lambda: defaultdict(dict)) 
     # start_time_dict = defaultdict(lambda: defaultdict(list))
@@ -20,9 +21,12 @@ def load_mods(modules: list[str]) -> tuple[dict, dict, dict]:
         print(f"loading data for {mod}")
         data = requests.get(f"https://api.nusmods.com/v2/2024-2025/modules/{mod}.json").json()
 
-        sem2_timetable: list = data["semesterData"][0]["timetable"] if data["semesterData"][0]["semester"] == 2 else data["semesterData"][1]["timetable"]
+        if semester == 2:
+            semester_timetable: list = data["semesterData"][0]["timetable"] if data["semesterData"][0]["semester"] == 2 else data["semesterData"][1]["timetable"]
+        elif semester == 1:
+            semester_timetable: list = data["semesterData"][0]["timetable"] if data["semesterData"][0]["semester"] == 1 else data["semesterData"][1]["timetable"]
 
-        for lesson in sem2_timetable:
+        for lesson in semester_timetable:
             slot_info = {
                 "startTime": lesson["startTime"],
                 "endTime": lesson["endTime"],

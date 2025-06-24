@@ -35,7 +35,9 @@ weekdays = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday"]
 class Csp:
     def __init__(self, modules, config):
 
-        self.data = load_mods(modules)
+        self.config = config
+
+        self.data = load_mods(modules, self.config["semester"])
 
         # For reference
         folder_path = "storage"
@@ -50,7 +52,6 @@ class Csp:
         # with open("storage/end_time.json", "w") as f:
         #     json.dump(self.end_time_dict, f, indent=2)
 
-        self.config = config
         self.assigned: set[tuple[str, str, str]] = set()
         # set where each element is (module_code, lesson_type, class_no)
         self.unassigned: set[tuple[str, str]] = set()
@@ -233,6 +234,7 @@ def backtrack(csp: Csp) -> None:
 
 def main():
     modules = CONFIG["modules"]
+    sem = CONFIG["semester"]
 
     csp = Csp(modules, CONFIG)
 
@@ -288,7 +290,7 @@ def main():
         return
     with open("output.txt", "w") as f:
         for i, solution in enumerate(csp.all_solutions):
-            timetable = Timetable()
+            timetable = Timetable(sem)
             for assigned_class in solution:
                 timetable.add_class(assigned_class[0], assigned_class[1], assigned_class[2])
             f.write(f"Solution {i + 1}:\n  {timetable.get_url()}\n")
