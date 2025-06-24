@@ -29,7 +29,8 @@ def str_to_mins(string: str) -> int:
     return int(hours_str) * 60 + int(mins_str)
 
 
-weekdays = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday"]
+WEEKDAYS = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday"]
+COMMON_LESSON_TYPES = ['LAB', 'TUT']
 
 
 class Csp:
@@ -104,7 +105,7 @@ class Csp:
             
         for user in self.users:
             if self.config[user]["enable_lunch_break"]:
-                self.lunch_days[user] = [weekdays[i] for i in range(5) if (i + 1) not in self.config[user]["days_without_lunch"]]
+                self.lunch_days[user] = [WEEKDAYS[i] for i in range(5) if (i + 1) not in self.config[user]["days_without_lunch"]]
                 self.possible_lunch_start_times[user] = self.get_start_times(self.config[user]["lunch_window"])
                 for day in self.lunch_days[user]:
                     self.has_lesson_in_window[user][day] = [False] * len(self.possible_lunch_start_times[user])
@@ -250,16 +251,17 @@ def backtrack(csp: Csp) -> None:
         assign(csp, curr_user, curr_mod, curr_lesson_type, class_no)
         if get_current_state(csp.assigned) in csp.reached_states:
             continue
-        # Check for empty domains
         prev_domains = copy.deepcopy(csp.domains)
         prev_lunch = copy.deepcopy(csp.has_lesson_in_window)
+        # Check for empty domains
         is_valid = update_domains(csp, curr_user, curr_mod, curr_lesson_type, class_no)
-        # If not empty, continue
+        # If not empty, continue dfs
         if is_valid:
             csp.reached_states.add(get_current_state(csp.assigned))
             backtrack(csp)
             if csp.max_solutions is not None and len(csp.all_solutions) >= csp.max_solutions:
                 return
+        # Else unassign and restore 
         unassign(csp, curr_user, curr_mod, curr_lesson_type, class_no)
         csp.domains.clear()
         csp.domains.update(prev_domains)
@@ -276,7 +278,7 @@ def main():
         config = csp.config[user]
         earliest_start_time = config["earliest_start"] if config["enable_late_start"] else None
         latest_end_time = config["latest_end"] if config["enable_early_end"] else None
-        school_days_strings = [weekdays[i] for i in range(5) if (i + 1) not in config["days_without_class"]]
+        school_days_strings = [WEEKDAYS[i] for i in range(5) if (i + 1) not in config["days_without_class"]]
 
         for mod_key, mod_val in csp.domains[user].items():
             for lesson_type_key, lesson_type_val in mod_val.items():
