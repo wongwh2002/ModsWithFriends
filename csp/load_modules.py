@@ -10,8 +10,10 @@ abbreviations = {
     "Packaged Lecture": "PLEC",
     "Packaged Tutorial": "PTUT",
     "Sectional Teaching": "SEC",
-    "Recitation": "REC"
+    "Recitation": "REC",
 }
+
+reverse_abbreviations = {v: k for k, v in abbreviations.items()}
 
 def load_mods(modules: list[str], semester) -> tuple[dict, dict, dict]:
     return_dict = defaultdict(lambda: defaultdict(dict)) 
