@@ -121,12 +121,12 @@ class Csp:
 
 def assign(csp, user, mod, lesson_type, class_no):
     csp.assigned.add((user, mod, lesson_type, class_no))
-    csp.unassigned.remove((user, mod, lesson_type))
+    csp.unassigned.discard((user, mod, lesson_type))
 
 
 def unassign(csp, user, mod, lesson_type, class_no):
     csp.unassigned.add((user, mod, lesson_type))
-    csp.assigned.remove((user, mod, lesson_type, class_no))
+    csp.assigned.discard((user, mod, lesson_type, class_no))
 
 
 def are_disjoint(list1: list, list2: list) -> bool:
@@ -200,6 +200,7 @@ def has_consecutive_slots(arr: list[bool], n: int) -> bool:
 
 
 def update_domains(csp: Csp, user: str, mod: str, lesson_type: str, class_no: str) -> bool:
+    print(f"\nUpdating domains after assigning {user} {mod} {lesson_type} {class_no}")
     # Returns False if there is a new domain that is empty or no lunch break, True otherwise
     affected_days = [(slot["day"], slot["startTime"], slot["endTime"]) for slot in csp.data[mod][lesson_type][class_no]["slots"]]
     if csp.config[user]["enable_lunch_break"] and (mod, lesson_type) not in csp.optional_classes[user]:
@@ -209,6 +210,7 @@ def update_domains(csp: Csp, user: str, mod: str, lesson_type: str, class_no: st
         for affected_day, start_time, end_time in affected_days:
             if affected_day in csp.lunch_days[user]:
                 if not has_consecutive_slots(csp.has_lesson_in_window[user][affected_day], min_no_of_consecutive_slots):
+                    print(f"No lunch slot for {affected_day}")
                     return False
     for (unassigned_user, unassigned_mod, unassigned_lesson_type) in csp.unassigned:
         if unassigned_user == user:
@@ -230,6 +232,7 @@ def update_domains(csp: Csp, user: str, mod: str, lesson_type: str, class_no: st
 
 
             if len(csp.domains[user][unassigned_mod][unassigned_lesson_type]) == 0:
+                print(f"No available slots for {user} {unassigned_mod} {unassigned_lesson_type}")
                 return False
     return True
 
@@ -250,6 +253,7 @@ def get_shared_users(csp: Csp, mod: str, user: str) -> list[str]:
 
 def backtrack(csp: Csp) -> None:
     if len(csp.unassigned) == 0:
+        print(len(csp.all_solutions))
         csp.all_solutions.append((copy.deepcopy(csp.assigned)))
         return
     curr_user, curr_mod, curr_lesson_type = next(iter(csp.unassigned)) # Take any element from unassigned
