@@ -1,5 +1,5 @@
 CONFIG = {
-    #"modules" : ['CS2113', 'CG2023', 'EE2211', 'CDE2501', 'EE2026'],
+    # "modules" : ['CS2113', 'CG2023', 'EE2211', 'CDE2501', 'EE2026'],
     # "modules" : ['CG2023', 'EE2211', 'CDE2501', 'CS3281', 'GESS1002'],
     "modules" : ['GESS1002', 'MA3205', 'CS3281', 'CG2023', 'CG2027', 'CG2028'],
     # "modules" : ['CDE2000', 'CDE2310', 'CDE3301', 'CG2023', 'CS3240', 'IE2141', 'EE2026', 'EE4204'],
@@ -20,13 +20,13 @@ CONFIG = {
         # "IE2141": ["Lecture"],
         # "CG2027": ["Lecture"],
         # "CG2028": ["Lecture"],
-        #"GESS1002": ["Lecture"],
-        #"MA3205": ["Lecture"],
-        #"CS3281": ["Lecture"],
+        "GESS1002": ["Lecture"],
+        "MA3205": ["Lecture"],
+        "CS3281": ["Lecture"],
     },
     "compulsory_classes": {
-        #"CG2023": {"Lecture": "01",
-        #           "Laboratory": "05"},
+        "CG2023": {"Lecture": "01",
+                   "Laboratory": "05"},
     },
     "weights": {  # Weights for optimization criteria
         "morning_class": 1,  # Preference for morning classes
@@ -34,7 +34,7 @@ CONFIG = {
         "day_length_penalty": -0.01,  # Penalty for long days
         "day_present_penalty": -10,  # Penalty for having classes on a day
     },
-    "enable_lunch_break": False,  # Whether to enforce lunch breaks
+    "enable_lunch_break": True,  # Whether to enforce lunch breaks
     "enable_late_start": False,  # Whether to enforce earliest start time
     "enable_early_end": False,  # Whether to enforce latest end time
     "enable_weights": True,  # Whether to minimize day length

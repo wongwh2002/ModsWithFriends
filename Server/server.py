@@ -1,10 +1,19 @@
-from flask import Flask, request, jsonify, send_file
+from flask import Flask, request, jsonify, send_file, send_from_directory
 from flask_cors import CORS
 import requests
 import asyncio
 from pyppeteer import launch
 import io
 from playwright.async_api import async_playwright
+import json
+import os
+import sys
+
+csp_path = os.path.abspath(os.path.join(os.path.dirname(__file__), './../csp'))
+sys.path.insert(0, csp_path)
+
+import generate
+from generate import generate_timetable
 
 app = Flask(__name__)
 CORS(app)
@@ -61,6 +70,17 @@ async def capture_element_screenshot(url):
     return image_bytes
 '''
 
+async def screenshot_json(url_list):
+    for id, url in enumerate(url_list[:10], start=1):
+      try:
+          image_bytes = await capture_element_screenshot(url)
+          with open(f"{id}.png", "wb") as f:
+            f.write(image_bytes)
+      except Exception as e:
+          print(e)
+          return "Something went wrong while taking screenshot", 500
+
+
 async def capture_element_screenshot(url):
     async with async_playwright() as p:
         browser = await p.chromium.launch(headless=True)
@@ -75,6 +95,24 @@ async def capture_element_screenshot(url):
         await browser.close()
 
         return image_bytes
+
+
+@app.route('/generate', methods=['POST'])
+def generate():
+    data = request.get_json()
+    generate_timetable(data)
+    url_list = []
+    with open("./output.txt", 'r') as f:
+        for i, line in enumerate(f):
+            if i >= 10:
+                break
+            url_list.append(line.strip())
+    asyncio.run(screenshot_json(url_list))
+    return "Screenshot saved", 200
+    
+@app.route('/Server/<filename>')
+def serve_file(filename):
+    return send_from_directory('.', filename)
 
 if __name__ == '__main__':
     app.run(port=4000)
