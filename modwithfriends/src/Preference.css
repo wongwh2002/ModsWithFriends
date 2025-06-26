@@ -313,7 +313,7 @@ div.lunch-duration {
 }
 
 div.pad-top {
-  padding-top: 50px;
+  padding-top: 20px;
   flex-direction: row;
   flex-wrap: wrap;
   row-gap: 20px;
