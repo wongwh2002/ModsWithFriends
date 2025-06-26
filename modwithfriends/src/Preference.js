@@ -11,7 +11,7 @@ import NewRoomOverlay from './NewRoomOverlay';
 import RoomCard from './RoomCard';
 import e from 'cors';
 
-function Preference({username, setGenerationDone}) {
+function Preference({username, setGenerationDone, setGenerationError}) {
 
   const dropDownRef = useRef();
   const startTimeRef = useRef();
@@ -182,6 +182,7 @@ function Preference({username, setGenerationDone}) {
 
   const requestGeneration = async () => {
     setGenerationDone(false);
+    setGenerationError(false);
     let mods = selectedMods.map(mod => mod.moduleCode)
     let st = get24hr(startTime)*60
     let et = get24hr(endTime)*60
@@ -220,6 +221,10 @@ function Preference({username, setGenerationDone}) {
         enable_weights: true,
       })
     }).then(response => {
+      //console.log(`Status Returned: ${response.status}`);
+      if (response.status === 500) {
+        setGenerationError(true);  
+      }
       setGenerationDone(true);
       console.log("Done generating");
     })

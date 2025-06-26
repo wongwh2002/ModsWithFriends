@@ -101,11 +101,14 @@ def generate():
     data = request.get_json()
     generate_timetable(data)
     screenshot_functions = []
-    with open("./output.txt", 'r') as f:
-        for i, line in enumerate(f):
-            if i >= 10:
-                break
-            screenshot_functions.append(screenshot_json(i+1, line.strip()))
+    try:
+      with open("./output.txt", 'r') as f:
+          for i, line in enumerate(f):
+              if i >= 10:
+                  break
+              screenshot_functions.append(screenshot_json(i+1, line.strip()))
+    except Exception:
+      return "No results avaliable", 400
     loop = asyncio.new_event_loop()
     asyncio.set_event_loop(loop)
     loop.run_until_complete(asyncio.gather(*screenshot_functions))
