@@ -70,15 +70,14 @@ async def capture_element_screenshot(url):
     return image_bytes
 '''
 
-async def screenshot_json(url_list):
-    for id, url in enumerate(url_list[:10], start=1):
-      try:
-          image_bytes = await capture_element_screenshot(url)
-          with open(f"{id}.png", "wb") as f:
-            f.write(image_bytes)
-      except Exception as e:
-          print(e)
-          return "Something went wrong while taking screenshot", 500
+async def screenshot_json(id, url):
+    try:
+        image_bytes = await capture_element_screenshot(url)
+        with open(f"{id}.png", "wb") as f:
+          f.write(image_bytes)
+    except Exception as e:
+        print(e)
+        return "Something went wrong while taking screenshot", 500
 
 
 async def capture_element_screenshot(url):
@@ -101,14 +100,16 @@ async def capture_element_screenshot(url):
 def generate():
     data = request.get_json()
     generate_timetable(data)
-    url_list = []
+    screenshot_functions = []
     with open("./output.txt", 'r') as f:
         for i, line in enumerate(f):
             if i >= 10:
                 break
-            url_list.append(line.strip())
-    asyncio.run(screenshot_json(url_list))
-    return "Screenshot saved", 200
+            screenshot_functions.append(screenshot_json(i+1, line.strip()))
+    loop = asyncio.new_event_loop()
+    asyncio.set_event_loop(loop)
+    loop.run_until_complete(asyncio.gather(*screenshot_functions))
+    return "Screenshots saved", 200
     
 @app.route('/Server/<filename>')
 def serve_file(filename):
