@@ -9,8 +9,9 @@ import dropdown from './assets/dropdown.png';
 import { Link } from 'react-router-dom';
 import NewRoomOverlay from './NewRoomOverlay';
 import RoomCard from './RoomCard';
+import e from 'cors';
 
-function Preference({username}) {
+function Preference({username, setGenerationDone, setGenerationError}) {
 
   const dropDownRef = useRef();
   const startTimeRef = useRef();
@@ -131,6 +132,14 @@ function Preference({username}) {
     }
   }, []);
 
+  useEffect(() => {
+    let updatedRooms = selectedMods.map(mod => ({
+      module : mod.moduleCode,
+      users : []
+    }));
+    setRooms(updatedRooms);
+  }, [isPreference]);
+
   const autocomplete = (value) => {
     setSearchValue(value);
     console.log(moduleData);
@@ -164,6 +173,61 @@ function Preference({username}) {
       setSelectedMods(pastedMods);
     }
     setSearchValue("");
+  }
+
+  function get24hr(timeStr) {
+    const date = new Date("1970-01-01T" + timeStr);
+    return date.getHours();
+  }
+
+  const requestGeneration = async () => {
+    setGenerationDone(false);
+    setGenerationError(false);
+    let mods = selectedMods.map(mod => mod.moduleCode)
+    let st = get24hr(startTime)*60
+    let et = get24hr(endTime)*60
+    let lw = (0,0)
+    if (lunchCheck) {
+      lw = (get24hr(lunchStart)*60, get24hr(lunchEnd)*60)
+    }
+    let ld = parseInt(duration[0], 10)*60
+    let no_class = []
+
+    fetch('http://127.0.0.1:4000/generate', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({
+        modules: mods,
+        semester: 2,
+        earliest_start: st,
+        latest_end: et,
+        lunch_window: lw,
+        lunch_duration: ld,
+        days_without_lunch: [],
+        days_without_class: no_class,
+        optional_classes: {},
+        compulsory_classes: {},
+        weights: {
+          morning_class: 1,
+          afternoon_class: 5,
+          day_length_penalty: -0.01,
+          day_present_penalty: -10,
+        },
+        enable_lunch_break: lunchCheck,
+        enable_late_start: false,
+        enable_early_end: false,
+        enable_weights: true,
+      })
+    }).then(response => {
+      //console.log(`Status Returned: ${response.status}`);
+      if (response.status === 500) {
+        setGenerationError(true);  
+      }
+      setGenerationDone(true);
+      console.log("Done generating");
+    })
   }
   
   return (
@@ -297,7 +361,12 @@ function Preference({username}) {
           </div> </> : <></>}
         </div> : 
         <div className={rooms.length === 0 ? 'rooms-body': 'pad-top rooms-body'}>
-          {rooms.length === 0 ? 
+          { rooms.length === 0 ? <></> :
+            rooms.map(room => {
+              return <RoomCard roomInfo={room} />
+            })
+          }
+          {/*{rooms.length === 0 ? 
           <button className='new-room-button button' onClick={() => setCreateRoom(true)}>
             Create New Room
           </button> : <></>}
@@ -309,13 +378,13 @@ function Preference({username}) {
             <p className='plus'>+</p>
           </div>}
           {createRoom ? <NewRoomOverlay setCreateRoom={setCreateRoom} selectedMods={selectedMods}
-            setRooms={setRooms} username={username}/> : <></>}
+            setRooms={setRooms} username={username}/> : <></>}*/}
         </div>}
       </div>
       <div className='generate-button-wrapper'>
         <div className='generate-button-container'>
           <Link to='/generate' className='link'>
-            <button className='button'>Generate</button>
+            <button className='button' onClick={async () => await requestGeneration()}>Generate</button>
           </Link>
         </div>
       </div>

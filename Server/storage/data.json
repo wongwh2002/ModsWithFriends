@@ -1,0 +1,2765 @@
+{
+  "CDE2000": {
+    "TUT": {
+      "A28": {
+        "size": 25,
+        "lessonType": "Tutorial",
+        "slots": [
+          {
+            "startTime": "1200",
+            "endTime": "1400",
+            "weeks": [
+              1,
+              2,
+              3,
+              4,
+              5,
+              6,
+              7,
+              8,
+              9,
+              10,
+              11,
+              12
+            ],
+            "venue": "SDE1-SR1",
+            "day": "Friday"
+          }
+        ]
+      },
+      "A10": {
+        "size": 25,
+        "lessonType": "Tutorial",
+        "slots": [
+          {
+            "startTime": "1200",
+            "endTime": "1400",
+            "weeks": [
+              1,
+              2,
+              3,
+              4,
+              5,
+              6,
+              7,
+              8,
+              9,
+              10,
+              11,
+              12
+            ],
+            "venue": "SDE3-BARM",
+            "day": "Tuesday"
+          }
+        ]
+      },
+      "A14": {
+        "size": 25,
+        "lessonType": "Tutorial",
+        "slots": [
+          {
+            "startTime": "1000",
+            "endTime": "1200",
+            "weeks": [
+              1,
+              2,
+              3,
+              4,
+              5,
+              6,
+              7,
+              8,
+              9,
+              10,
+              11,
+              12
+            ],
+            "venue": "SDE3-SR8",
+            "day": "Wednesday"
+          }
+        ]
+      },
+      "A29": {
+        "size": 25,
+        "lessonType": "Tutorial",
+        "slots": [
+          {
+            "startTime": "1200",
+            "endTime": "1400",
+            "weeks": [
+              1,
+              2,
+              3,
+              4,
+              5,
+              6,
+              7,
+              8,
+              9,
+              10,
+              11,
+              12
+            ],
+            "venue": "SDE4-EXR-1",
+            "day": "Friday"
+          }
+        ]
+      },
+      "A12": {
+        "size": 25,
+        "lessonType": "Tutorial",
+        "slots": [
+          {
+            "startTime": "1400",
+            "endTime": "1600",
+            "weeks": [
+              1,
+              2,
+              3,
+              4,
+              5,
+              6,
+              7,
+              8,
+              9,
+              10,
+              11,
+              12
+            ],
+            "venue": "SDE4-EXR-1",
+            "day": "Tuesday"
+          }
+        ]
+      },
+      "A13": {
+        "size": 25,
+        "lessonType": "Tutorial",
+        "slots": [
+          {
+            "startTime": "1600",
+            "endTime": "1800",
+            "weeks": [
+              1,
+              2,
+              3,
+              4,
+              5,
+              6,
+              7,
+              8,
+              9,
+              10,
+              11,
+              12
+            ],
+            "venue": "SDE4-EXR-1",
+            "day": "Tuesday"
+          }
+        ]
+      },
+      "A23": {
+        "size": 25,
+        "lessonType": "Tutorial",
+        "slots": [
+          {
+            "startTime": "1200",
+            "endTime": "1400",
+            "weeks": [
+              1,
+              2,
+              3,
+              4,
+              5,
+              6,
+              7,
+              8,
+              9,
+              10,
+              11,
+              12
+            ],
+            "venue": "SDE1-SR1",
+            "day": "Thursday"
+          }
+        ]
+      },
+      "A31": {
+        "size": 25,
+        "lessonType": "Tutorial",
+        "slots": [
+          {
+            "startTime": "1400",
+            "endTime": "1600",
+            "weeks": [
+              1,
+              2,
+              3,
+              4,
+              5,
+              6,
+              7,
+              8,
+              9,
+              10,
+              11,
+              12
+            ],
+            "venue": "SDE1-SR1",
+            "day": "Friday"
+          }
+        ]
+      },
+      "A6": {
+        "size": 25,
+        "lessonType": "Tutorial",
+        "slots": [
+          {
+            "startTime": "1600",
+            "endTime": "1800",
+            "weeks": [
+              1,
+              2,
+              3,
+              4,
+              5,
+              6,
+              7,
+              8,
+              9,
+              10,
+              11,
+              12
+            ],
+            "venue": "SDE3-SR6",
+            "day": "Monday"
+          }
+        ]
+      },
+      "A32": {
+        "size": 25,
+        "lessonType": "Tutorial",
+        "slots": [
+          {
+            "startTime": "1600",
+            "endTime": "1800",
+            "weeks": [
+              1,
+              2,
+              3,
+              4,
+              5,
+              6,
+              7,
+              8,
+              9,
+              10,
+              11,
+              12
+            ],
+            "venue": "SDE3-SR8",
+            "day": "Friday"
+          }
+        ]
+      },
+      "A27": {
+        "size": 25,
+        "lessonType": "Tutorial",
+        "slots": [
+          {
+            "startTime": "1000",
+            "endTime": "1200",
+            "weeks": [
+              1,
+              2,
+              3,
+              4,
+              5,
+              6,
+              7,
+              8,
+              9,
+              10,
+              11,
+              12
+            ],
+            "venue": "SDE4-EXR-1",
+            "day": "Friday"
+          }
+        ]
+      },
+      "A30": {
+        "size": 25,
+        "lessonType": "Tutorial",
+        "slots": [
+          {
+            "startTime": "1400",
+            "endTime": "1600",
+            "weeks": [
+              1,
+              2,
+              3,
+              4,
+              5,
+              6,
+              7,
+              8,
+              9,
+              10,
+              11,
+              12
+            ],
+            "venue": "SDE3-BARM",
+            "day": "Friday"
+          }
+        ]
+      },
+      "A25": {
+        "size": 25,
+        "lessonType": "Tutorial",
+        "slots": [
+          {
+            "startTime": "1600",
+            "endTime": "1800",
+            "weeks": [
+              1,
+              2,
+              3,
+              4,
+              5,
+              6,
+              7,
+              8,
+              9,
+              10,
+              11,
+              12
+            ],
+            "venue": "SDE1-SR5-6",
+            "day": "Thursday"
+          }
+        ]
+      },
+      "A21": {
+        "size": 25,
+        "lessonType": "Tutorial",
+        "slots": [
+          {
+            "startTime": "1200",
+            "endTime": "1400",
+            "weeks": [
+              1,
+              2,
+              3,
+              4,
+              5,
+              6,
+              7,
+              8,
+              9,
+              10,
+              11,
+              12
+            ],
+            "venue": "SDE3-SR7",
+            "day": "Thursday"
+          }
+        ]
+      },
+      "A3": {
+        "size": 25,
+        "lessonType": "Tutorial",
+        "slots": [
+          {
+            "startTime": "1200",
+            "endTime": "1400",
+            "weeks": [
+              1,
+              2,
+              3,
+              4,
+              5,
+              6,
+              7,
+              8,
+              9,
+              10,
+              11,
+              12
+            ],
+            "venue": "SDE1-SR1",
+            "day": "Monday"
+          }
+        ]
+      },
+      "A15": {
+        "size": 25,
+        "lessonType": "Tutorial",
+        "slots": [
+          {
+            "startTime": "1000",
+            "endTime": "1200",
+            "weeks": [
+              1,
+              2,
+              3,
+              4,
+              5,
+              6,
+              7,
+              8,
+              9,
+              10,
+              11,
+              12
+            ],
+            "venue": "SDE3-SR7",
+            "day": "Wednesday"
+          }
+        ]
+      },
+      "A22": {
+        "size": 25,
+        "lessonType": "Tutorial",
+        "slots": [
+          {
+            "startTime": "1200",
+            "endTime": "1400",
+            "weeks": [
+              1,
+              2,
+              3,
+              4,
+              5,
+              6,
+              7,
+              8,
+              9,
+              10,
+              11,
+              12
+            ],
+            "venue": "SDE3-SR8",
+            "day": "Thursday"
+          }
+        ]
+      },
+      "A4": {
+        "size": 25,
+        "lessonType": "Tutorial",
+        "slots": [
+          {
+            "startTime": "1200",
+            "endTime": "1400",
+            "weeks": [
+              1,
+              2,
+              3,
+              4,
+              5,
+              6,
+              7,
+              8,
+              9,
+              10,
+              11,
+              12
+            ],
+            "venue": "SDE1-SR5-6",
+            "day": "Monday"
+          }
+        ]
+      },
+      "A18": {
+        "size": 25,
+        "lessonType": "Tutorial",
+        "slots": [
+          {
+            "startTime": "1000",
+            "endTime": "1200",
+            "weeks": [
+              1,
+              2,
+              3,
+              4,
+              5,
+              6,
+              7,
+              8,
+              9,
+              10,
+              11,
+              12
+            ],
+            "venue": "SDE3-SR8",
+            "day": "Thursday"
+          }
+        ]
+      },
+      "A5": {
+        "size": 25,
+        "lessonType": "Tutorial",
+        "slots": [
+          {
+            "startTime": "1400",
+            "endTime": "1600",
+            "weeks": [
+              1,
+              2,
+              3,
+              4,
+              5,
+              6,
+              7,
+              8,
+              9,
+              10,
+              11,
+              12
+            ],
+            "venue": "SDE3-SR6",
+            "day": "Monday"
+          }
+        ]
+      },
+      "A1": {
+        "size": 25,
+        "lessonType": "Tutorial",
+        "slots": [
+          {
+            "startTime": "1000",
+            "endTime": "1200",
+            "weeks": [
+              1,
+              2,
+              3,
+              4,
+              5,
+              6,
+              7,
+              8,
+              9,
+              10,
+              11,
+              12
+            ],
+            "venue": "SDE4-EXR-1",
+            "day": "Monday"
+          }
+        ]
+      },
+      "A19": {
+        "size": 25,
+        "lessonType": "Tutorial",
+        "slots": [
+          {
+            "startTime": "1000",
+            "endTime": "1200",
+            "weeks": [
+              1,
+              2,
+              3,
+              4,
+              5,
+              6,
+              7,
+              8,
+              9,
+              10,
+              11,
+              12
+            ],
+            "venue": "SDE3-SR7",
+            "day": "Thursday"
+          }
+        ]
+      },
+      "A8": {
+        "size": 25,
+        "lessonType": "Tutorial",
+        "slots": [
+          {
+            "startTime": "1000",
+            "endTime": "1200",
+            "weeks": [
+              1,
+              2,
+              3,
+              4,
+              5,
+              6,
+              7,
+              8,
+              9,
+              10,
+              11,
+              12
+            ],
+            "venue": "SDE1-SR1",
+            "day": "Tuesday"
+          }
+        ]
+      },
+      "A17": {
+        "size": 25,
+        "lessonType": "Tutorial",
+        "slots": [
+          {
+            "startTime": "1200",
+            "endTime": "1400",
+            "weeks": [
+              1,
+              2,
+              3,
+              4,
+              5,
+              6,
+              7,
+              8,
+              9,
+              10,
+              11,
+              12
+            ],
+            "venue": "SDE3-SR8",
+            "day": "Wednesday"
+          }
+        ]
+      },
+      "A7": {
+        "size": 25,
+        "lessonType": "Tutorial",
+        "slots": [
+          {
+            "startTime": "1000",
+            "endTime": "1200",
+            "weeks": [
+              1,
+              2,
+              3,
+              4,
+              5,
+              6,
+              7,
+              8,
+              9,
+              10,
+              11,
+              12
+            ],
+            "venue": "SDE3-SR7",
+            "day": "Tuesday"
+          }
+        ]
+      },
+      "A24": {
+        "size": 25,
+        "lessonType": "Tutorial",
+        "slots": [
+          {
+            "startTime": "1400",
+            "endTime": "1600",
+            "weeks": [
+              1,
+              2,
+              3,
+              4,
+              5,
+              6,
+              7,
+              8,
+              9,
+              10,
+              11,
+              12
+            ],
+            "venue": "SDE1-SR1",
+            "day": "Thursday"
+          }
+        ]
+      },
+      "A2": {
+        "size": 25,
+        "lessonType": "Tutorial",
+        "slots": [
+          {
+            "startTime": "1000",
+            "endTime": "1200",
+            "weeks": [
+              1,
+              2,
+              3,
+              4,
+              5,
+              6,
+              7,
+              8,
+              9,
+              10,
+              11,
+              12
+            ],
+            "venue": "SDE4-EXR-2",
+            "day": "Monday"
+          }
+        ]
+      },
+      "A26": {
+        "size": 25,
+        "lessonType": "Tutorial",
+        "slots": [
+          {
+            "startTime": "1000",
+            "endTime": "1200",
+            "weeks": [
+              1,
+              2,
+              3,
+              4,
+              5,
+              6,
+              7,
+              8,
+              9,
+              10,
+              11,
+              12
+            ],
+            "venue": "SDE4-EXR-2",
+            "day": "Friday"
+          }
+        ]
+      },
+      "A9": {
+        "size": 25,
+        "lessonType": "Tutorial",
+        "slots": [
+          {
+            "startTime": "1200",
+            "endTime": "1400",
+            "weeks": [
+              1,
+              2,
+              3,
+              4,
+              5,
+              6,
+              7,
+              8,
+              9,
+              10,
+              11,
+              12
+            ],
+            "venue": "SDE3-SR7",
+            "day": "Tuesday"
+          }
+        ]
+      },
+      "A16": {
+        "size": 25,
+        "lessonType": "Tutorial",
+        "slots": [
+          {
+            "startTime": "1200",
+            "endTime": "1400",
+            "weeks": [
+              1,
+              2,
+              3,
+              4,
+              5,
+              6,
+              7,
+              8,
+              9,
+              10,
+              11,
+              12
+            ],
+            "venue": "SDE3-SR7",
+            "day": "Wednesday"
+          }
+        ]
+      },
+      "A11": {
+        "size": 25,
+        "lessonType": "Tutorial",
+        "slots": [
+          {
+            "startTime": "1400",
+            "endTime": "1600",
+            "weeks": [
+              1,
+              2,
+              3,
+              4,
+              5,
+              6,
+              7,
+              8,
+              9,
+              10,
+              11,
+              12
+            ],
+            "venue": "SDE3-SR7",
+            "day": "Tuesday"
+          }
+        ]
+      },
+      "A20": {
+        "size": 25,
+        "lessonType": "Tutorial",
+        "slots": [
+          {
+            "startTime": "1000",
+            "endTime": "1200",
+            "weeks": [
+              1,
+              2,
+              3,
+              4,
+              5,
+              6,
+              7,
+              8,
+              9,
+              10,
+              11,
+              12
+            ],
+            "venue": "SDE3-BARM",
+            "day": "Thursday"
+          }
+        ]
+      }
+    }
+  },
+  "CDE2310": {
+    "LEC": {
+      "1": {
+        "size": 75,
+        "lessonType": "Lecture",
+        "slots": [
+          {
+            "startTime": "1800",
+            "endTime": "2100",
+            "weeks": [
+              1,
+              2,
+              3,
+              4,
+              5,
+              6,
+              7,
+              8,
+              9,
+              10,
+              11,
+              12,
+              13
+            ],
+            "venue": "",
+            "day": "Tuesday"
+          }
+        ]
+      }
+    },
+    "LAB": {
+      "1": {
+        "size": 75,
+        "lessonType": "Laboratory",
+        "slots": [
+          {
+            "startTime": "1800",
+            "endTime": "2100",
+            "weeks": [
+              1,
+              2,
+              3,
+              4,
+              5,
+              6,
+              7,
+              8,
+              9,
+              10,
+              11,
+              12,
+              13
+            ],
+            "venue": "",
+            "day": "Thursday"
+          }
+        ]
+      }
+    }
+  },
+  "CDE3301": {
+    "LAB": {
+      "G10": {
+        "size": 25,
+        "lessonType": "Laboratory",
+        "slots": [
+          {
+            "startTime": "1300",
+            "endTime": "1600",
+            "weeks": [
+              1,
+              2,
+              3,
+              4,
+              5,
+              6,
+              7,
+              8,
+              9,
+              10,
+              11,
+              12,
+              13
+            ],
+            "venue": "E2A-03-02",
+            "day": "Thursday"
+          }
+        ]
+      },
+      "G12": {
+        "size": 25,
+        "lessonType": "Laboratory",
+        "slots": [
+          {
+            "startTime": "1300",
+            "endTime": "1600",
+            "weeks": [
+              1,
+              2,
+              3,
+              4,
+              5,
+              6,
+              7,
+              8,
+              9,
+              10,
+              11,
+              12,
+              13
+            ],
+            "venue": "",
+            "day": "Thursday"
+          }
+        ]
+      },
+      "G7": {
+        "size": 25,
+        "lessonType": "Laboratory",
+        "slots": [
+          {
+            "startTime": "1300",
+            "endTime": "1600",
+            "weeks": [
+              1,
+              2,
+              3,
+              4,
+              5,
+              6,
+              7,
+              8,
+              9,
+              10,
+              11,
+              12,
+              13
+            ],
+            "venue": "E2A-02-01",
+            "day": "Thursday"
+          }
+        ]
+      },
+      "G3": {
+        "size": 25,
+        "lessonType": "Laboratory",
+        "slots": [
+          {
+            "startTime": "0900",
+            "endTime": "1200",
+            "weeks": [
+              1,
+              2,
+              3,
+              4,
+              5,
+              6,
+              7,
+              8,
+              9,
+              10,
+              11,
+              12,
+              13
+            ],
+            "venue": "E2A-03-02",
+            "day": "Wednesday"
+          }
+        ]
+      },
+      "G14": {
+        "size": 25,
+        "lessonType": "Laboratory",
+        "slots": [
+          {
+            "startTime": "0900",
+            "endTime": "1200",
+            "weeks": [
+              1,
+              2,
+              3,
+              4,
+              5,
+              6,
+              7,
+              8,
+              9,
+              10,
+              11,
+              12,
+              13
+            ],
+            "venue": "E2A-04-03",
+            "day": "Tuesday"
+          }
+        ]
+      },
+      "G2": {
+        "size": 25,
+        "lessonType": "Laboratory",
+        "slots": [
+          {
+            "startTime": "0900",
+            "endTime": "1200",
+            "weeks": [
+              1,
+              2,
+              3,
+              4,
+              5,
+              6,
+              7,
+              8,
+              9,
+              10,
+              11,
+              12,
+              13
+            ],
+            "venue": "E2A-03-01",
+            "day": "Wednesday"
+          }
+        ]
+      },
+      "G8": {
+        "size": 25,
+        "lessonType": "Laboratory",
+        "slots": [
+          {
+            "startTime": "1300",
+            "endTime": "1600",
+            "weeks": [
+              1,
+              2,
+              3,
+              4,
+              5,
+              6,
+              7,
+              8,
+              9,
+              10,
+              11,
+              12,
+              13
+            ],
+            "venue": "E2A-03-01",
+            "day": "Thursday"
+          }
+        ]
+      },
+      "G11": {
+        "size": 25,
+        "lessonType": "Laboratory",
+        "slots": [
+          {
+            "startTime": "1300",
+            "endTime": "1600",
+            "weeks": [
+              1,
+              2,
+              3,
+              4,
+              5,
+              6,
+              7,
+              8,
+              9,
+              10,
+              11,
+              12,
+              13
+            ],
+            "venue": "E2A-04-02",
+            "day": "Thursday"
+          }
+        ]
+      },
+      "G1": {
+        "size": 25,
+        "lessonType": "Laboratory",
+        "slots": [
+          {
+            "startTime": "0900",
+            "endTime": "1200",
+            "weeks": [
+              1,
+              2,
+              3,
+              4,
+              5,
+              6,
+              7,
+              8,
+              9,
+              10,
+              11,
+              12,
+              13
+            ],
+            "venue": "E2A-02-01",
+            "day": "Wednesday"
+          }
+        ]
+      },
+      "G4": {
+        "size": 25,
+        "lessonType": "Laboratory",
+        "slots": [
+          {
+            "startTime": "0900",
+            "endTime": "1200",
+            "weeks": [
+              1,
+              2,
+              3,
+              4,
+              5,
+              6,
+              7,
+              8,
+              9,
+              10,
+              11,
+              12,
+              13
+            ],
+            "venue": "E2A-03-03",
+            "day": "Wednesday"
+          }
+        ]
+      },
+      "G5": {
+        "size": 25,
+        "lessonType": "Laboratory",
+        "slots": [
+          {
+            "startTime": "0900",
+            "endTime": "1200",
+            "weeks": [
+              1,
+              2,
+              3,
+              4,
+              5,
+              6,
+              7,
+              8,
+              9,
+              10,
+              11,
+              12,
+              13
+            ],
+            "venue": "E2A-04-02",
+            "day": "Wednesday"
+          }
+        ]
+      },
+      "G6": {
+        "size": 25,
+        "lessonType": "Laboratory",
+        "slots": [
+          {
+            "startTime": "0900",
+            "endTime": "1200",
+            "weeks": [
+              1,
+              2,
+              3,
+              4,
+              5,
+              6,
+              7,
+              8,
+              9,
+              10,
+              11,
+              12,
+              13
+            ],
+            "venue": "E2A-04-03",
+            "day": "Wednesday"
+          }
+        ]
+      },
+      "G9": {
+        "size": 25,
+        "lessonType": "Laboratory",
+        "slots": [
+          {
+            "startTime": "1300",
+            "endTime": "1600",
+            "weeks": [
+              1,
+              2,
+              3,
+              4,
+              5,
+              6,
+              7,
+              8,
+              9,
+              10,
+              11,
+              12,
+              13
+            ],
+            "venue": "E2A-03-03",
+            "day": "Thursday"
+          }
+        ]
+      }
+    },
+    "LEC": {
+      "1": {
+        "size": 180,
+        "lessonType": "Lecture",
+        "slots": [
+          {
+            "startTime": "1800",
+            "endTime": "2100",
+            "weeks": [
+              1,
+              2,
+              3,
+              4,
+              5,
+              6,
+              7,
+              8,
+              9,
+              10,
+              11,
+              12,
+              13
+            ],
+            "venue": "SDE3-LT424",
+            "day": "Wednesday"
+          }
+        ]
+      }
+    }
+  },
+  "CG2023": {
+    "LAB": {
+      "03": {
+        "size": 80,
+        "lessonType": "Laboratory",
+        "slots": [
+          {
+            "startTime": "1400",
+            "endTime": "1700",
+            "weeks": [
+              7,
+              9,
+              11,
+              13
+            ],
+            "venue": "E4-03-06",
+            "day": "Monday"
+          }
+        ]
+      },
+      "02": {
+        "size": 80,
+        "lessonType": "Laboratory",
+        "slots": [
+          {
+            "startTime": "0900",
+            "endTime": "1200",
+            "weeks": [
+              6,
+              8,
+              10,
+              12
+            ],
+            "venue": "E4-03-06",
+            "day": "Tuesday"
+          }
+        ]
+      },
+      "01": {
+        "size": 80,
+        "lessonType": "Laboratory",
+        "slots": [
+          {
+            "startTime": "1400",
+            "endTime": "1700",
+            "weeks": [
+              6,
+              8,
+              10,
+              12
+            ],
+            "venue": "E4-03-06",
+            "day": "Monday"
+          }
+        ]
+      },
+      "04": {
+        "size": 80,
+        "lessonType": "Laboratory",
+        "slots": [
+          {
+            "startTime": "0900",
+            "endTime": "1200",
+            "weeks": [
+              7,
+              9,
+              11,
+              13
+            ],
+            "venue": "E4-03-06",
+            "day": "Tuesday"
+          }
+        ]
+      },
+      "05": {
+        "size": 36,
+        "lessonType": "Laboratory",
+        "slots": [
+          {
+            "startTime": "1400",
+            "endTime": "1700",
+            "weeks": [
+              6,
+              8,
+              11,
+              12
+            ],
+            "venue": "E4-03-08",
+            "day": "Friday"
+          }
+        ]
+      }
+    },
+    "LEC": {
+      "03": {
+        "size": 80,
+        "lessonType": "Lecture",
+        "slots": [
+          {
+            "startTime": "1600",
+            "endTime": "1800",
+            "weeks": [
+              1,
+              2,
+              3,
+              4,
+              5,
+              6,
+              7,
+              8,
+              9,
+              10,
+              11,
+              12,
+              13
+            ],
+            "venue": "EA-06-03",
+            "day": "Tuesday"
+          },
+          {
+            "startTime": "1600",
+            "endTime": "1800",
+            "weeks": [
+              1,
+              2,
+              3,
+              4,
+              5,
+              6,
+              7,
+              8,
+              9,
+              10,
+              11,
+              12,
+              13
+            ],
+            "venue": "EA-06-03",
+            "day": "Thursday"
+          }
+        ]
+      },
+      "02": {
+        "size": 80,
+        "lessonType": "Lecture",
+        "slots": [
+          {
+            "startTime": "1600",
+            "endTime": "1800",
+            "weeks": [
+              1,
+              2,
+              3,
+              4,
+              5,
+              6,
+              7,
+              8,
+              9,
+              10,
+              11,
+              12,
+              13
+            ],
+            "venue": "LT4",
+            "day": "Tuesday"
+          },
+          {
+            "startTime": "1600",
+            "endTime": "1800",
+            "weeks": [
+              1,
+              2,
+              3,
+              4,
+              5,
+              6,
+              7,
+              8,
+              9,
+              10,
+              11,
+              12,
+              13
+            ],
+            "venue": "LT3",
+            "day": "Thursday"
+          }
+        ]
+      },
+      "04": {
+        "size": 80,
+        "lessonType": "Lecture",
+        "slots": [
+          {
+            "startTime": "1600",
+            "endTime": "1800",
+            "weeks": [
+              1,
+              2,
+              3,
+              4,
+              5,
+              6,
+              7,
+              8,
+              9,
+              10,
+              11,
+              12,
+              13
+            ],
+            "venue": "LT1",
+            "day": "Thursday"
+          },
+          {
+            "startTime": "1600",
+            "endTime": "1800",
+            "weeks": [
+              1,
+              2,
+              3,
+              4,
+              5,
+              6,
+              7,
+              8,
+              9,
+              10,
+              11,
+              12,
+              13
+            ],
+            "venue": "LT1",
+            "day": "Tuesday"
+          }
+        ]
+      },
+      "01": {
+        "size": 80,
+        "lessonType": "Lecture",
+        "slots": [
+          {
+            "startTime": "1600",
+            "endTime": "1800",
+            "weeks": [
+              1,
+              2,
+              3,
+              4,
+              5,
+              6,
+              7,
+              8,
+              9,
+              10,
+              11,
+              12,
+              13
+            ],
+            "venue": "EA-06-02",
+            "day": "Tuesday"
+          },
+          {
+            "startTime": "1600",
+            "endTime": "1800",
+            "weeks": [
+              1,
+              2,
+              3,
+              4,
+              5,
+              6,
+              7,
+              8,
+              9,
+              10,
+              11,
+              12,
+              13
+            ],
+            "venue": "E1-06-08",
+            "day": "Thursday"
+          }
+        ]
+      }
+    }
+  },
+  "CG2271": {
+    "LAB": {
+      "02": {
+        "size": 70,
+        "lessonType": "Laboratory",
+        "slots": [
+          {
+            "startTime": "1200",
+            "endTime": "1400",
+            "weeks": [
+              1,
+              2,
+              3,
+              4,
+              5,
+              6,
+              7,
+              8,
+              9,
+              10,
+              11,
+              12,
+              13
+            ],
+            "venue": "COM3-01-19",
+            "day": "Tuesday"
+          }
+        ]
+      },
+      "03": {
+        "size": 70,
+        "lessonType": "Laboratory",
+        "slots": [
+          {
+            "startTime": "1200",
+            "endTime": "1400",
+            "weeks": [
+              1,
+              2,
+              3,
+              4,
+              5,
+              6,
+              7,
+              8,
+              9,
+              10,
+              11,
+              12,
+              13
+            ],
+            "venue": "COM3-01-19",
+            "day": "Thursday"
+          }
+        ]
+      },
+      "01": {
+        "size": 70,
+        "lessonType": "Laboratory",
+        "slots": [
+          {
+            "startTime": "1400",
+            "endTime": "1600",
+            "weeks": [
+              1,
+              2,
+              3,
+              4,
+              5,
+              6,
+              7,
+              8,
+              9,
+              10,
+              11,
+              12,
+              13
+            ],
+            "venue": "COM3-01-19",
+            "day": "Friday"
+          }
+        ]
+      }
+    },
+    "LEC": {
+      "01": {
+        "size": 130,
+        "lessonType": "Lecture",
+        "slots": [
+          {
+            "startTime": "1000",
+            "endTime": "1200",
+            "weeks": [
+              1,
+              2,
+              3,
+              4,
+              5,
+              6,
+              7,
+              8,
+              9,
+              10,
+              11,
+              12,
+              13
+            ],
+            "venue": "LT15",
+            "day": "Wednesday"
+          }
+        ]
+      }
+    }
+  },
+  "CS3240": {
+    "TUT": {
+      "3": {
+        "size": 40,
+        "lessonType": "Tutorial",
+        "slots": [
+          {
+            "startTime": "1600",
+            "endTime": "1700",
+            "weeks": [
+              3,
+              4,
+              5,
+              6,
+              7,
+              8,
+              9,
+              10,
+              11,
+              12,
+              13
+            ],
+            "venue": "COM3-01-20",
+            "day": "Monday"
+          }
+        ]
+      },
+      "4": {
+        "size": 40,
+        "lessonType": "Tutorial",
+        "slots": [
+          {
+            "startTime": "1700",
+            "endTime": "1800",
+            "weeks": [
+              3,
+              4,
+              5,
+              6,
+              7,
+              8,
+              9,
+              10,
+              11,
+              12,
+              13
+            ],
+            "venue": "COM3-01-20",
+            "day": "Monday"
+          }
+        ]
+      },
+      "8": {
+        "size": 40,
+        "lessonType": "Tutorial",
+        "slots": [
+          {
+            "startTime": "1700",
+            "endTime": "1800",
+            "weeks": [
+              3,
+              4,
+              5,
+              6,
+              7,
+              8,
+              9,
+              10,
+              11,
+              12,
+              13
+            ],
+            "venue": "COM3-01-20",
+            "day": "Tuesday"
+          }
+        ]
+      },
+      "7": {
+        "size": 40,
+        "lessonType": "Tutorial",
+        "slots": [
+          {
+            "startTime": "1600",
+            "endTime": "1700",
+            "weeks": [
+              3,
+              4,
+              5,
+              6,
+              7,
+              8,
+              9,
+              10,
+              11,
+              12,
+              13
+            ],
+            "venue": "COM3-01-20",
+            "day": "Tuesday"
+          }
+        ]
+      }
+    },
+    "LEC": {
+      "1": {
+        "size": 150,
+        "lessonType": "Lecture",
+        "slots": [
+          {
+            "startTime": "0900",
+            "endTime": "1100",
+            "weeks": [
+              1,
+              2,
+              3,
+              4,
+              5,
+              6,
+              7,
+              8,
+              9,
+              10,
+              11,
+              12,
+              13
+            ],
+            "venue": "LT18",
+            "day": "Wednesday"
+          }
+        ]
+      }
+    }
+  },
+  "EE2026": {
+    "TUT": {
+      "08": {
+        "size": 28,
+        "lessonType": "Tutorial",
+        "slots": [
+          {
+            "startTime": "1300",
+            "endTime": "1400",
+            "weeks": [
+              1,
+              2,
+              3,
+              4,
+              5,
+              6,
+              7,
+              8,
+              9,
+              10,
+              11,
+              12,
+              13
+            ],
+            "venue": "E3-06-02",
+            "day": "Thursday"
+          }
+        ]
+      },
+      "05": {
+        "size": 28,
+        "lessonType": "Tutorial",
+        "slots": [
+          {
+            "startTime": "1200",
+            "endTime": "1300",
+            "weeks": [
+              1,
+              2,
+              3,
+              4,
+              5,
+              6,
+              7,
+              8,
+              9,
+              10,
+              11,
+              12,
+              13
+            ],
+            "venue": "E3-06-08",
+            "day": "Wednesday"
+          }
+        ]
+      },
+      "06": {
+        "size": 28,
+        "lessonType": "Tutorial",
+        "slots": [
+          {
+            "startTime": "1400",
+            "endTime": "1500",
+            "weeks": [
+              1,
+              2,
+              3,
+              4,
+              5,
+              6,
+              7,
+              8,
+              9,
+              10,
+              11,
+              12,
+              13
+            ],
+            "venue": "E1-06-01",
+            "day": "Thursday"
+          }
+        ]
+      },
+      "01": {
+        "size": 28,
+        "lessonType": "Tutorial",
+        "slots": [
+          {
+            "startTime": "0900",
+            "endTime": "1000",
+            "weeks": [
+              1,
+              2,
+              3,
+              4,
+              5,
+              6,
+              7,
+              8,
+              9,
+              10,
+              11,
+              12,
+              13
+            ],
+            "venue": "E3-06-08",
+            "day": "Tuesday"
+          }
+        ]
+      },
+      "04": {
+        "size": 28,
+        "lessonType": "Tutorial",
+        "slots": [
+          {
+            "startTime": "1200",
+            "endTime": "1300",
+            "weeks": [
+              1,
+              2,
+              3,
+              4,
+              5,
+              6,
+              7,
+              8,
+              9,
+              10,
+              11,
+              12,
+              13
+            ],
+            "venue": "E3-06-01",
+            "day": "Wednesday"
+          }
+        ]
+      },
+      "02": {
+        "size": 28,
+        "lessonType": "Tutorial",
+        "slots": [
+          {
+            "startTime": "1100",
+            "endTime": "1200",
+            "weeks": [
+              1,
+              2,
+              3,
+              4,
+              5,
+              6,
+              7,
+              8,
+              9,
+              10,
+              11,
+              12,
+              13
+            ],
+            "venue": "E3-06-03",
+            "day": "Tuesday"
+          }
+        ]
+      },
+      "03": {
+        "size": 28,
+        "lessonType": "Tutorial",
+        "slots": [
+          {
+            "startTime": "1300",
+            "endTime": "1400",
+            "weeks": [
+              1,
+              2,
+              3,
+              4,
+              5,
+              6,
+              7,
+              8,
+              9,
+              10,
+              11,
+              12,
+              13
+            ],
+            "venue": "E3-06-01",
+            "day": "Tuesday"
+          }
+        ]
+      },
+      "07": {
+        "size": 28,
+        "lessonType": "Tutorial",
+        "slots": [
+          {
+            "startTime": "1400",
+            "endTime": "1500",
+            "weeks": [
+              1,
+              2,
+              3,
+              4,
+              5,
+              6,
+              7,
+              8,
+              9,
+              10,
+              11,
+              12,
+              13
+            ],
+            "venue": "E1-06-08",
+            "day": "Thursday"
+          }
+        ]
+      }
+    },
+    "LAB": {
+      "03": {
+        "size": 80,
+        "lessonType": "Laboratory",
+        "slots": [
+          {
+            "startTime": "1400",
+            "endTime": "1700",
+            "weeks": [
+              1,
+              2,
+              3,
+              4,
+              5,
+              6,
+              7,
+              8,
+              9,
+              10,
+              11,
+              12,
+              13
+            ],
+            "venue": "E4-03-06",
+            "day": "Wednesday"
+          }
+        ]
+      },
+      "02": {
+        "size": 80,
+        "lessonType": "Laboratory",
+        "slots": [
+          {
+            "startTime": "0900",
+            "endTime": "1200",
+            "weeks": [
+              1,
+              2,
+              3,
+              4,
+              5,
+              6,
+              7,
+              8,
+              9,
+              10,
+              11,
+              12,
+              13
+            ],
+            "venue": "E4-03-06",
+            "day": "Wednesday"
+          }
+        ]
+      },
+      "01": {
+        "size": 80,
+        "lessonType": "Laboratory",
+        "slots": [
+          {
+            "startTime": "0900",
+            "endTime": "1200",
+            "weeks": [
+              1,
+              2,
+              3,
+              4,
+              5,
+              6,
+              7,
+              8,
+              9,
+              10,
+              11,
+              12,
+              13
+            ],
+            "venue": "E4-03-06",
+            "day": "Monday"
+          }
+        ]
+      }
+    },
+    "LEC": {
+      "01": {
+        "size": 220,
+        "lessonType": "Lecture",
+        "slots": [
+          {
+            "startTime": "1700",
+            "endTime": "1800",
+            "weeks": [
+              1,
+              2,
+              3,
+              4,
+              5,
+              6,
+              7,
+              8,
+              9,
+              10,
+              11,
+              12,
+              13
+            ],
+            "venue": "LT6",
+            "day": "Monday"
+          },
+          {
+            "startTime": "0900",
+            "endTime": "1100",
+            "weeks": [
+              1,
+              2,
+              3,
+              4,
+              5,
+              6,
+              7,
+              8,
+              9,
+              10,
+              11,
+              12,
+              13
+            ],
+            "venue": "LT6",
+            "day": "Thursday"
+          }
+        ]
+      }
+    }
+  },
+  "EE4204": {
+    "PLEC": {
+      "01": {
+        "size": 250,
+        "lessonType": "Packaged Lecture",
+        "slots": [
+          {
+            "startTime": "1000",
+            "endTime": "1200",
+            "weeks": [
+              1,
+              2,
+              3,
+              4,
+              5,
+              6,
+              7,
+              8,
+              9,
+              10,
+              11,
+              12,
+              13
+            ],
+            "venue": "ENG-AUD",
+            "day": "Monday"
+          }
+        ]
+      }
+    },
+    "PTUT": {
+      "01": {
+        "size": 250,
+        "lessonType": "Packaged Tutorial",
+        "slots": [
+          {
+            "startTime": "1300",
+            "endTime": "1400",
+            "weeks": [
+              1,
+              2,
+              3,
+              4,
+              5,
+              6,
+              7,
+              8,
+              9,
+              10,
+              11,
+              12,
+              13
+            ],
+            "venue": "LT6",
+            "day": "Wednesday"
+          }
+        ]
+      }
+    }
+  },
+  "IE2141": {
+    "TUT": {
+      "01": {
+        "size": 50,
+        "lessonType": "Tutorial",
+        "slots": [
+          {
+            "startTime": "1600",
+            "endTime": "1800",
+            "weeks": [
+              3,
+              4,
+              5,
+              6,
+              7,
+              8,
+              9,
+              10,
+              11,
+              12,
+              13
+            ],
+            "venue": "E3-06-07",
+            "day": "Tuesday"
+          }
+        ]
+      },
+      "16": {
+        "size": 50,
+        "lessonType": "Tutorial",
+        "slots": [
+          {
+            "startTime": "1300",
+            "endTime": "1500",
+            "weeks": [
+              3,
+              4,
+              5,
+              6,
+              7,
+              8,
+              9,
+              10,
+              11,
+              12,
+              13
+            ],
+            "venue": "E1-06-01",
+            "day": "Friday"
+          }
+        ]
+      },
+      "08": {
+        "size": 50,
+        "lessonType": "Tutorial",
+        "slots": [
+          {
+            "startTime": "1000",
+            "endTime": "1200",
+            "weeks": [
+              3,
+              4,
+              5,
+              6,
+              7,
+              8,
+              9,
+              10,
+              11,
+              12,
+              13
+            ],
+            "venue": "E1-06-03",
+            "day": "Wednesday"
+          }
+        ]
+      },
+      "03": {
+        "size": 50,
+        "lessonType": "Tutorial",
+        "slots": [
+          {
+            "startTime": "1300",
+            "endTime": "1500",
+            "weeks": [
+              3,
+              4,
+              5,
+              6,
+              7,
+              8,
+              9,
+              10,
+              11,
+              12,
+              13
+            ],
+            "venue": "E1-06-08",
+            "day": "Tuesday"
+          }
+        ]
+      },
+      "15": {
+        "size": 50,
+        "lessonType": "Tutorial",
+        "slots": [
+          {
+            "startTime": "1300",
+            "endTime": "1500",
+            "weeks": [
+              3,
+              4,
+              5,
+              6,
+              7,
+              8,
+              9,
+              10,
+              11,
+              12,
+              13
+            ],
+            "venue": "E1-06-04",
+            "day": "Friday"
+          }
+        ]
+      },
+      "02": {
+        "size": 50,
+        "lessonType": "Tutorial",
+        "slots": [
+          {
+            "startTime": "1400",
+            "endTime": "1600",
+            "weeks": [
+              3,
+              4,
+              5,
+              6,
+              7,
+              8,
+              9,
+              10,
+              11,
+              12,
+              13
+            ],
+            "venue": "E3-06-07",
+            "day": "Tuesday"
+          }
+        ]
+      },
+      "17": {
+        "size": 50,
+        "lessonType": "Tutorial",
+        "slots": [
+          {
+            "startTime": "1500",
+            "endTime": "1700",
+            "weeks": [
+              3,
+              4,
+              5,
+              6,
+              7,
+              8,
+              9,
+              10,
+              11,
+              12,
+              13
+            ],
+            "venue": "E1-06-04",
+            "day": "Friday"
+          }
+        ]
+      },
+      "19": {
+        "size": 50,
+        "lessonType": "Tutorial",
+        "slots": [
+          {
+            "startTime": "1600",
+            "endTime": "1800",
+            "weeks": [
+              3,
+              4,
+              5,
+              6,
+              7,
+              8,
+              9,
+              10,
+              11,
+              12,
+              13
+            ],
+            "venue": "E3-06-01",
+            "day": "Friday"
+          }
+        ]
+      },
+      "09": {
+        "size": 50,
+        "lessonType": "Tutorial",
+        "slots": [
+          {
+            "startTime": "1100",
+            "endTime": "1300",
+            "weeks": [
+              3,
+              4,
+              5,
+              6,
+              7,
+              8,
+              9,
+              10,
+              11,
+              12,
+              13
+            ],
+            "venue": "E3-06-01",
+            "day": "Thursday"
+          }
+        ]
+      },
+      "11": {
+        "size": 50,
+        "lessonType": "Tutorial",
+        "slots": [
+          {
+            "startTime": "1400",
+            "endTime": "1600",
+            "weeks": [
+              3,
+              4,
+              5,
+              6,
+              7,
+              8,
+              9,
+              10,
+              11,
+              12,
+              13
+            ],
+            "venue": "LT7",
+            "day": "Thursday"
+          }
+        ]
+      },
+      "05": {
+        "size": 50,
+        "lessonType": "Tutorial",
+        "slots": [
+          {
+            "startTime": "1200",
+            "endTime": "1400",
+            "weeks": [
+              3,
+              4,
+              5,
+              6,
+              7,
+              8,
+              9,
+              10,
+              11,
+              12,
+              13
+            ],
+            "venue": "E1-06-03",
+            "day": "Wednesday"
+          }
+        ]
+      },
+      "07": {
+        "size": 50,
+        "lessonType": "Tutorial",
+        "slots": [
+          {
+            "startTime": "0900",
+            "endTime": "1100",
+            "weeks": [
+              3,
+              4,
+              5,
+              6,
+              7,
+              8,
+              9,
+              10,
+              11,
+              12,
+              13
+            ],
+            "venue": "E3-06-07",
+            "day": "Monday"
+          }
+        ]
+      },
+      "04": {
+        "size": 50,
+        "lessonType": "Tutorial",
+        "slots": [
+          {
+            "startTime": "1600",
+            "endTime": "1800",
+            "weeks": [
+              3,
+              4,
+              5,
+              6,
+              7,
+              8,
+              9,
+              10,
+              11,
+              12,
+              13
+            ],
+            "venue": "E1-06-01",
+            "day": "Tuesday"
+          }
+        ]
+      },
+      "06": {
+        "size": 50,
+        "lessonType": "Tutorial",
+        "slots": [
+          {
+            "startTime": "1300",
+            "endTime": "1500",
+            "weeks": [
+              3,
+              4,
+              5,
+              6,
+              7,
+              8,
+              9,
+              10,
+              11,
+              12,
+              13
+            ],
+            "venue": "E1-06-01",
+            "day": "Wednesday"
+          }
+        ]
+      },
+      "10": {
+        "size": 50,
+        "lessonType": "Tutorial",
+        "slots": [
+          {
+            "startTime": "1200",
+            "endTime": "1400",
+            "weeks": [
+              3,
+              4,
+              5,
+              6,
+              7,
+              8,
+              9,
+              10,
+              11,
+              12,
+              13
+            ],
+            "venue": "E1-06-04",
+            "day": "Thursday"
+          }
+        ]
+      },
+      "18": {
+        "size": 50,
+        "lessonType": "Tutorial",
+        "slots": [
+          {
+            "startTime": "1400",
+            "endTime": "1600",
+            "weeks": [
+              3,
+              4,
+              5,
+              6,
+              7,
+              8,
+              9,
+              10,
+              11,
+              12,
+              13
+            ],
+            "venue": "E3-06-01",
+            "day": "Friday"
+          }
+        ]
+      },
+      "12": {
+        "size": 50,
+        "lessonType": "Tutorial",
+        "slots": [
+          {
+            "startTime": "1600",
+            "endTime": "1800",
+            "weeks": [
+              3,
+              4,
+              5,
+              6,
+              7,
+              8,
+              9,
+              10,
+              11,
+              12,
+              13
+            ],
+            "venue": "E1-06-04",
+            "day": "Thursday"
+          }
+        ]
+      },
+      "14": {
+        "size": 50,
+        "lessonType": "Tutorial",
+        "slots": [
+          {
+            "startTime": "1100",
+            "endTime": "1300",
+            "weeks": [
+              3,
+              4,
+              5,
+              6,
+              7,
+              8,
+              9,
+              10,
+              11,
+              12,
+              13
+            ],
+            "venue": "E1-06-01",
+            "day": "Wednesday"
+          }
+        ]
+      },
+      "13": {
+        "size": 50,
+        "lessonType": "Tutorial",
+        "slots": [
+          {
+            "startTime": "1600",
+            "endTime": "1800",
+            "weeks": [
+              3,
+              4,
+              5,
+              6,
+              7,
+              8,
+              9,
+              10,
+              11,
+              12,
+              13
+            ],
+            "venue": "E1-06-05",
+            "day": "Thursday"
+          }
+        ]
+      }
+    },
+    "LEC": {
+      "1": {
+        "size": 500,
+        "lessonType": "Lecture",
+        "slots": [
+          {
+            "startTime": "1600",
+            "endTime": "1800",
+            "weeks": [
+              1,
+              2,
+              3,
+              4,
+              5,
+              6,
+              7,
+              8,
+              9,
+              10,
+              11,
+              12,
+              13
+            ],
+            "venue": "E-Learn_A",
+            "day": "Monday"
+          }
+        ]
+      },
+      "2": {
+        "size": 500,
+        "lessonType": "Lecture",
+        "slots": [
+          {
+            "startTime": "1000",
+            "endTime": "1200",
+            "weeks": [
+              1,
+              2,
+              3,
+              4,
+              5,
+              6,
+              7,
+              8,
+              9,
+              10,
+              11,
+              12,
+              13
+            ],
+            "venue": "E-Learn_A",
+            "day": "Tuesday"
+          }
+        ]
+      }
+    }
+  }
+}
