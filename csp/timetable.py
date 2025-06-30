@@ -2,7 +2,9 @@ class Timetable:
     def __init__(self, semester):
         self.classes = {}
         self.semester = semester
+        self.assignment = set()
     def add_class(self, module_code: str, lesson_type: str, class_no: str):
+        self.assignment.add((module_code, lesson_type, class_no))
         if not module_code in self.classes:
             self.classes[module_code] = {
                 lesson_type: class_no
@@ -11,6 +13,10 @@ class Timetable:
             self.classes[module_code][lesson_type] = class_no
         else:
             raise Exception(f"2 {lesson_type} selected for {module_code}")
+
+
+    def get_assignment(self):
+        return frozenset(self.assignment)
     
     def get_url(self):
         url = "https://nusmods.com/timetable/sem-2/share?" if self.semester == 2 else "https://nusmods.com/timetable/sem-1/share?" 

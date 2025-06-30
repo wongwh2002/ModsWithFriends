@@ -1,6 +1,6 @@
 CONFIG = {
     "semester": 2,
-    "users": ["wx", "nigel", "weng"],
+    "users": ["wx", "weng", "nigel"],
     "wx": {
         "modules" : ['GESS1002', 'MA3205', 'CS3281', 'CG2023', 'CG2027', 'CG2028'],
 
