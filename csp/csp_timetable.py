@@ -301,11 +301,7 @@ def backtrack(csp: Csp) -> None:
         csp.has_lesson_in_window.update(prev_lunch)
     return
 
-def main():
-    sem = CONFIG["semester"]
-
-    csp = Csp(CONFIG, max_solutions=10)
-
+def filter_invalid_slots(csp):
     for user in csp.users:
         config = csp.config[user]
         earliest_start_time = config["earliest_start"] if config["enable_late_start"] else None
@@ -343,8 +339,7 @@ def main():
                     # Check that domain is not empty:
                     if len(lesson_type_val) == 0:
                         print(f"No slots available for {user} {mod_key} {lesson_type_key}")
-                        print("no solution")
-                        return
+                        return False
 
                 # Assign slots that only have 1 possible value
                 if len(lesson_type_val) == 1:
@@ -353,7 +348,19 @@ def main():
                     if not is_valid:
                         # print(json.dumps(csp.domains, indent=2))
                         print(f"no solution after assigning {user} {mod_key} {lesson_type_key}")
-                        return
+                        return False
+    return True
+
+
+def main():
+    sem = CONFIG["semester"]
+
+    csp = Csp(CONFIG, max_solutions=10)
+
+
+    if not filter_invalid_slots(csp):
+        print("NO SOLUTION")
+        return
             
     backtrack(csp)
     if len(csp.all_solutions) == 0:

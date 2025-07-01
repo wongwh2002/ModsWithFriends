@@ -47,7 +47,7 @@ CONFIG = {
             'CS2030',
         ],
 
-        "earliest_start": 10 * 60,  # Earliest class start time (10:00 AM in minutes)
+        "earliest_start": 11 * 60,  # Earliest class start time (10:00 AM in minutes)
         "latest_end": 18 * 60,  # Latest class end time (6:00 PM in minutes)
 
         "lunch_window": (12 * 60, 15 * 60),  # Preferred lunch window (11AM-1PM)
@@ -58,9 +58,9 @@ CONFIG = {
             "EE2211": ["Lecture"],
         },
         "compulsory_classes": {
-            "CG2023": {
-                "Lecture": "03",
-            }
+            # "CS3219": {
+            #     "Tutorial": "13"
+            # }
         },
         "weights": {  # Weights for optimization criteria
             "morning_class": 1,  # Preference for morning classes
