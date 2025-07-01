@@ -1,6 +1,6 @@
 CONFIG = {
     "semester": 1,
-    "users": ["A", "B", "C"],
+    "users": ["B"],
     "A": {
         "modules" : [
             "CG2271",
@@ -50,9 +50,9 @@ CONFIG = {
         "earliest_start": 10 * 60,  # Earliest class start time (10:00 AM in minutes)
         "latest_end": 18 * 60,  # Latest class end time (6:00 PM in minutes)
 
-        "lunch_window": (12 * 60, 14 * 60),  # Preferred lunch window (11AM-1PM)
+        "lunch_window": (12 * 60, 15 * 60),  # Preferred lunch window (11AM-1PM)
         "lunch_duration": 60,  # Lunch break duration (60 minutes)
-        "days_without_lunch": [1],  # Days where lunch break isn't required
+        "days_without_lunch": [],  # Days where lunch break isn't required
         "days_without_class": [],
         "optional_classes": {  # Classes that can be optionally included
             "EE2211": ["Lecture"],

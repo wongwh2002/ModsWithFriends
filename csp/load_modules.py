@@ -21,7 +21,7 @@ def load_mods(modules: list[str], semester) -> tuple[dict, dict, dict]:
     # end_time_dict = defaultdict(lambda: defaultdict(list))
     for mod in modules:
         print(f"loading data for {mod}")
-        data = requests.get(f"https://api.nusmods.com/v2/2024-2025/modules/{mod}.json").json()
+        data = requests.get(f"https://api.nusmods.com/v2/2025-2026/modules/{mod}.json").json()
 
         if semester == 2:
             semester_timetable: list = data["semesterData"][0]["timetable"] if data["semesterData"][0]["semester"] == 2 else data["semesterData"][1]["timetable"]
