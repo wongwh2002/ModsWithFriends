@@ -34,7 +34,10 @@ COMMON_LESSON_TYPES = ['LAB', 'TUT']
 
 
 class Csp:
-    def __init__(self, config):
+    def __init__(self, config, max_solutions = None, max_solutions_per_user = None):
+
+        self.max_solutions = max_solutions
+        self.max_solutions_per_user = max_solutions_per_user
 
         self.config = config
         self.users = self.config["users"]
@@ -89,7 +92,6 @@ class Csp:
                     self.optional_classes[user].add((module_code, abbreviations[lesson_type]))
         
 
-        # self.max_solutions = 10 
         self.max_solutions_per_user = 10 
 
         self.lunch_days: dict[str, list[str]] = {}
@@ -215,7 +217,7 @@ def update_domains(csp: Csp, user: str, mod: str, lesson_type: str, class_no: st
         for affected_day, start_time, end_time in affected_days:
             if affected_day in csp.lunch_days[user]:
                 if not has_consecutive_slots(csp.has_lesson_in_window[user][affected_day], min_no_of_consecutive_slots):
-                    # print(f"No lunch slot for {affected_day}")
+                    print(f"No lunch slot for {user} on {affected_day}")
                     return False
     for (unassigned_user, unassigned_mod, unassigned_lesson_type) in csp.unassigned:
         if unassigned_user == user:
@@ -237,7 +239,7 @@ def update_domains(csp: Csp, user: str, mod: str, lesson_type: str, class_no: st
 
 
             if len(csp.domains[user][unassigned_mod][unassigned_lesson_type]) == 0:
-                # print(f"No available slots for {user} {unassigned_mod} {unassigned_lesson_type}")
+                print(f"No available slots for {user} {unassigned_mod} {unassigned_lesson_type}")
                 return False
     return True
 
@@ -286,9 +288,9 @@ def backtrack(csp: Csp) -> None:
         if is_valid:
             csp.reached_states.add(get_current_state(csp.assigned))
             backtrack(csp)
-            # if csp.max_solutions is not None and len(csp.all_solutions) >= csp.max_solutions:
-            #     return
-            if all(len(csp.solutions[user]) >= csp.max_solutions_per_user for user in csp.users):
+            if csp.max_solutions is not None and len(csp.all_solutions) >= csp.max_solutions:
+                return
+            if csp.max_solutions_per_user is not None and all(len(csp.solutions[user]) >= csp.max_solutions_per_user for user in csp.users):
                 return
         # Else unassign and restore 
         for shared_user in shared_users:
@@ -302,7 +304,7 @@ def backtrack(csp: Csp) -> None:
 def main():
     sem = CONFIG["semester"]
 
-    csp = Csp(CONFIG)
+    csp = Csp(CONFIG, max_solutions=10)
 
     for user in csp.users:
         config = csp.config[user]
@@ -349,6 +351,7 @@ def main():
                     assign(csp, user, mod_key, lesson_type_key, lesson_type_val[0][0])
                     is_valid = update_domains(csp, user, mod_key, lesson_type_key, lesson_type_val[0][0])
                     if not is_valid:
+                        # print(json.dumps(csp.domains, indent=2))
                         print(f"no solution after assigning {user} {mod_key} {lesson_type_key}")
                         return
             
@@ -364,6 +367,7 @@ def main():
             f.write(f"\n\nSolution {i + 1}:")
             for user, timetable in new_solution.timetables.items():
                 f.write(f"\n{user}: {timetable.get_url()}")
+        print("DONE")
 
 
 
