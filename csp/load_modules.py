@@ -11,6 +11,11 @@ abbreviations = {
     "Packaged Tutorial": "PTUT",
     "Sectional Teaching": "SEC",
     "Recitation": "REC",
+    "Design Lecture": "DLEC",
+    "Seminar-style Module Teaching": "SEM",
+    "Tutorial Type 2": "TUT2",
+    "Tutorial Type 3": "TUT3",
+    "Workshop": "WS",
 }
 
 reverse_abbreviations = {v: k for k, v in abbreviations.items()}
