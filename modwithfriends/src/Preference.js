@@ -133,11 +133,14 @@ function Preference({username, setGenerationDone, setGenerationError}) {
   }, []);
 
   useEffect(() => {
-    let updatedRooms = selectedMods.map(mod => ({
-      module : mod.moduleCode,
-      users : []
-    }));
-    setRooms(updatedRooms);
+    let updatedRooms = [];
+    if (rooms.length === 0) {
+      updatedRooms = selectedMods.map(mod => ({
+        module : mod.moduleCode,
+        users : []
+      }));
+      setRooms(updatedRooms);
+    }
   }, [isPreference]);
 
   const autocomplete = (value) => {
@@ -314,7 +317,7 @@ function Preference({username, setGenerationDone, setGenerationError}) {
           </div>
           <div className='lunch-option flex-row'>
             <p className='lo'>Lunch?</p>
-            <input className='lo-checkbox' type="checkbox" onClick={() => {setLunchCheck(!lunchCheck)}}></input>
+            <input className='lo-checkbox' type="checkbox" checked={lunchCheck} onClick={() => {setLunchCheck(!lunchCheck)}}></input>
           </div>
           {lunchCheck ? <>
           <div className='lunch-timing flex-row'>
