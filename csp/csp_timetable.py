@@ -367,8 +367,6 @@ def solve_for_timetables(config: dict, max_solutions: int = None, max_solutions_
 
 
 def main():
-    sem = CONFIG["semester"]
-
     solutions = solve_for_timetables(CONFIG, max_solutions=10)
 
     with open("solutions.txt", "w") as f:
