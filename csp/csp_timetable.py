@@ -89,7 +89,8 @@ class Csp:
                     self.optional_classes[user].add((module_code, abbreviations[lesson_type]))
         
 
-        self.max_solutions = 1000 
+        # self.max_solutions = 10 
+        self.max_solutions_per_user = 10 
 
         self.lunch_days: dict[str, list[str]] = {}
         for user in self.users:
@@ -110,6 +111,10 @@ class Csp:
                 for day in self.lunch_days[user]:
                     self.has_lesson_in_window[user][day] = [False] * len(self.possible_lunch_start_times[user])
         
+        self.solutions: dict[str, set[frozenset[tuple[str, str, str]]]] = {} 
+        for user in self.users:
+            self.solutions[user] = set()
+
     
     @staticmethod
     def get_start_times(lunch_window: tuple[int, int]) -> list[str]:
@@ -200,7 +205,7 @@ def has_consecutive_slots(arr: list[bool], n: int) -> bool:
 
 
 def update_domains(csp: Csp, user: str, mod: str, lesson_type: str, class_no: str) -> bool:
-    print(f"\nUpdating domains after assigning {user} {mod} {lesson_type} {class_no}")
+    # print(f"\nUpdating domains after assigning {user} {mod} {lesson_type} {class_no}")
     # Returns False if there is a new domain that is empty or no lunch break, True otherwise
     affected_days = [(slot["day"], slot["startTime"], slot["endTime"]) for slot in csp.data[mod][lesson_type][class_no]["slots"]]
     if csp.config[user]["enable_lunch_break"] and (mod, lesson_type) not in csp.optional_classes[user]:
@@ -210,7 +215,7 @@ def update_domains(csp: Csp, user: str, mod: str, lesson_type: str, class_no: st
         for affected_day, start_time, end_time in affected_days:
             if affected_day in csp.lunch_days[user]:
                 if not has_consecutive_slots(csp.has_lesson_in_window[user][affected_day], min_no_of_consecutive_slots):
-                    print(f"No lunch slot for {affected_day}")
+                    # print(f"No lunch slot for {affected_day}")
                     return False
     for (unassigned_user, unassigned_mod, unassigned_lesson_type) in csp.unassigned:
         if unassigned_user == user:
@@ -232,7 +237,7 @@ def update_domains(csp: Csp, user: str, mod: str, lesson_type: str, class_no: st
 
 
             if len(csp.domains[user][unassigned_mod][unassigned_lesson_type]) == 0:
-                print(f"No available slots for {user} {unassigned_mod} {unassigned_lesson_type}")
+                # print(f"No available slots for {user} {unassigned_mod} {unassigned_lesson_type}")
                 return False
     return True
 
@@ -253,10 +258,16 @@ def get_shared_users(csp: Csp, mod: str, user: str) -> list[str]:
 
 def backtrack(csp: Csp) -> None:
     if len(csp.unassigned) == 0:
-        print(len(csp.all_solutions))
+        # print(len(csp.all_solutions))
         csp.all_solutions.append((copy.deepcopy(csp.assigned)))
+        new_solution = Solution(csp.users, csp.config["semester"])
+        for assigned_class in csp.assigned:
+            new_solution.add_class_for_user(assigned_class[0], assigned_class[1], assigned_class[2], assigned_class[3])
+        for user in csp.users:
+            csp.solutions[user].add(new_solution.timetables[user].get_assignment())
         return
-    curr_user, curr_mod, curr_lesson_type = next(iter(csp.unassigned)) # Take any element from unassigned
+    next_item_to_assign = next(iter(csp.unassigned))
+    curr_user, curr_mod, curr_lesson_type =  next_item_to_assign # Take any element from unassigned
     csp.domains[curr_user][curr_mod][curr_lesson_type] = sorted(csp.domains[curr_user][curr_mod][curr_lesson_type], key=lambda x: -x[1])
     domain = csp.domains[curr_user][curr_mod][curr_lesson_type]
     shared_users = get_shared_users(csp, curr_mod, curr_user)
@@ -275,7 +286,9 @@ def backtrack(csp: Csp) -> None:
         if is_valid:
             csp.reached_states.add(get_current_state(csp.assigned))
             backtrack(csp)
-            if csp.max_solutions is not None and len(csp.all_solutions) >= csp.max_solutions:
+            # if csp.max_solutions is not None and len(csp.all_solutions) >= csp.max_solutions:
+            #     return
+            if all(len(csp.solutions[user]) >= csp.max_solutions_per_user for user in csp.users):
                 return
         # Else unassign and restore 
         for shared_user in shared_users:
@@ -351,6 +364,7 @@ def main():
             f.write(f"\n\nSolution {i + 1}:")
             for user, timetable in new_solution.timetables.items():
                 f.write(f"\n{user}: {timetable.get_url()}")
+
 
 
 if __name__ == "__main__":

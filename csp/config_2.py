@@ -1,19 +1,25 @@
 CONFIG = {
-    "semester": 2,
-    "users": ["wx", "nigel", "weng"],
-    "wx": {
-        "modules" : ['GESS1002', 'MA3205', 'CS3281', 'CG2023', 'CG2027', 'CG2028'],
+    "semester": 1,
+    "users": ["A", "B", "C"],
+    "A": {
+        "modules" : [
+            "CG2271",
+            "CS2113",
+            "ST2334",
+            "EE2026",
+            "CS1231",
+            "ES2631"
+        ],
 
         "earliest_start": 10 * 60,  # Earliest class start time (10:00 AM in minutes)
         "latest_end": 18 * 60,  # Latest class end time (6:00 PM in minutes)
 
-        "lunch_window": (12 * 60, 16 * 60),  # Preferred lunch window (11AM-1PM)
+        "lunch_window": (12 * 60, 14 * 60),  # Preferred lunch window (11AM-1PM)
         "lunch_duration": 60,  # Lunch break duration (60 minutes)
-        "days_without_lunch": [5],  # Days where lunch break isn't required
+        "days_without_lunch": [3, 4, 5],  # Days where lunch break isn't required
         "days_without_class": [],
         "optional_classes": {  # Classes that can be optionally included
-            "CG2027": ["Lecture"],
-            "CG2028": ["Lecture"],
+            
         },
         "compulsory_classes": {
             "CG2023": {
@@ -32,17 +38,24 @@ CONFIG = {
         "enable_weights": True,  # Whether to minimize day length
     },
 
-    "nigel": {
-        "modules" : ['CDE2000', 'CDE2310', 'CDE3301', 'CG2023', 'CS3240', 'IE2141', 'EE2026', 'EE4204'],
+    "B": {
+        "modules" : [
+            'CS3219',
+            'CS3243',
+            'EE2211',
+            'CS3230',
+            'CS2030',
+        ],
 
         "earliest_start": 10 * 60,  # Earliest class start time (10:00 AM in minutes)
         "latest_end": 18 * 60,  # Latest class end time (6:00 PM in minutes)
 
         "lunch_window": (12 * 60, 14 * 60),  # Preferred lunch window (11AM-1PM)
         "lunch_duration": 60,  # Lunch break duration (60 minutes)
-        "days_without_lunch": [],  # Days where lunch break isn't required
+        "days_without_lunch": [1],  # Days where lunch break isn't required
         "days_without_class": [],
         "optional_classes": {  # Classes that can be optionally included
+            "EE2211": ["Lecture"],
         },
         "compulsory_classes": {
             "CG2023": {
@@ -55,21 +68,27 @@ CONFIG = {
             "day_length_penalty": -0.01,  # Penalty for long days
             "day_present_penalty": -10,  # Penalty for having classes on a day
         },
-        "enable_lunch_break": False,  # Whether to enforce lunch breaks
+        "enable_lunch_break": True,  # Whether to enforce lunch breaks
         "enable_late_start": False,  # Whether to enforce earliest start time
         "enable_early_end": False,  # Whether to enforce latest end time
         "enable_weights": True,  # Whether to minimize day length
     },
 
-    "weng": {
-        "modules" : ['CG2027', 'CG2028', 'LAM1201', 'CG2023', 'IE2141', 'CDE2000', 'CDE3301'],
+    "C": {
+        "modules" : [
+            'CS2040C',
+            'CS2107',
+            'EE2026',
+            'ST2334',
+            'ES2631',
+        ],
 
         "earliest_start": 10 * 60,  # Earliest class start time (10:00 AM in minutes)
         "latest_end": 18 * 60,  # Latest class end time (6:00 PM in minutes)
 
         "lunch_window": (12 * 60, 14 * 60),  # Preferred lunch window (11AM-1PM)
         "lunch_duration": 60,  # Lunch break duration (60 minutes)
-        "days_without_lunch": [],  # Days where lunch break isn't required
+        "days_without_lunch": [4],  # Days where lunch break isn't required
         "days_without_class": [],
         "optional_classes": {  # Classes that can be optionally included
         },
@@ -82,16 +101,16 @@ CONFIG = {
             "day_length_penalty": -0.01,  # Penalty for long days
             "day_present_penalty": -10,  # Penalty for having classes on a day
         },
-        "enable_lunch_break": False,  # Whether to enforce lunch breaks
+        "enable_lunch_break": True,  # Whether to enforce lunch breaks
         "enable_late_start": False,  # Whether to enforce earliest start time
         "enable_early_end": False,  # Whether to enforce latest end time
         "enable_weights": True,  # Whether to minimize day length
     },
 
     "shared": {
-        "CG2023": [["wx", "nigel"]], # Assume wont have the case where [["A", "B"], ["A", "C"]] cuz in this case it would be [["A", "B", "C"]]
-        "CG2027": [["wx", "weng"]],
-        "CG2028": [["wx", "weng"]],
-        "IE2141": [["weng", "nigel"]]
+        # "CG2024": [["wx", "nigel"]], # Assume wont have the case where [["A", "B"], ["A", "C"]] cuz in this case it would be [["A", "B", "C"]]
+        # "CG2028": [["wx", "weng"]],
+        # "CG2029": [["wx", "weng"]],
+        # "IE2142": [["weng", "nigel"]]
     },
 }
