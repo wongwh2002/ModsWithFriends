@@ -81,7 +81,7 @@ class Csp:
                             self.domains[user][mod][lesson_type].append((class_no, 0))
         
 
-        self.all_solutions = []
+        self.all_solutions: list[Solution] = []
         self.reached_states: set[tuple[tuple[str, str, str, str]]] = set()
 
         self.optional_classes: defaultdict[str, set[tuple[str, str]]] = defaultdict(set)
@@ -261,12 +261,12 @@ def get_shared_users(csp: Csp, mod: str, user: str) -> list[str]:
 def backtrack(csp: Csp) -> None:
     if len(csp.unassigned) == 0:
         # print(len(csp.all_solutions))
-        csp.all_solutions.append((copy.deepcopy(csp.assigned)))
         new_solution = Solution(csp.users, csp.config["semester"])
         for assigned_class in csp.assigned:
             new_solution.add_class_for_user(assigned_class[0], assigned_class[1], assigned_class[2], assigned_class[3])
         for user in csp.users:
             csp.solutions[user].add(new_solution.timetables[user].get_assignment())
+        csp.all_solutions.append(new_solution)
         return
     next_item_to_assign = next(iter(csp.unassigned))
     curr_user, curr_mod, curr_lesson_type =  next_item_to_assign # Take any element from unassigned
@@ -352,27 +352,29 @@ def filter_invalid_slots(csp):
     return True
 
 
-def main():
-    sem = CONFIG["semester"]
-
-    csp = Csp(CONFIG, max_solutions=10)
-
+def solve_for_timetables(config: dict, max_solutions: int = None, max_solutions_per_user: int = None):
+    csp = Csp(config, max_solutions=max_solutions, max_solutions_per_user=max_solutions_per_user)
 
     if not filter_invalid_slots(csp):
         print("NO SOLUTION")
-        return
             
     backtrack(csp)
     if len(csp.all_solutions) == 0:
         print("no solution, len=0")
-        return
+
+    return csp.all_solutions
+
+
+
+def main():
+    sem = CONFIG["semester"]
+
+    solutions = solve_for_timetables(CONFIG, max_solutions=10)
+
     with open("solutions.txt", "w") as f:
-        for i, solution in enumerate(csp.all_solutions):
-            new_solution = Solution(csp.users, sem)
-            for assigned_class in solution:
-                new_solution.add_class_for_user(assigned_class[0], assigned_class[1], assigned_class[2], assigned_class[3])
+        for i, solution in enumerate(solutions):
             f.write(f"\n\nSolution {i + 1}:")
-            for user, timetable in new_solution.timetables.items():
+            for user, timetable in solution.timetables.items():
                 f.write(f"\n{user}: {timetable.get_url()}")
         print("DONE")
 
