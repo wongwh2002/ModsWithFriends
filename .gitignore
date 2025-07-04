@@ -1,2 +1,6 @@
 genTimetable2.py
 genTimetable2.py
+*/__pycache__/*
+*.pyc
+*/node_modules/*
+__pycache__/*

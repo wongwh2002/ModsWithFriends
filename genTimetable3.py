@@ -23,7 +23,7 @@ CONFIG = {
         # "CS3281": ["Lecture"],
     },
     "compulsory_classes": {
-        "CG2023": {"Lecture": "01"},
+        # "CG2023": {"Lecture": "01"},
         # "CDE3301": {"Laboratory": "G10"},
     },
     "teaching_assistant": {"CG2111A": {"Laboratory": "L03"}},
@@ -41,7 +41,7 @@ CONFIG = {
 
 
 def print_and_write_to_file(
-    solution_printer, isPrint, file_path="timetable_solution.txt"
+    solution_printer, best_solution, isPrint, file_path="timetable_solution.txt"
 ):
     """
     Prints and writes solutions to a file.
@@ -53,6 +53,13 @@ def print_and_write_to_file(
     """
     if isPrint:
         print(f"Found {len(solution_printer.solutions)} solutions:")
+        for solution in best_solution.solutions:
+            print(f"\nSolution {solution['solution_number']}:")
+            print("NUSMods Link:", solution["nusmods_link"])
+            print("Selected Classes:")
+            for module, classes in solution["selected_classes"].items():
+                print(f"  {module}: {', '.join(classes)}")
+            print(solution["score"])
         for solution in solution_printer.solutions:
             print(f"\nSolution {solution['solution_number']}:")
             print("NUSMods Link:", solution["nusmods_link"])
@@ -69,10 +76,18 @@ def print_and_write_to_file(
     # Write solutions to file
     with open(file_path, "w") as f:
         toWrite = ""
-        for index, solution in enumerate(solution_printer.solutions):
+
+        # Combine and sort all solutions by score (descending)
+        all_solutions = best_solution.solutions + solution_printer.solutions
+        sorted_solutions = sorted(
+            all_solutions, key=lambda s: s.get("score", float("-inf")), reverse=True
+        )
+
+        for index, solution in enumerate(sorted_solutions):
             toWrite += f"sol num: {index}: {solution['nusmods_link']}\n"
-            if "score" in solution:  # Print score if available
+            if "score" in solution:
                 toWrite += f"Score: {solution['score']}\n"
+
         f.write(toWrite)
 
 
@@ -220,7 +235,7 @@ class TimetableSolutionPrinter(cp_model.CpSolverSolutionCallback):
         if solution_signature in self.seen_solutions:
             return
         self.seen_solutions.add(solution_signature)
-        pprint(self.seen_solutions)
+        # pprint(self.seen_solutions)
         self._solution_count += 1
         # Generate NUSMods URL
         url = f"https://nusmods.com/timetable/sem-{self._semester}/share?"
@@ -230,7 +245,6 @@ class TimetableSolutionPrinter(cp_model.CpSolverSolutionCallback):
 
         # Calculate score for this solution
         score = self.calculate_solution_score(selection_dict, schedule)
-        # print("AHHHHHH", self.ObjectiveValue())
 
         # Store solution
         self.solutions.append(
@@ -545,206 +559,31 @@ def main(link=None, modules=None, isLink=False, semester=2):
             sum += i
         return int(sum)
 
-    class TimetableSolutionPrinter(cp_model.CpSolverSolutionCallback):
-        """
-        Custom solution printer that collects and formats timetable solutions.
-        Also calculates objective scores for each solution.
-        """
-
-        def __init__(
-            self, class_vars, class_groups, all_sessions, semester, limit, config, model
-        ):
-            cp_model.CpSolverSolutionCallback.__init__(self)
-            self._class_vars = class_vars
-            self._class_groups = class_groups
-            self._all_sessions = all_sessions
-            self._semester = semester
-            self._config = config
-            self._solution_count = 0
-            self._solution_limit = limit
-            self.solutions = []
-            self.seen_solutions = set()
-            self.model = model
-
-            # Mapping from lesson types to abbreviations
-            self.lesson_dict = {
-                "Laboratory": "LAB",
-                "Lecture": "LEC",
-                "Tutorial": "TUT",
-                "Sectional Teaching": "SEC",
-                "Packaged Lecture": "PLEC",
-                "Packaged Tutorial": "PTUT",
-            }
-
-            # Precompute optional class keys for faster lookup
-            self.optional_class_keys = set()
-            for module, lesson_types in config["optional_classes"].items():
-                for lesson_type in lesson_types:
-                    self.optional_class_keys.update(
-                        key
-                        for key in class_vars
-                        if key[0] == module and key[1] == lesson_type
-                    )
-
-        def calculate_solution_score(self, selected_classes, schedule):
-            """
-            Calculates the objective score for a solution.
-            """
-            score = 0
-            day_map = {
-                "Monday": 0,
-                "Tuesday": 1,
-                "Wednesday": 2,
-                "Thursday": 3,
-                "Friday": 4,
-            }
-
-            # Track day information for calculating penalties
-            day_info = {
-                day: {"present": False, "start": 24 * 60, "end": 0}
-                for day in day_map.keys()
-            }
-
-            # Process all sessions in the schedule
-            for day, sessions in schedule.items():
-                day_idx = day_map[day]
-
-                for session in sessions:
-                    class_key = (
-                        session["module"],
-                        session["lesson_type"],
-                        session["class_no"],
-                    )
-                    if class_key in self.optional_class_keys:
-                        continue  # Skip optional classes for scoring
-
-                    # Parse time
-                    start_str, end_str = session["time"].split("-")
-                    start = int(start_str.split(":")[0]) * 60 + int(
-                        start_str.split(":")[1]
-                    )
-                    end = int(end_str.split(":")[0]) * 60 + int(end_str.split(":")[1])
-
-                    # Add morning/afternoon weights
-                    if start >= 12 * 60:  # Afternoon
-                        score += self._config["weights"]["afternoon_class"]
-                    else:
-                        score += self._config["weights"]["morning_class"]
-
-                    # Track day bounds
-                    day_info[day]["start"] = min(day_info[day]["start"], start)
-                    day_info[day]["end"] = max(day_info[day]["end"], end)
-                    day_info[day]["present"] = True
-
-            # Add day penalties
-            for day, info in day_info.items():
-                if info["present"]:
-                    # Day length penalty
-                    day_length = info["end"] - info["start"]
-                    score += self._config["weights"]["day_length_penalty"] * day_length
-
-                    # Day presence penalty
-                    score += self._config["weights"]["day_present_penalty"]
-
-            return score
-
-        def on_solution_callback(self):
-            """Called whenever a new solution is found."""
-
-            selection_dict = {}
-            schedule = defaultdict(list)
-
-            # Process selected classes
-            for class_key, var in self._class_vars.items():
-                if self.Value(var):
-                    module, lesson_type, class_no = class_key
-                    if module in selection_dict:
-                        selection_dict[module].append(
-                            f"{self.lesson_dict[lesson_type]}:{class_no}"
-                        )
-                    else:
-                        selection_dict[module] = [
-                            f"{self.lesson_dict[lesson_type]}:{class_no}"
-                        ]
-
-                    # Add to schedule
-                    for sid in self._class_groups[class_key]:
-                        if self.Value(self._all_sessions[sid]["id"]):
-                            session = self._all_sessions[sid]
-                            schedule[session["day_name"]].append(
-                                {
-                                    "module": session["module"],
-                                    "lesson_type": session["lesson_type"],
-                                    "class_no": session["class_no"],
-                                    "time": f"{session['start']//60:02d}:{session['start']%60:02d}-{session['end']//60:02d}:{session['end']%60:02d}",
-                                    "venue": session["venue"],
-                                    "weeks": session["weeks"],
-                                }
-                            )
-
-            # Generate a tuple to uniquely identify the solution
-            solution_signature = tuple(
-                sorted((k, tuple(sorted(v))) for k, v in selection_dict.items())
-            )
-
-            # Skip if already seen
-            if solution_signature in self.seen_solutions:
-                return
-            self.seen_solutions.add(solution_signature)
-            pprint(self.seen_solutions)
-            self._solution_count += 1
-            # Generate NUSMods URL
-            url = f"https://nusmods.com/timetable/sem-{self._semester}/share?"
-            for key, value in selection_dict.items():
-                url += f"{key}={','.join(value)}&"
-            url = url[:-1]  # Remove trailing &
-
-            # Calculate score for this solution
-            score = self.calculate_solution_score(selection_dict, schedule)
-            # print("AHHHHHH", self.ObjectiveValue())
-
-            # Store solution
-            self.solutions.append(
-                {
-                    "solution_number": self._solution_count,
-                    "nusmods_link": url,
-                    "schedule": dict(schedule),
-                    "selected_classes": selection_dict,
-                    "score": round(score, 2),  # Include the calculated score
-                }
-            )
-
-            if self._solution_count >= self._solution_limit:
-                self.StopSearch()
-
-            # exclusion = []
-            # for class_key, var in self._class_vars.items():
-            #     if self.Value(var):
-            #         exclusion.append(var)
-            # self.model.AddBoolOr([var.Not() for var in exclusion])
-
-        def get_last_exclusion_clause(self):
-            exclusion = []
-            for class_key, var in self._class_vars.items():
-                if self.Value(var):
-                    exclusion.append(var)
-            return exclusion
-
-        # Set objective to maximize
-
+    # Set objective to maximize
     if CONFIG["enable_weights"]:
         model.Maximize(sum(objective_terms))
 
     # Solve the model
     solver = cp_model.CpSolver()
-    solution_limit = 10
+    solution_limit = 100
 
     # First solve to find optimal solution
     solver.parameters.random_seed = 88
     solver.parameters.enumerate_all_solutions = False  # Disable for first solve
-    solver.parameters.max_time_in_seconds = 60.0
+    solver.parameters.max_time_in_seconds = 10.0
 
     status = solver.Solve(model)
+    best_solution_printer = TimetableSolutionPrinter(
+        class_vars,
+        class_groups,
+        all_sessions,
+        semester,
+        solution_limit,
+        CONFIG,
+        model,
+    )
+
+    print_and_write_to_file(best_solution_printer, best_solution_printer, True)
 
     if status == cp_model.OPTIMAL:
         best_val = solver.ObjectiveValue()
@@ -755,58 +594,41 @@ def main(link=None, modules=None, isLink=False, semester=2):
         upper_bound = int(best_val * (1 + tolerance))
 
         # Create a new variable for the total objective
+
         model.ClearObjective()
 
-        model.Add(sum(objective_terms) >= -2000)
+        solver = cp_model.CpSolver()
+        solver.parameters.random_seed = 42  # Change seed to vary solutions
+        solver.parameters.use_phase_saving = False  # Disable heuristic memory
+        solver.parameters.enumerate_all_solutions = False  # Disable for first solve
+        solver.parameters.max_time_in_seconds = 300.0
+
+        # model.Add(sum(objective_terms) >= -20000)
 
         # Now find multiple solutions within the range
+
         solver.parameters.enumerate_all_solutions = True
-        solution_printer = TimetableSolutionPrinter()
+        solution_printer = TimetableSolutionPrinter(
+            class_vars,
+            class_groups,
+            all_sessions,
+            semester,
+            solution_limit,
+            CONFIG,
+            model,
+        )
         solver.Solve(model, solution_printer)
-
-        while len(solution_printer.solutions) < 30:
-            exclusion_clause = solution_printer.get_last_exclusion_clause()
-            if not exclusion_clause:
-                break  # No more new solutions
-
-            # Add exclusion constraint: force at least one change
-            model.AddBoolOr([var.Not() for var in exclusion_clause])
-
-            # Solve again
-            solver.Solve(model, solution_printer)
-
-        # Output results
-        print_and_write_to_file(solution_printer, isPrint=False)
+        print_and_write_to_file(solution_printer, best_solution_printer, isPrint=False)
     else:
         print("No optimal solution found.")
 
 
 if __name__ == "__main__":
     # Example usage
-    modules = [
-        # "CS2113",
-        # "CG2023",
-        "EE2211",
-        "CDE2501",
-        # "EE2026",
-        "CS1010",
-        # "CG2027",
-        # "CG2028",
-        # "LAM1201",
-        # "CG2023",
-        "CDE2000",
-        "IE2141",
-        # "CDE3301",
-        # "CG2027",
-        # "CG2028",
-        # "CG2023",
-        # "GESS1002",
-        # "MA3205",
-        # "CS3281",
-    ]
+    modules = ["CS2107", "CS3243", "EE2211", "EE2012", "EE3331C"]
     result = main(
         link="https://nusmods.com/timetable/sem-2/share?CDE2000=TUT:A4&CDE2310=LEC:1,LAB:1&CDE3301=LEC:1,LAB:G10&CG2023=LEC:03,LAB:05&LEC:01&CS3240=LEC:1,TUT:3&EE2026=TUT:05,LEC:01,LAB:03&EE4204=PLEC:01,PTUT:01&IE2141=TUT:09,LEC:2",
         isLink=False,
         modules=modules,
-        semester=2,
+        semester=1,
     )

@@ -39,6 +39,7 @@ def generate_filtered_timetable(module_code, semester, YEAR):
         return None
 
     target_semester_info = semester_info[0]
+    # pprint(target_semester_info["timetable"])
     processed_timetable = group_timetable_by_lesson_type(
         target_semester_info["timetable"]
     )
@@ -63,7 +64,7 @@ def generate_filtered_timetable(module_code, semester, YEAR):
 def filter_timetable(
     link="https://nusmods.com/timetable/sem-2/share?CDE2000=TUT:A26&CG2023=LAB:03,LEC:02&CG2028=TUT:03,LAB:02,LEC:01&IE2141=TUT:14,LEC:2&LAM1201=LEC:6",
     YEAR=2024,
-    modules=["CS2113", "CG2023", "EE2211", "CDE2501", "EE2026"],
+    modules=["CG2111A"],
     isLink=True,
     semester=2,
 ):
@@ -96,4 +97,4 @@ def filter_timetable(
 
 
 if __name__ == "__main__":
-    pprint(filter_timetable(isLink=False)["timetable"])
+    pprint(filter_timetable(isLink=False)["timetable"]["CG2111A"])
