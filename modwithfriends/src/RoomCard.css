@@ -67,6 +67,9 @@ div.dividor {
   width: 100%;
   border-top: 2px solid rgb(186, 186, 186);
   transform: translateY(10px);
+  position: relative;
+  padding-bottom: 10px;
+  margin-top: 10px;
 }
 
 p.room-name {
@@ -78,4 +81,83 @@ p.room-name {
 p.empty-room {
   font-style: italic;
   color: grey;
+}
+
+div.users-container {
+  display: flex;
+  flex-direction: row;
+}
+
+div.user-icon {
+  display: flex;
+  height: 40px;
+  width: 40px;
+  border-radius: 20px;
+  border: 1px solid grey;
+  margin-right: 10px;
+  justify-content: center;
+  align-items: center;
+}
+
+div.user-icon:hover div.user-fulltext {
+  visibility: visible;
+  transform: translateY(-30px);
+  transition: 0.3s ease-in-out;
+  background-color: rgba(186, 186, 186, 0.9);
+}
+
+div.user-icon:hover p.username {
+  color: rgba(0,0,0,0.9);
+  transition: 0.3s ease-in-out;
+}
+
+div.user-fulltext {
+  position: absolute;
+  height: fit-content;
+  width: fit-content;
+  padding: 8px 10px;
+  background-color: rgba(186, 186, 186, 0);
+  border-radius: 8px;
+  transform: translateY(-15px);
+}
+
+p.user-text {
+  margin: 0;
+}
+
+p.username {
+  margin: 0;
+  color: rgba(0,0,0,0);
+}
+
+div.add-duplicate-container {
+  position: absolute;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  left: 50%;
+  height: 30px;
+  width: 30px;
+  border-radius: 15px;
+  background-color: rgba(186, 186, 186, 0);
+  transform: translateY(-13px);
+}
+
+p.plus-sign {
+  margin: 0;
+  transform: translateY(-2px);
+  font-size: 18px;
+  color: rgba(0,0,0,0);
+}
+
+div.dividor:hover div.add-duplicate-container {
+  background-color: rgba(186, 186, 186, 1);
+}
+
+div.dividor:hover p.plus-sign {
+  color: rgba(0,0,0,1);
+}
+
+div.add-duplicate-container:hover {
+  cursor: pointer;;
 }

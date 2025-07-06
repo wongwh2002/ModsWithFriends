@@ -12,11 +12,11 @@ function SessionPage({createSession, setCreateSession, joinSession, setJoinSessi
     <div>
       <Header setCreateSession={setCreateSession} setJoinSession={setJoinSession} setShareSession={setShareSession} setBody={setBody} body={body}/>
       <Preference username={username} setGenerationDone={setGenerationDone} setGenerationError={setGenerationError}/>
-      {createSession ? <NewSessionOverlay setBody={setBody} setCreateSession={setCreateSession}/>
+      {createSession ? <NewSessionOverlay setBody={setBody} setCreateSession={setCreateSession} setUsername={setUsername}/>
       : <></>}
       {joinSession ? <JoinSessionOverlay setBody={setBody} setJoinSession={setJoinSession} setUsername={setUsername}/>
       : <></>}
-      {shareSession ? <ShareSessionOverlay setShareSession={setShareSession} setUsername={setUsername}/>
+      {shareSession ? <ShareSessionOverlay setShareSession={setShareSession}/>
       : <></>}
     </div>
   )

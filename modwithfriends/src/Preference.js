@@ -45,8 +45,8 @@ function Preference({username, setGenerationDone, setGenerationError}) {
   const [rooms, setRooms] = useState([])
   const [isPreference, setIsPreference] = useState(true);
   
-  const timeOptions = ['8:00AM', '9:00AM', '10:00AM', '11:00AM', '12:00PM', '1:00PM', 
-    '2:00PM', '3:00PM', '4:00PM', '5:00PM', '6:00PM'];
+  const timeOptions = ['0800', '0900', '1000', '1100', '1200', '1300', 
+    '1400', '1500', '1600', '1700', '1800'];
 
   const durationOptions = ['1HR', '2HR', '3HR'];
 
@@ -133,11 +133,14 @@ function Preference({username, setGenerationDone, setGenerationError}) {
   }, []);
 
   useEffect(() => {
-    let updatedRooms = selectedMods.map(mod => ({
-      module : mod.moduleCode,
-      users : []
-    }));
-    setRooms(updatedRooms);
+    let updatedRooms = [];
+    if (rooms.length === 0) {
+      updatedRooms = selectedMods.map(mod => ({
+        module : mod.moduleCode,
+        users : []
+      }));
+      setRooms(updatedRooms);
+    }
   }, [isPreference]);
 
   const autocomplete = (value) => {
@@ -176,29 +179,24 @@ function Preference({username, setGenerationDone, setGenerationError}) {
   }
 
   function get24hr(timeStr) {
-    const date = new Date("1970-01-01T" + timeStr);
-    return date.getHours();
+    return parseInt(timeStr[0]+timeStr[1], 10);
   }
 
   const requestGeneration = async () => {
     setGenerationDone(false);
     setGenerationError(false);
-    let mods = selectedMods.map(mod => mod.moduleCode)
-    let st = get24hr(startTime)*60
-    let et = get24hr(endTime)*60
-    let lw = (0,0)
+    let mods = selectedMods.map(mod => mod.moduleCode);
+    let st = get24hr(startTime)*60;
+    console.log(`Start time = ${startTime}, Converted = ${st}`);
+    let et = get24hr(endTime)*60;
+    let lw = [0,0];
     if (lunchCheck) {
-      lw = (get24hr(lunchStart)*60, get24hr(lunchEnd)*60)
+      lw = [get24hr(lunchStart)*60, get24hr(lunchEnd)*60];
     }
-    let ld = parseInt(duration[0], 10)*60
-    let no_class = []
+    let ld = parseInt(duration[0], 10)*60;
+    let no_class = [];
 
-    fetch('http://127.0.0.1:4000/generate', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify({
+    const jsonContent = JSON.stringify({
         modules: mods,
         semester: 2,
         earliest_start: st,
@@ -219,7 +217,16 @@ function Preference({username, setGenerationDone, setGenerationError}) {
         enable_late_start: false,
         enable_early_end: false,
         enable_weights: true,
-      })
+      });
+    
+    console.log(jsonContent);
+
+    fetch('http://127.0.0.1:4000/generate', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: jsonContent
     }).then(response => {
       //console.log(`Status Returned: ${response.status}`);
       if (response.status === 500) {
@@ -310,7 +317,7 @@ function Preference({username, setGenerationDone, setGenerationError}) {
           </div>
           <div className='lunch-option flex-row'>
             <p className='lo'>Lunch?</p>
-            <input className='lo-checkbox' type="checkbox" onClick={() => {setLunchCheck(!lunchCheck)}}></input>
+            <input className='lo-checkbox' type="checkbox" checked={lunchCheck} onClick={() => {setLunchCheck(!lunchCheck)}}></input>
           </div>
           {lunchCheck ? <>
           <div className='lunch-timing flex-row'>
@@ -362,8 +369,8 @@ function Preference({username, setGenerationDone, setGenerationError}) {
         </div> : 
         <div className={rooms.length === 0 ? 'rooms-body': 'pad-top rooms-body'}>
           { rooms.length === 0 ? <></> :
-            rooms.map(room => {
-              return <RoomCard roomInfo={room} />
+            rooms.map((room, idx) => {
+              return <RoomCard roomInfo={room} setRoomInfo={setRooms} user={username} idx={idx} />
             })
           }
           {/*{rooms.length === 0 ? 
