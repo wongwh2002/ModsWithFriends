@@ -34,7 +34,7 @@ COMMON_LESSON_TYPES = ['LAB', 'TUT']
 
 
 class Csp:
-    def __init__(self, config, max_solutions = None, max_solutions_per_user = None):
+    def __init__(self, config, max_solutions = None, max_solutions_per_user = None, data = None):
 
         self.max_solutions = max_solutions
         self.max_solutions_per_user = max_solutions_per_user
@@ -47,20 +47,23 @@ class Csp:
             for mod in self.config[user]["modules"]:
                 self.all_modules.add(mod)
 
-        self.data = load_mods(list(self.all_modules), self.config["semester"])
+        if not data:
+            self.data = load_mods(list(self.all_modules), self.config["semester"])
 
-        # For reference
-        folder_path = "storage"
-        try:
-            os.makedirs(folder_path, exist_ok=True)
-        except OSError as e:
-            print(str(e))
-        with open("storage/data.json", "w") as f:
-            json.dump(self.data, f, indent=2)
-        # with open("storage/start_time.json", "w") as f:
-        #     json.dump(self.start_time_dict, f, indent=2)
-        # with open("storage/end_time.json", "w") as f:
-        #     json.dump(self.end_time_dict, f, indent=2)
+            # For reference
+            folder_path = "storage"
+            try:
+                os.makedirs(folder_path, exist_ok=True)
+            except OSError as e:
+                print(str(e))
+            with open("storage/data.json", "w") as f:
+                json.dump(self.data, f, indent=2)
+            # with open("storage/start_time.json", "w") as f:
+            #     json.dump(self.start_time_dict, f, indent=2)
+            # with open("storage/end_time.json", "w") as f:
+            #     json.dump(self.end_time_dict, f, indent=2)
+        else:
+            self.data = data
 
         self.assigned: set[tuple[str, str, str, str]] = set()
         # set where each element is (user, module_code, lesson_type, class_no)
@@ -90,9 +93,6 @@ class Csp:
             for module_code, optional_lesson_types in self.config[user]["optional_classes"].items():
                 for lesson_type in optional_lesson_types:
                     self.optional_classes[user].add((module_code, abbreviations[lesson_type]))
-        
-
-        self.max_solutions_per_user = 10 
 
         self.lunch_days: dict[str, list[str]] = {}
         for user in self.users:
@@ -217,7 +217,7 @@ def update_domains(csp: Csp, user: str, mod: str, lesson_type: str, class_no: st
         for affected_day, start_time, end_time in affected_days:
             if affected_day in csp.lunch_days[user]:
                 if not has_consecutive_slots(csp.has_lesson_in_window[user][affected_day], min_no_of_consecutive_slots):
-                    print(f"No lunch slot for {user} on {affected_day}")
+                    # print(f"No lunch slot for {user} on {affected_day}")
                     return False
     for (unassigned_user, unassigned_mod, unassigned_lesson_type) in csp.unassigned:
         if unassigned_user == user:
@@ -239,7 +239,7 @@ def update_domains(csp: Csp, user: str, mod: str, lesson_type: str, class_no: st
 
 
             if len(csp.domains[user][unassigned_mod][unassigned_lesson_type]) == 0:
-                print(f"No available slots for {user} {unassigned_mod} {unassigned_lesson_type}")
+                # print(f"No available slots for {user} {unassigned_mod} {unassigned_lesson_type}")
                 return False
     return True
 
@@ -248,7 +248,9 @@ def get_current_state(assigned: set[tuple[str, str, str]]) -> tuple[tuple[str, s
     return tuple(sorted(assigned))
 
 
-def get_shared_users(csp: Csp, mod: str, user: str) -> list[str]:
+def get_shared_users(csp: Csp, mod: str, user: str, lesson_type: str) -> list[str]:
+    if lesson_type not in COMMON_LESSON_TYPES:
+        return [user]
     if mod not in csp.config["shared"]:
         return [user]
     for group in csp.config["shared"][mod]:
@@ -272,7 +274,7 @@ def backtrack(csp: Csp) -> None:
     curr_user, curr_mod, curr_lesson_type =  next_item_to_assign # Take any element from unassigned
     csp.domains[curr_user][curr_mod][curr_lesson_type] = sorted(csp.domains[curr_user][curr_mod][curr_lesson_type], key=lambda x: -x[1])
     domain = csp.domains[curr_user][curr_mod][curr_lesson_type]
-    shared_users = get_shared_users(csp, curr_mod, curr_user)
+    shared_users = get_shared_users(csp, curr_mod, curr_user, curr_lesson_type)
     for class_no, score in domain:
         prev_domains = copy.deepcopy(csp.domains)
         prev_lunch = copy.deepcopy(csp.has_lesson_in_window)
@@ -338,7 +340,7 @@ def filter_invalid_slots(csp):
                 
                     # Check that domain is not empty:
                     if len(lesson_type_val) == 0:
-                        print(f"No slots available for {user} {mod_key} {lesson_type_key}")
+                        # print(f"No slots available for {user} {mod_key} {lesson_type_key}")
                         return False
 
                 # Assign slots that only have 1 possible value
@@ -347,13 +349,13 @@ def filter_invalid_slots(csp):
                     is_valid = update_domains(csp, user, mod_key, lesson_type_key, lesson_type_val[0][0])
                     if not is_valid:
                         # print(json.dumps(csp.domains, indent=2))
-                        print(f"no solution after assigning {user} {mod_key} {lesson_type_key}")
+                        # print(f"no solution after assigning {user} {mod_key} {lesson_type_key}")
                         return False
     return True
 
 
-def solve_for_timetables(config: dict, max_solutions: int = None, max_solutions_per_user: int = None):
-    csp = Csp(config, max_solutions=max_solutions, max_solutions_per_user=max_solutions_per_user)
+def solve_for_timetables(config: dict, max_solutions: int = None, max_solutions_per_user: int = None, data=None):
+    csp = Csp(config, max_solutions=max_solutions, max_solutions_per_user=max_solutions_per_user, data=data)
 
     if not filter_invalid_slots(csp):
         print("NO SOLUTION")
@@ -367,7 +369,7 @@ def solve_for_timetables(config: dict, max_solutions: int = None, max_solutions_
 
 
 def main():
-    solutions = solve_for_timetables(CONFIG, max_solutions=10)
+    solutions = solve_for_timetables(CONFIG)
 
     with open("solutions.txt", "w") as f:
         for i, solution in enumerate(solutions):
