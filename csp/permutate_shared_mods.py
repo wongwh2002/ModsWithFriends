@@ -71,8 +71,8 @@ def permutate_shared_mods(config, data):
                 if is_valid:
                     all_permutations.append(current)
                 
-                for user, mod, lt, cn in recently_set_compulsory:
-                    remove_compulsory_class(config, user, mod, lt, cn)
+                # for user, mod, lt, cn in recently_set_compulsory:
+                #     remove_compulsory_class(config, user, mod, lt, cn)
             
             continue
 

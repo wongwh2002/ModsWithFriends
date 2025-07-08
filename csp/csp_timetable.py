@@ -117,6 +117,8 @@ class Csp:
         for user in self.users:
             self.solutions[user] = set()
 
+        # print(json.dumps(self.domains, indent=2))
+
     
     @staticmethod
     def get_start_times(lunch_window: tuple[int, int]) -> list[str]:
@@ -127,8 +129,21 @@ class Csp:
 
 
 def assign(csp, user, mod, lesson_type, class_no):
+    if user not in csp.domains:
+        print(f"{user} not in csp.domains")
+        return False
+    if mod not in csp.domains[user]: 
+        print(f"{mod} not in csp.domains[{user}]")
+        return False
+    if lesson_type not in csp.domains[user][mod]: 
+        print(f"{lesson_type} not in csp.domains[{user}][{mod}]")
+        return False
+    if not any(cn == class_no for cn, _ in csp.domains[user][mod][lesson_type]):
+        print(f"{class_no} not in csp.domains[{user}][{mod}][{lesson_type}]")
+        return False
     csp.assigned.add((user, mod, lesson_type, class_no))
     csp.unassigned.discard((user, mod, lesson_type))
+    return True
 
 
 def unassign(csp, user, mod, lesson_type, class_no):
@@ -282,8 +297,7 @@ def backtrack(csp: Csp) -> None:
         # If it is a shared module, lesson type, and user, once the lesson is assigned, it needs to be assigned for all users in the group. Same for unassigning.
         is_valid = True
         for shared_user in shared_users:
-            assign(csp, shared_user, curr_mod, curr_lesson_type, class_no)
-            if update_domains(csp, shared_user, curr_mod, curr_lesson_type, class_no) == False:
+            if assign(csp, shared_user, curr_mod, curr_lesson_type, class_no) == False or update_domains(csp, shared_user, curr_mod, curr_lesson_type, class_no) == False:
                 is_valid = False
         if get_current_state(csp.assigned) in csp.reached_states:
             continue
@@ -345,8 +359,7 @@ def filter_invalid_slots(csp):
 
                 # Assign slots that only have 1 possible value
                 if len(lesson_type_val) == 1:
-                    assign(csp, user, mod_key, lesson_type_key, lesson_type_val[0][0])
-                    is_valid = update_domains(csp, user, mod_key, lesson_type_key, lesson_type_val[0][0])
+                    is_valid = assign(csp, user, mod_key, lesson_type_key, lesson_type_val[0][0]) and update_domains(csp, user, mod_key, lesson_type_key, lesson_type_val[0][0])
                     if not is_valid:
                         # print(json.dumps(csp.domains, indent=2))
                         # print(f"no solution after assigning {user} {mod_key} {lesson_type_key}")
