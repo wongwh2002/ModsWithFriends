@@ -370,12 +370,12 @@ def solve_for_timetables(config: dict, max_solutions: int = None, max_solutions_
 
 def main():
     solutions = solve_for_timetables(CONFIG)
+    print(f"solved for {len(solutions)} solutions")
 
     with open("solutions.txt", "w") as f:
         for i, solution in enumerate(solutions):
-            f.write(f"\n\nSolution {i + 1}:")
-            for user, timetable in solution.timetables.items():
-                f.write(f"\n{user}: {timetable.get_url()}")
+            f.write(f"\n\nSolution {i + 1}:\n")
+            f.write(f"{str(solution)}")
         print("DONE")
 
 
