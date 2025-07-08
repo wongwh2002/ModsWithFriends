@@ -1,6 +1,6 @@
 CONFIG = {
     "semester": 1,
-    "users": ["B"],
+    "users": ["B", "D"],
     "A": {
         "modules" : [
             "CG2271",
@@ -133,6 +133,9 @@ CONFIG = {
         "optional_classes": {  # Classes that can be optionally included
         },
         "compulsory_classes": {
+            # "CS2107": {
+            #     "Tutorial": "01"
+            # },
         },
         "weights": {  # Weights for optimization criteria
             "morning_class": 1,  # Preference for morning classes
@@ -147,8 +150,8 @@ CONFIG = {
     },
 
     "shared": {
-        # "CS2107": [["B", "D"]],
-        # "CS3243": [["B", "D"]],
-        # "EE2211": [["B", "D"]],
+        "CS2107": [["B", "D"]],
+        "CS3243": [["B", "D"]],
+        "EE2211": [["B", "D"]],
     },
 }

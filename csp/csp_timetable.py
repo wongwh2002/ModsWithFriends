@@ -359,7 +359,14 @@ def filter_invalid_slots(csp):
 
                 # Assign slots that only have 1 possible value
                 if len(lesson_type_val) == 1:
-                    is_valid = assign(csp, user, mod_key, lesson_type_key, lesson_type_val[0][0]) and update_domains(csp, user, mod_key, lesson_type_key, lesson_type_val[0][0])
+                    class_no = lesson_type_val[0][0]
+                    shared_users = get_shared_users(csp, mod_key, user, lesson_type_key)
+                    prev_domains = copy.deepcopy(csp.domains)
+                    prev_lunch = copy.deepcopy(csp.has_lesson_in_window)
+                    is_valid = True
+                    for shared_user in shared_users:
+                        if assign(csp, shared_user, mod_key, lesson_type_key, class_no) == False or update_domains(csp, shared_user, mod_key, lesson_type_key, class_no) == False:
+                            is_valid = False
                     if not is_valid:
                         # print(json.dumps(csp.domains, indent=2))
                         # print(f"no solution after assigning {user} {mod_key} {lesson_type_key}")
@@ -372,6 +379,7 @@ def solve_for_timetables(config: dict, max_solutions: int = None, max_solutions_
 
     if not filter_invalid_slots(csp):
         print("NO SOLUTION")
+        return csp.all_solutions
             
     backtrack(csp)
     if len(csp.all_solutions) == 0:
