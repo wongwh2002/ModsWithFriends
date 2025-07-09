@@ -24,7 +24,7 @@ def set_compulsory_class(config, user, mod, lesson_type, class_no):
         }
         return True
     if lesson_type_key not in user_config["compulsory_classes"][mod]:
-        user_config["compulsory_classes"][mod][lesson_type] = class_no
+        user_config["compulsory_classes"][mod][lesson_type_key] = class_no
         return True
     if user_config["compulsory_classes"][mod][lesson_type_key] == class_no:
         return True

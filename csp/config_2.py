@@ -64,15 +64,15 @@ CONFIG = {
             "EE2211": ["Lecture"],
         },
         "compulsory_classes": {
-            "CS2107": {
-                "Tutorial": "07"
-            },
-            "CS3243": {
-                "Tutorial": "01"
-            },
-            "EE2211": {
-                "Tutorial": "03"
-            },
+            # "CS2107": {
+            #     "Tutorial": "07"
+            # },
+            # "CS3243": {
+            #     "Tutorial": "01"
+            # },
+            # "EE2211": {
+            #     "Tutorial": "03"
+            # },
         },
         "weights": {  # Weights for optimization criteria
             "morning_class": 1,  # Preference for morning classes
@@ -155,7 +155,7 @@ CONFIG = {
     },
 
     "shared": {
-        "CS2107": [["B", "D"]],
+        "CS2107": [["B", "D", "C"]],
         "CS3243": [["B", "D"]],
         "EE2211": [["B", "D"]],
         "EE2026": [["A", "C"]]

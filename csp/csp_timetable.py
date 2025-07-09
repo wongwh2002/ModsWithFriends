@@ -401,7 +401,7 @@ def solve_for_timetables(config: dict, max_solutions: int = None, max_solutions_
 
 
 def main():
-    solutions = solve_for_timetables(CONFIG)
+    solutions = solve_for_timetables(CONFIG, max_solutions=10)
     print(f"solved for {len(solutions)} solutions")
 
     with open("solutions.txt", "w") as f:
