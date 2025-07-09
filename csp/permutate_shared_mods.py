@@ -86,6 +86,14 @@ def permutate_shared_mods(config, data):
     return all_permutations
 
 
+def edit_config_for_one_person(config, user, assignment):
+    config["shared"] = {}
+    config["users"] = [user]
+    for assigned_mod, assigned_lt, assigned_cn in assignment:
+        assert set_compulsory_class(config, user, assigned_mod, assigned_lt, assigned_cn) == True
+
+
+
 
 def main():
     all_modules = set()
@@ -94,17 +102,58 @@ def main():
             all_modules.add(mod)
     data = load_mods(list(all_modules), CONFIG["semester"])
 
-    start_time = time.time()
     permutations = permutate_shared_mods(CONFIG, data)
-    time_taken = time.time() - start_time
-    print(f"{time_taken:.4f} seconds")
 
     print(len(permutations))
-
     for permutation in permutations:
         print("\n")
         for assignment in permutation:
             print(f"{assignment[0]}: {assignment[1]} {assignment[2]} {assignment[3]}")
+
+    for user in CONFIG["users"]:
+        # print(f"{user}:")
+        # to_generate = set()
+        # for permutation in permutations:
+        #     assignment_for_user: set[tuple[str, str, str]] = set()
+        #     for assigned_user, assigned_mod, assigned_lt, assigned_cn in permutation:
+        #         if assigned_user == user:
+        #             assignment_for_user.add((assigned_mod, assigned_lt, assigned_cn))
+        #     frozen_assignment = frozenset(assignment_for_user)
+        #     to_generate.add(frozen_assignment)
+        #     for i, assignment in enumerate(to_generate):
+        #         print(f"Solution {i}:")
+        #         for assigned_mod, assigned_lt, assigned_cn in assignment:
+        #             print(f"{assigned_mod} {assigned_lt} {assigned_cn}")
+        #         new_config = copy.deepcopy(CONFIG)
+        #         edit_config_for_one_person(new_config, user, assignment)
+        #         results = solve_for_timetables(new_config, max_solutions=10, data=data)
+        #         for result in results:
+        #             print(str(result))
+        print(f"{user}:")
+        user_specific_assignments = set()
+
+        for permutation in permutations:
+            assignment_for_user = frozenset(
+                (mod, lt, cn)
+                for assigned_user, mod, lt, cn in permutation
+                if assigned_user == user
+            )
+            if assignment_for_user:
+                user_specific_assignments.add(assignment_for_user)
+
+        for i, assignment in enumerate(user_specific_assignments):
+            print(f"Solution {i}:")
+            for mod, lt, cn in assignment:
+                print(f"{mod} {lt} {cn}")
+
+            user_config = copy.deepcopy(CONFIG)
+            edit_config_for_one_person(user_config, user, assignment)
+
+            results = solve_for_timetables(user_config, max_solutions=10, data=data)
+            for result in results:
+                print(str(result))
+
+
 
 if __name__ == "__main__":
     main()
