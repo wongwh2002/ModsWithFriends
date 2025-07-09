@@ -1,6 +1,8 @@
+import copy
+import json
 from config_2 import CONFIG
 from csp_timetable import solve_for_timetables
-from load_modules import load_mods
+from load_modules import load_mods, abbreviations, reverse_abbreviations
 import time
 
 SHARED_LESSON_TYPES = ['TUT', 'LAB']
@@ -13,14 +15,18 @@ def set_compulsory_class(config, user, mod, lesson_type, class_no):
     set for the mod and lesson type
     """
 
+    lesson_type_key = reverse_abbreviations[lesson_type]
+
     user_config = config[user]
     if mod not in user_config["compulsory_classes"]:
         user_config["compulsory_classes"][mod] = {
-            lesson_type: class_no
+            lesson_type_key: class_no
         }
         return True
-    if lesson_type not in user_config["compulsory_classes"][mod]:
+    if lesson_type_key not in user_config["compulsory_classes"][mod]:
         user_config["compulsory_classes"][mod][lesson_type] = class_no
+        return True
+    if user_config["compulsory_classes"][mod][lesson_type_key] == class_no:
         return True
     return False
 
@@ -53,26 +59,19 @@ def permutate_shared_mods(config, data):
             if frozen not in visited:
                 is_valid = True
                 visited.add(frozen)
-                recently_set_compulsory = set()
+                new_config = copy.deepcopy(config)
                 # Check if valid
                 for user, mod, lt, cn in current:
-                    is_valid = set_compulsory_class(config, user, mod, lt, cn)
-                    if is_valid:
-                        recently_set_compulsory.add((user, mod, lt, cn))
-                    if not is_valid:
-                        for compulsory_class in recently_set_compulsory:
-                            user, mod, lt, cn = compulsory_class
-                            remove_compulsory_class(config, user, mod, lt, cn)
+                    if set_compulsory_class(new_config, user, mod, lt, cn) == False:
+                        is_valid = False
 
                 if is_valid:
-                    if len(solve_for_timetables(config, max_solutions=1, data=data)) == 0:
+                    solutions = solve_for_timetables(new_config, max_solutions=1, data=copy.deepcopy(data))
+                    if len(solutions) == 0:
                         is_valid = False
 
                 if is_valid:
                     all_permutations.append(current)
-                
-                # for user, mod, lt, cn in recently_set_compulsory:
-                #     remove_compulsory_class(config, user, mod, lt, cn)
             
             continue
 
