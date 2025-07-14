@@ -29,7 +29,7 @@ def create_modules_table(cursor):
 def create_session_table(cursor):
     cursor.execute("DROP TABLE IF EXISTS SESSIONS")
     sql = """CREATE TABLE SESSIONS(
-    Session_ID VARCHAR PRIMARY KEY,
+    Session_ID VARCHAR PRIMARY KEY
     )"""
     cursor.execute(sql)
 
@@ -38,8 +38,8 @@ def create_group_table(cursor):
     cursor.execute("DROP TABLE IF EXISTS GROUPS")
     sql = """CREATE TABLE GROUPS(
     Group_ID VARCHAR PRIMARY KEY,
-    Module_ID VARCHAR NOT NULL REFERENCES MODULES(Module_ID),
-    SESSION_ID VARCHAR NOT NULL REFERENCES SESSION(Session_ID)
+    Module_ID VARCHAR NOT NULL REFERENCES MODULE(Module_ID),
+    SESSION_ID VARCHAR NOT NULL REFERENCES SESSIONS(Session_ID)
     )"""
     cursor.execute(sql)
 
@@ -59,18 +59,8 @@ def create_student_session_table(cursor):
     sql = """CREATE TABLE STUDENT_SESSION(
     Student_ID VARCHAR REFERENCES STUDENT(Student_ID),
     Session_ID VARCHAR REFERENCES SESSIONS(Session_ID),
-    Preference JSONB
-    PRIMARY KEY (Student_ID, Session_ID)
-    )"""
-    cursor.execute(sql)
-
-
-def create_student_module_table(cursor):
-    cursor.execute("DROP TABLE IF EXISTS STUDENT_MODULE")
-    sql = """CREATE TABLE STUDENT_MODULE(
-    Student_ID VARCHAR REFERENCES STUDENT(Student_ID),
-    Session_ID VARCHAR REFERENCES SESSIONs(Session_ID),
-    Module_ID VARCHAR REFERENCES MODULE(Module_ID)
+    Modules JSONB NOT NULL,
+    Preference JSONB,
     PRIMARY KEY (Student_ID, Session_ID)
     )"""
     cursor.execute(sql)
@@ -86,7 +76,12 @@ conn = psycopg2.connect(
 conn.autocommit = True
 
 cursor = conn.cursor()
-
+# create_student_table(cursor)
+# create_modules_table(cursor)
+# create_session_table(cursor)
+# create_group_table(cursor)
+# create_student_group_table(cursor)
+# create_student_session_table(cursor)
 
 # Closing the connection
 conn.close()
