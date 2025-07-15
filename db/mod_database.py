@@ -76,6 +76,7 @@ conn = psycopg2.connect(
 conn.autocommit = True
 
 cursor = conn.cursor()
+# create_db(cursor)
 # create_student_table(cursor)
 # create_modules_table(cursor)
 # create_session_table(cursor)
