@@ -51,6 +51,7 @@ CONFIG = {
             # 'CG3207',
             'CS2107',
             'CDE2501',
+            # 'MA2108',
         ],
 
         "earliest_start": 10 * 60,  # Earliest class start time (10:00 AM in minutes)

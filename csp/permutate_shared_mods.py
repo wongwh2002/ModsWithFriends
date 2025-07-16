@@ -93,20 +93,24 @@ def edit_config_for_one_person(config, user, assignment):
     for assigned_mod, assigned_lt, assigned_cn in assignment:
         assert set_compulsory_class(config, user, assigned_mod, assigned_lt, assigned_cn) == True
 
-
-def main():
+def get_solutions(config):
     return_dict = {}
     all_modules = set()
-    for user in CONFIG["users"]:
-        for mod in CONFIG[user]["modules"]:
+    for user in config["users"]:
+        for mod in config[user]["modules"]:
             all_modules.add(mod)
-    data = load_mods(list(all_modules), CONFIG["semester"])
+    data = load_mods(list(all_modules), config["semester"])
 
-    permutations = permutate_shared_mods(CONFIG, data)
+    # Ensure that there are solutions
+    valid_solution = solve_for_timetables(config, max_solutions=1, data=data)
+    if len(valid_solution) == 0:
+        return return_dict
+
+    permutations = permutate_shared_mods(config, data)
 
     print(f"{len(permutations)} permutations of shared mods found")
 
-    for user in CONFIG["users"]:
+    for user in config["users"]:
         return_dict[user] = [] 
         user_specific_assignments = defaultdict(list) 
 
@@ -133,13 +137,17 @@ def main():
             
             solution_dict["shared_modules"] = assignment_dict
 
-            user_config = copy.deepcopy(CONFIG)
+            user_config = copy.deepcopy(config)
             edit_config_for_one_person(user_config, user, assignment)
 
             results = solve_for_timetables(user_config, max_solutions=10, data=data)
             for result in results:
                 solution_dict["timetables"].append(result.timetables[user].get_url())
             return_dict[user].append(solution_dict)
+    return return_dict
+
+def main():
+    return_dict = get_solutions(CONFIG)
     
     with open("solutions.json", "w") as f:
         json.dump(return_dict, f, indent=2)
