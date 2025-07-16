@@ -1,3 +1,4 @@
+from collections import defaultdict
 import copy
 import json
 from config_2 import CONFIG
@@ -93,9 +94,8 @@ def edit_config_for_one_person(config, user, assignment):
         assert set_compulsory_class(config, user, assigned_mod, assigned_lt, assigned_cn) == True
 
 
-
-
 def main():
+    return_dict = {}
     all_modules = set()
     for user in CONFIG["users"]:
         for mod in CONFIG[user]["modules"]:
@@ -104,39 +104,45 @@ def main():
 
     permutations = permutate_shared_mods(CONFIG, data)
 
-    print(len(permutations))
-    for permutation in permutations:
-        print("\n")
-        for assignment in permutation:
-            print(f"{assignment[0]}: {assignment[1]} {assignment[2]} {assignment[3]}")
+    print(f"{len(permutations)} permutations of shared mods found")
 
     for user in CONFIG["users"]:
-        print(f"{user}:")
-        user_specific_assignments = set()
+        return_dict[user] = [] 
+        user_specific_assignments = defaultdict(list) 
 
-        for permutation in permutations:
+        for index, permutation in enumerate(permutations):
             assignment_for_user = frozenset(
                 (mod, lt, cn)
                 for assigned_user, mod, lt, cn in permutation
                 if assigned_user == user
             )
             if assignment_for_user:
-                user_specific_assignments.add(assignment_for_user)
+                user_specific_assignments[assignment_for_user].append(index)
         
         if len(user_specific_assignments) == 0:
-            user_specific_assignments.add(frozenset())
+            user_specific_assignments[frozenset()] = []
 
-        for i, assignment in enumerate(user_specific_assignments):
-            print(f"Solution {i}:")
+        for assignment, ids in user_specific_assignments.items():
+            solution_dict = {
+                "id": ids,
+                "timetables": []
+            }
+            assignment_dict = defaultdict(lambda: defaultdict(str))
             for mod, lt, cn in assignment:
-                print(f"{mod} {lt} {cn}")
+                assignment_dict[mod][lt] = cn
+            
+            solution_dict["shared_modules"] = assignment_dict
 
             user_config = copy.deepcopy(CONFIG)
             edit_config_for_one_person(user_config, user, assignment)
 
             results = solve_for_timetables(user_config, max_solutions=10, data=data)
             for result in results:
-                print(str(result))
+                solution_dict["timetables"].append(result.timetables[user].get_url())
+            return_dict[user].append(solution_dict)
+    
+    with open("solutions.json", "w") as f:
+        json.dump(return_dict, f, indent=2)
 
 
 
