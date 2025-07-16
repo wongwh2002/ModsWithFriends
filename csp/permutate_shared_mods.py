@@ -111,24 +111,6 @@ def main():
             print(f"{assignment[0]}: {assignment[1]} {assignment[2]} {assignment[3]}")
 
     for user in CONFIG["users"]:
-        # print(f"{user}:")
-        # to_generate = set()
-        # for permutation in permutations:
-        #     assignment_for_user: set[tuple[str, str, str]] = set()
-        #     for assigned_user, assigned_mod, assigned_lt, assigned_cn in permutation:
-        #         if assigned_user == user:
-        #             assignment_for_user.add((assigned_mod, assigned_lt, assigned_cn))
-        #     frozen_assignment = frozenset(assignment_for_user)
-        #     to_generate.add(frozen_assignment)
-        #     for i, assignment in enumerate(to_generate):
-        #         print(f"Solution {i}:")
-        #         for assigned_mod, assigned_lt, assigned_cn in assignment:
-        #             print(f"{assigned_mod} {assigned_lt} {assigned_cn}")
-        #         new_config = copy.deepcopy(CONFIG)
-        #         edit_config_for_one_person(new_config, user, assignment)
-        #         results = solve_for_timetables(new_config, max_solutions=10, data=data)
-        #         for result in results:
-        #             print(str(result))
         print(f"{user}:")
         user_specific_assignments = set()
 
@@ -140,6 +122,9 @@ def main():
             )
             if assignment_for_user:
                 user_specific_assignments.add(assignment_for_user)
+        
+        if len(user_specific_assignments) == 0:
+            user_specific_assignments.add(frozenset())
 
         for i, assignment in enumerate(user_specific_assignments):
             print(f"Solution {i}:")
