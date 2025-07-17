@@ -13,6 +13,7 @@ function App() {
   const [username, setUsername] = useState("");
   const [generationDone, setGenerationDone] = useState(true);
   const [generationError, setGenerationError] = useState(false);
+  const [imagesData, setImagesData] = useState([]);
 
   return (
     <BrowserRouter>
@@ -27,13 +28,13 @@ function App() {
         setJoinSession={setJoinSession} shareSession={shareSession}
         setShareSession={setShareSession} body={body} setBody={setBody}
         username={username} setUsername={setUsername} setGenerationDone={setGenerationDone}
-        setGenerationError={setGenerationError}/>} />
+        setGenerationError={setGenerationError} setImagesData={setImagesData}/>} />
         <Route path='/generate' element={<GeneratePage createSession={createSession}
         setCreateSession={setCreateSession} joinSession={joinSession} 
         setJoinSession={setJoinSession} shareSession={shareSession}
         setShareSession={setShareSession} body={body} setBody={setBody}
         username={username} setUsername={setUsername} generationDone={generationDone}
-        generationError={generationError}/>} />
+        generationError={generationError} imagesData={imagesData}/>} />
       </Routes>
     </BrowserRouter>
   );

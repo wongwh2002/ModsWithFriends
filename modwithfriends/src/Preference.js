@@ -11,7 +11,7 @@ import NewRoomOverlay from './NewRoomOverlay';
 import RoomCard from './RoomCard';
 import e from 'cors';
 
-function Preference({username, setGenerationDone, setGenerationError}) {
+function Preference({username, setGenerationDone, setGenerationError, setImagesData}) {
 
   const dropDownRef = useRef();
   const startTimeRef = useRef();
@@ -59,6 +59,7 @@ function Preference({username, setGenerationDone, setGenerationError}) {
   const [OMod, setOMod] = useState("");
   const [clickOType, setClickOType] = useState(false);
   const [OType, setOType] = useState("");
+  //const [imagesData, setImagesData] = useState([]);
   
   const timeOptions = ['0800', '0900', '1000', '1100', '1200', '1300', 
     '1400', '1500', '1600', '1700', '1800'];
@@ -274,7 +275,7 @@ function Preference({username, setGenerationDone, setGenerationError}) {
     
     console.log(jsonContent);
 
-    fetch('http://127.0.0.1:4000/generate', {
+    await fetch('http://127.0.0.1:4000/generate', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json'
@@ -284,10 +285,19 @@ function Preference({username, setGenerationDone, setGenerationError}) {
       //console.log(`Status Returned: ${response.status}`);
       if (response.status === 500) {
         setGenerationError(true);  
-      }
-      setGenerationDone(true);
-      console.log("Done generating");
-    })
+      } 
+      //setImagesData(data['images_data']);
+      return response.json();
+    }).then(({images_urls}) => {
+      return Promise.all(
+        images_urls.map(url => {
+          return fetch(`http://localhost:4000/${url}`).then(res => res.blob()).then(blob => URL.createObjectURL(blob))
+        })
+      )
+    }).then(setImagesData)
+    .catch(console.error);
+    setGenerationDone(true);
+    console.log("Done generating");
   }
 
   const addFixedMod = () => {

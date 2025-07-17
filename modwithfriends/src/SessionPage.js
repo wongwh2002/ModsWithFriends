@@ -7,11 +7,11 @@ import JoinSessionOverlay from './JoinSessionOverlay';
 
 function SessionPage({createSession, setCreateSession, joinSession, setJoinSession, 
   shareSession, setShareSession, body, setBody, username, setUsername, 
-  setGenerationDone, setGenerationError}) {
+  setGenerationDone, setGenerationError, setImagesData}) {
   return (
     <div>
       <Header setCreateSession={setCreateSession} setJoinSession={setJoinSession} setShareSession={setShareSession} setBody={setBody} body={body}/>
-      <Preference username={username} setGenerationDone={setGenerationDone} setGenerationError={setGenerationError}/>
+      <Preference username={username} setGenerationDone={setGenerationDone} setGenerationError={setGenerationError} setImagesData={setImagesData}/>
       {createSession ? <NewSessionOverlay setBody={setBody} setCreateSession={setCreateSession} setUsername={setUsername}/>
       : <></>}
       {joinSession ? <JoinSessionOverlay setBody={setBody} setJoinSession={setJoinSession} setUsername={setUsername}/>

@@ -3,7 +3,7 @@ import {useEffect} from 'react';
 import './Generated.css'
 import GeneratedTimetable from './GeneratedTimetable';
 
-function Generated({generationDone, generationError}) {
+function Generated({generationDone, generationError, imagesData}) {
 
   const timetables = ["http://localhost:4000/Server/1.png",
     "http://localhost:4000/Server/2.png",
@@ -17,14 +17,14 @@ function Generated({generationDone, generationError}) {
     "http://localhost:4000/Server/10.png",
   ];
   useEffect(() => {
-    
-  }, [generationDone]);
+    console.log(imagesData);
+  }, [imagesData]);
 
   return (
     <div className='generated-wrapper'>
       <div className='generated-container'>
-        {generationDone && !generationError ? timetables.map(timetable => {
-          return <GeneratedTimetable imgPath={timetable}/>
+        {generationDone && !generationError ? imagesData.map(imageData => {
+          return <GeneratedTimetable imageData={imageData}/>
         }) :  generationError ? 
         <div className='no-timetable-wrapper'>
           <p className='no-timetable'>There are no possible timetables</p> 
