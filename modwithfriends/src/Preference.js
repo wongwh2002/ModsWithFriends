@@ -19,6 +19,11 @@ function Preference({username, setGenerationDone, setGenerationError}) {
   const lunchStartRef = useRef();
   const lunchEndRef = useRef();
   const durationRef = useRef();
+  const cModRef = useRef();
+  const cTypeRef = useRef();
+  const cLessonRef = useRef();
+  const oModRef = useRef();
+  const oTypeRef = useRef();
   
   const [searchValue, setSearchValue] = useState("");
   const [moduleData, setModuleData] = useState([]);
@@ -44,11 +49,28 @@ function Preference({username, setGenerationDone, setGenerationError}) {
   const [createRoom, setCreateRoom] = useState(false);
   const [rooms, setRooms] = useState([])
   const [isPreference, setIsPreference] = useState(true);
+  const [clickCMod, setClickCMod] = useState(false);
+  const [CMod, setCMod] = useState(false);
+  const [clickCType, setClickCType] = useState(false);
+  const [CType, setCType] = useState(false);
+  const [clickCLesson, setClickCLesson] = useState(false);
+  const [CLesson, setCLesson] = useState(false);
+  const [clickOMod, setClickOMod] = useState(false);
+  const [OMod, setOMod] = useState(false);
+  const [clickOType, setClickOType] = useState(false);
+  const [OType, setOType] = useState(false);
   
   const timeOptions = ['0800', '0900', '1000', '1100', '1200', '1300', 
     '1400', '1500', '1600', '1700', '1800'];
 
   const durationOptions = ['1HR', '2HR', '3HR'];
+
+  const getModuleInfo = async (modCode) => {
+    const encoded = encodeURIComponent(modCode);
+    const response = await fetch(`http://localhost:4000/modInfo?modCode=${encoded}` )
+    const data = await response.json();
+    return data.modInfo;
+  }
 
   const getURL = async (url) => {
     const encoded = encodeURIComponent(url);
@@ -91,6 +113,11 @@ function Preference({username, setGenerationDone, setGenerationError}) {
     setClickLunchEnd(false);
     setClickLunchStart(false);
     setClickDuration(false);
+    setClickCLesson(false);
+    setClickCMod(false);
+    setClickCType(false);
+    setClickOMod(false);
+    setClickOType(false);
   }
 
   useEffect(() => {
@@ -105,7 +132,12 @@ function Preference({username, setGenerationDone, setGenerationError}) {
         endTimeRef.current,
         lunchStartRef.current,
         lunchEndRef.current,
-        durationRef.current
+        durationRef.current,
+        cModRef.current,
+        cTypeRef.current,
+        cLessonRef.current,
+        oModRef.current,
+        oTypeRef.current
       ];
     
       const clickedInsideAny = refs
@@ -137,7 +169,8 @@ function Preference({username, setGenerationDone, setGenerationError}) {
     if (rooms.length === 0) {
       updatedRooms = selectedMods.map(mod => ({
         module : mod.moduleCode,
-        users : []
+        users : [],
+        isOriginal: true
       }));
       setRooms(updatedRooms);
     }
@@ -173,7 +206,27 @@ function Preference({username, setGenerationDone, setGenerationError}) {
       const matches = [...url.matchAll(/([A-Z]{2,4}[0-9]{4})/g)];
       const moduleCodes = new Set(matches.map(match => match[1]));
       const pastedMods = Array.from(moduleCodes).map(code => findModule(code));
-      setSelectedMods(pastedMods);
+      let appendMods = [];
+      for (const mod of pastedMods) {
+        let classes = {};
+        let data = await getModuleInfo(mod.moduleCode);
+        //console.log(data);
+        for (const semester of data["semesterData"]) {
+          if (semester.semester === 1) {
+            for (const lesson of semester.timetable) {
+              const lessonType = lesson.lessonType;
+              const classNo = lesson.classNo;
+
+              if (!classes[lessonType]) {
+                  classes[lessonType] = [];
+              }
+              classes[lessonType].push(classNo);
+            }
+          }
+        }
+        appendMods.push({...mod, 'classes': classes});
+      }
+      setSelectedMods(appendMods);
     }
     setSearchValue("");
   }
@@ -236,6 +289,53 @@ function Preference({username, setGenerationDone, setGenerationError}) {
       console.log("Done generating");
     })
   }
+
+  const addFixedMod = () => {
+    setSelectedMods(prevSelectedMods => 
+      prevSelectedMods.map(mod => {
+        if (mod.moduleCode === CMod) {
+          if (!mod['fixed']) {
+            mod['fixed'] = [];
+          }
+          const fixedIndex = mod['fixed'].findIndex(fixedMod => Object.keys(fixedMod)[0] === CType);
+
+          if (fixedIndex !== -1) {
+            mod['fixed'][fixedIndex] = {[CType]: CLesson};
+          } else {
+            mod['fixed'].push({[CType]: CLesson});
+          }
+          return {
+            ...mod,
+            'fixed': [...mod['fixed']]
+          };
+        }
+        return mod;
+      })
+    );
+    //console.log(selectedMods);
+    setCMod("");
+    setCType("");
+    setCLesson("");
+  }
+
+  const addOptionalMod = () => {
+    setSelectedMods(prevSelectedMods => 
+      prevSelectedMods.map(mod => {
+        if (mod.moduleCode === OMod) {
+          if (!mod['optional']) {
+            mod['optional'] = [];
+          }
+          if (!mod['optional'].includes(OType)) {
+            mod['optional'].push(OType);
+          }
+        }
+        return mod;
+      })
+    )
+    setOMod("");
+    setOType("");
+    //console.log(selectedMods);
+  }
   
   return (
     <div className='preference-overall'>
@@ -271,6 +371,98 @@ function Preference({username, setGenerationDone, setGenerationError}) {
               </div>
             </div>
           </div>
+          {selectedMods.length === 0 ? <></> : 
+          <div className='mod-modification'>
+            <div className='compulsary-mods-container'>
+              <p className='fm'>Fixed modules: </p>
+              <div className='longer-dd select-time' ref={cModRef} onClick={() => {closeAll(); setClickCMod(!clickCMod);}}>
+                {clickCMod ? <div className='extend-dd time-dd dropdown'>
+                  {(selectedMods).map(mod => {
+                    return (
+                      <div className='time-container' onClick={() => setCMod(mod["moduleCode"])}>
+                        <p className='time'>{mod["moduleCode"]}</p>
+                      </div>
+                    )
+                  })}     
+                </div> : <></>}
+                <p className='time'> {CMod} </p>
+                <img className='dd' src={dropdown} />
+              </div>
+              <div className='longer-dd select-time' ref={cTypeRef} onClick={() => {closeAll(); setClickCType(!clickCType);}}>
+                {clickCType ? <div className='extend-dd time-dd dropdown'>
+                  {selectedMods.map(module => {
+                    if (module.moduleCode === CMod) {
+                      return Object.keys(module["classes"]).map(type => {
+                        return (
+                          <div className='time-container' onClick={() => setCType(type)}>
+                            <p className='time'>{type}</p>
+                          </div>
+                        )
+                      })
+                    }
+                  })}    
+                </div> : <></>}
+                <p className='time'> {CType} </p>
+                <img className='dd' src={dropdown} />
+              </div>
+              <div className='longer-dd select-time' ref={cLessonRef} onClick={() => {closeAll(); setClickCLesson(!clickCLesson);}}>
+                {clickCLesson ? <div className='extend-dd time-dd dropdown'>
+                  {selectedMods.map(module => {
+                    if (module.moduleCode === CMod) {
+                      return module["classes"][CType].map(lesson => {
+                        return (
+                          <div className='time-container' onClick={() => setCLesson(lesson)}>
+                            <p className='time'>{lesson}</p>
+                          </div>
+                        )
+                      })
+                    }
+                  })}     
+                </div> : <></>}
+                <p className='time'> {CLesson} </p>
+                <img className='dd' src={dropdown} />
+              </div>
+              <div className='add-item-container' onClick={() => addFixedMod()}>
+                <p className='add'>+</p>
+              </div>
+            </div>
+            <div className='optional-mods-container'>
+              <p className='om'>Classes to ignore: </p>
+              <div className='longer-dd select-time' ref={oModRef} onClick={() => {closeAll(); setClickOMod(!clickOMod);}}>
+                {clickOMod ? <div className='extend-dd time-dd dropdown'>
+                  {selectedMods.map(mod => {
+                    return (
+                      <div className='time-container' onClick={() => setOMod(mod["moduleCode"])}>
+                        <p className='time'>{mod["moduleCode"]}</p>
+                      </div>
+                    )
+                  })}     
+                </div> : <></>}
+                <p className='time'> {OMod} </p>
+                <img className='dd' src={dropdown} />
+              </div>
+              <div className='longer-dd select-time' ref={oTypeRef} onClick={() => {closeAll(); setClickOType(!clickOType);}}>
+                {clickOType ? <div className='extend-dd time-dd dropdown'>
+                  {selectedMods.map(module => {
+                    if (module.moduleCode === OMod) {
+                      return Object.keys(module["classes"]).map(type => {
+                        return (
+                          <div className='time-container' onClick={() => setOType(type)}>
+                            <p className='time'>{type}</p>
+                          </div>
+                        )
+                      })
+                    }
+                  })}     
+                </div> : <></>}
+                <p className='time'> {OType} </p>
+                <img className='dd' src={dropdown} />
+              </div>
+              <div className='add-item-container' onClick={() => addOptionalMod()}>
+                <p className='add'>+</p>
+              </div>
+            </div> 
+          </div>}
           {selectedMods.length === 0 ? <></> :
           <div className='sm-container'>
             {selectedMods.map((selectedMod, index) => {

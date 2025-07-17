@@ -1,12 +1,12 @@
 div.selected-mods-container {
   position: relative;
   width: 200px;
-  height: 100px;
+  min-height: 100px;
   border-radius: 20px;
   background-color: #E1DEE3;
   padding: 0 15px;
   margin: 0 6px;
-  box-shadow: 3px 3px 2px rgb(186, 186, 186)
+  box-shadow: 3px 3px 2px rgb(186, 186, 186);
 }
 
 div.selected-mods-container:hover div.sm-overlay {
@@ -44,6 +44,7 @@ p.mod-description {
   margin: 0;
   font-weight: 300;
   font-size: 13px;
+  padding-bottom: 12px;
 }
 
 div.bin-container {
@@ -90,4 +91,21 @@ div.selected-mods-container:hover img.bin {
   100% {
     transform: translateY(0) rotate(0);
   }
+}
+
+p.mod-config {
+  font-size: 12px;
+  margin: 0;
+  font-weight: 500;
+  margin-bottom: 6px;
+  width: fit-content;
+}
+
+p.mod-config:hover {
+  cursor: pointer;
+  text-decoration: line-through;
+}
+
+div.add-padd {
+  height: 10px;
 }

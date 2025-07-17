@@ -3,7 +3,7 @@ import copy
 import json
 import math
 import os
-from load_modules_single import load_mods, abbreviations
+from load_modules import load_mods, abbreviations
 from timetable_single import Timetable
 from config_single import CONFIG
 

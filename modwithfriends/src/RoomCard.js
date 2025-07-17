@@ -1,25 +1,38 @@
 import React from 'react';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import './RoomCard.css';
 
 function RoomCard({roomInfo, setRoomInfo, user, idx}) {
 
   const toggleRoom = () => {
-    setRoomInfo(prevRooms =>
-     ([
-      ...prevRooms.slice(0, idx), {
-        ...prevRooms[idx],
-        users: prevRooms[idx].users.includes(user)
-          ? prevRooms[idx].users.filter(u => u !== user)
-          : [...prevRooms[idx].users, user]
-        }, ...prevRooms.slice(idx + 1)
-      ])
-    );
+    setRoomInfo(prevRooms => {
+      const room = prevRooms[idx];
+      const isUserInRoom = room.users.includes(user);
+      const isOnlyUser = room.users.length === 1;
+
+      if (isUserInRoom && isOnlyUser && !room.isOriginal) {
+        return [
+          ...prevRooms.slice(0, idx),
+          ...prevRooms.slice(idx + 1)
+        ];
+      }
+
+      return [
+        ...prevRooms.slice(0, idx),
+        {
+          ...room,
+          users: isUserInRoom
+            ? room.users.filter(u => u !== user)
+            : [...room.users, user]
+        },
+        ...prevRooms.slice(idx + 1)
+      ];
+    });
   };
 
   const addDuplicate = () => {
     setRoomInfo(prev => {
-      const newRoom = { ...prev[idx], users: [] };
+      const newRoom = { ...prev[idx], users: [user], isOriginal: false };
       const updated = [...prev.slice(0, idx + 1), newRoom, ...prev.slice(idx + 1)];
       return updated;
     })
