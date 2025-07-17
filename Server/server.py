@@ -12,7 +12,6 @@ import sys
 csp_path = os.path.abspath(os.path.join(os.path.dirname(__file__), './../csp'))
 sys.path.insert(0, csp_path)
 
-import generate
 from generate import generate_timetable
 
 app = Flask(__name__)

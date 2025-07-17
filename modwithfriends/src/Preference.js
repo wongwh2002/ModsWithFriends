@@ -50,15 +50,15 @@ function Preference({username, setGenerationDone, setGenerationError}) {
   const [rooms, setRooms] = useState([])
   const [isPreference, setIsPreference] = useState(true);
   const [clickCMod, setClickCMod] = useState(false);
-  const [CMod, setCMod] = useState(false);
+  const [CMod, setCMod] = useState("");
   const [clickCType, setClickCType] = useState(false);
-  const [CType, setCType] = useState(false);
+  const [CType, setCType] = useState("");
   const [clickCLesson, setClickCLesson] = useState(false);
-  const [CLesson, setCLesson] = useState(false);
+  const [CLesson, setCLesson] = useState("");
   const [clickOMod, setClickOMod] = useState(false);
-  const [OMod, setOMod] = useState(false);
+  const [OMod, setOMod] = useState("");
   const [clickOType, setClickOType] = useState(false);
-  const [OType, setOType] = useState(false);
+  const [OType, setOType] = useState("");
   
   const timeOptions = ['0800', '0900', '1000', '1100', '1200', '1300', 
     '1400', '1500', '1600', '1700', '1800'];
@@ -291,6 +291,7 @@ function Preference({username, setGenerationDone, setGenerationError}) {
   }
 
   const addFixedMod = () => {
+    if (CLesson === "") return;
     setSelectedMods(prevSelectedMods => 
       prevSelectedMods.map(mod => {
         if (mod.moduleCode === CMod) {
@@ -319,6 +320,7 @@ function Preference({username, setGenerationDone, setGenerationError}) {
   }
 
   const addOptionalMod = () => {
+    if (OType === "") return;
     setSelectedMods(prevSelectedMods => 
       prevSelectedMods.map(mod => {
         if (mod.moduleCode === OMod) {
@@ -374,12 +376,12 @@ function Preference({username, setGenerationDone, setGenerationError}) {
           {selectedMods.length === 0 ? <></> : 
           <div className='mod-modification'>
             <div className='compulsary-mods-container'>
-              <p className='fm'>Fixed modules: </p>
+              <p className='fm'>Preallocated/Decided classes: </p>
               <div className='longer-dd select-time' ref={cModRef} onClick={() => {closeAll(); setClickCMod(!clickCMod);}}>
                 {clickCMod ? <div className='extend-dd time-dd dropdown'>
                   {(selectedMods).map(mod => {
                     return (
-                      <div className='time-container' onClick={() => setCMod(mod["moduleCode"])}>
+                      <div className='time-container' onClick={() => {setCMod(mod["moduleCode"]); setCType(""); setCLesson("");}}>
                         <p className='time'>{mod["moduleCode"]}</p>
                       </div>
                     )
@@ -394,7 +396,7 @@ function Preference({username, setGenerationDone, setGenerationError}) {
                     if (module.moduleCode === CMod) {
                       return Object.keys(module["classes"]).map(type => {
                         return (
-                          <div className='time-container' onClick={() => setCType(type)}>
+                          <div className='time-container' onClick={() => {setCType(type); setCLesson("")}}>
                             <p className='time'>{type}</p>
                           </div>
                         )
@@ -422,17 +424,17 @@ function Preference({username, setGenerationDone, setGenerationError}) {
                 <p className='time'> {CLesson} </p>
                 <img className='dd' src={dropdown} />
               </div>
-              <div className='add-item-container' onClick={() => addFixedMod()}>
-                <p className='add'>+</p>
+              <div className={CLesson === "" ? 'unclickable add-item-container' : 'add-item-container'} onClick={() => addFixedMod()}>
+                <p className='add'>Add Constraint</p>
               </div>
             </div>
             <div className='optional-mods-container'>
-              <p className='om'>Classes to ignore: </p>
+              <p className='om'>Classes you are skipping: </p>
               <div className='longer-dd select-time' ref={oModRef} onClick={() => {closeAll(); setClickOMod(!clickOMod);}}>
                 {clickOMod ? <div className='extend-dd time-dd dropdown'>
                   {selectedMods.map(mod => {
                     return (
-                      <div className='time-container' onClick={() => setOMod(mod["moduleCode"])}>
+                      <div className='time-container' onClick={() => {setOMod(mod["moduleCode"]); setOType("");}}>
                         <p className='time'>{mod["moduleCode"]}</p>
                       </div>
                     )
@@ -458,8 +460,8 @@ function Preference({username, setGenerationDone, setGenerationError}) {
                 <p className='time'> {OType} </p>
                 <img className='dd' src={dropdown} />
               </div>
-              <div className='add-item-container' onClick={() => addOptionalMod()}>
-                <p className='add'>+</p>
+              <div className={OType === "" ? 'unclickable add-item-container' : 'add-item-container'} onClick={() => addOptionalMod()}>
+                <p className='add'>Add Constraint</p>
               </div>
             </div> 
           </div>}
