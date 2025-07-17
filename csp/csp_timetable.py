@@ -34,9 +34,13 @@ COMMON_LESSON_TYPES = ['LAB', 'TUT']
 
 
 class Csp:
-    def __init__(self, config):
+    def __init__(self, config, max_solutions = None, max_solutions_per_user = None, data = None):
+
+        self.max_solutions = max_solutions
+        self.max_solutions_per_user = max_solutions_per_user
 
         self.config = config
+        # print(f"csp object:\n{json.dumps(self.config, indent=2)}\n")
         self.users = self.config["users"]
 
         self.all_modules = set()
@@ -44,20 +48,23 @@ class Csp:
             for mod in self.config[user]["modules"]:
                 self.all_modules.add(mod)
 
-        self.data = load_mods(list(self.all_modules), self.config["semester"])
+        if not data:
+            self.data = load_mods(list(self.all_modules), self.config["semester"])
 
-        # For reference
-        folder_path = "storage"
-        try:
-            os.makedirs(folder_path, exist_ok=True)
-        except OSError as e:
-            print(str(e))
-        with open("storage/data.json", "w") as f:
-            json.dump(self.data, f, indent=2)
-        # with open("storage/start_time.json", "w") as f:
-        #     json.dump(self.start_time_dict, f, indent=2)
-        # with open("storage/end_time.json", "w") as f:
-        #     json.dump(self.end_time_dict, f, indent=2)
+            # For reference
+            folder_path = "storage"
+            try:
+                os.makedirs(folder_path, exist_ok=True)
+            except OSError as e:
+                print(str(e))
+            with open("storage/data.json", "w") as f:
+                json.dump(self.data, f, indent=2)
+            # with open("storage/start_time.json", "w") as f:
+            #     json.dump(self.start_time_dict, f, indent=2)
+            # with open("storage/end_time.json", "w") as f:
+            #     json.dump(self.end_time_dict, f, indent=2)
+        else:
+            self.data = data
 
         self.assigned: set[tuple[str, str, str, str]] = set()
         # set where each element is (user, module_code, lesson_type, class_no)
@@ -71,6 +78,7 @@ class Csp:
                 for lesson_type, lesson_type_info in self.data[mod].items():
                     self.unassigned.add((user, mod, lesson_type))
                     if (mod in self.config[user]["compulsory_classes"]) and (reverse_abbreviations[lesson_type] in self.config[user]["compulsory_classes"][mod]):
+                        # print(f"{mod} {lesson_type} is compulsory for {user}")
                         lesson_type_str = reverse_abbreviations[lesson_type]
                         self.domains[user][mod][lesson_type] = [(self.config[user]["compulsory_classes"][mod][lesson_type_str], 0)]
                     else:
@@ -78,7 +86,7 @@ class Csp:
                             self.domains[user][mod][lesson_type].append((class_no, 0))
         
 
-        self.all_solutions = []
+        self.all_solutions: list[Solution] = []
         self.reached_states: set[tuple[tuple[str, str, str, str]]] = set()
 
         self.optional_classes: defaultdict[str, set[tuple[str, str]]] = defaultdict(set)
@@ -87,10 +95,6 @@ class Csp:
             for module_code, optional_lesson_types in self.config[user]["optional_classes"].items():
                 for lesson_type in optional_lesson_types:
                     self.optional_classes[user].add((module_code, abbreviations[lesson_type]))
-        
-
-        # self.max_solutions = 10 
-        self.max_solutions_per_user = 10 
 
         self.lunch_days: dict[str, list[str]] = {}
         for user in self.users:
@@ -114,7 +118,10 @@ class Csp:
         self.solutions: dict[str, set[frozenset[tuple[str, str, str]]]] = {} 
         for user in self.users:
             self.solutions[user] = set()
+        
+        # print(f"After init, csp obj has {len(self.all_solutions)} items in all_solutions")
 
+        # print(json.dumps(self.domains, indent=2))
     
     @staticmethod
     def get_start_times(lunch_window: tuple[int, int]) -> list[str]:
@@ -125,8 +132,21 @@ class Csp:
 
 
 def assign(csp, user, mod, lesson_type, class_no):
+    if user not in csp.domains:
+        # print(f"{user} not in csp.domains")
+        return False
+    if mod not in csp.domains[user]: 
+        # print(f"{mod} not in csp.domains[{user}]")
+        return False
+    if lesson_type not in csp.domains[user][mod]: 
+        # print(f"{lesson_type} not in csp.domains[{user}][{mod}]")
+        return False
+    if not any(cn == class_no for cn, _ in csp.domains[user][mod][lesson_type]):
+        # print(f"{class_no} not in csp.domains[{user}][{mod}][{lesson_type}]")
+        return False
     csp.assigned.add((user, mod, lesson_type, class_no))
     csp.unassigned.discard((user, mod, lesson_type))
+    return True
 
 
 def unassign(csp, user, mod, lesson_type, class_no):
@@ -215,7 +235,7 @@ def update_domains(csp: Csp, user: str, mod: str, lesson_type: str, class_no: st
         for affected_day, start_time, end_time in affected_days:
             if affected_day in csp.lunch_days[user]:
                 if not has_consecutive_slots(csp.has_lesson_in_window[user][affected_day], min_no_of_consecutive_slots):
-                    # print(f"No lunch slot for {affected_day}")
+                    # print(f"No lunch slot for {user} on {affected_day}")
                     return False
     for (unassigned_user, unassigned_mod, unassigned_lesson_type) in csp.unassigned:
         if unassigned_user == user:
@@ -246,7 +266,9 @@ def get_current_state(assigned: set[tuple[str, str, str]]) -> tuple[tuple[str, s
     return tuple(sorted(assigned))
 
 
-def get_shared_users(csp: Csp, mod: str, user: str) -> list[str]:
+def get_shared_users(csp: Csp, mod: str, user: str, lesson_type: str) -> list[str]:
+    if lesson_type not in COMMON_LESSON_TYPES:
+        return [user]
     if mod not in csp.config["shared"]:
         return [user]
     for group in csp.config["shared"][mod]:
@@ -259,18 +281,18 @@ def get_shared_users(csp: Csp, mod: str, user: str) -> list[str]:
 def backtrack(csp: Csp) -> None:
     if len(csp.unassigned) == 0:
         # print(len(csp.all_solutions))
-        csp.all_solutions.append((copy.deepcopy(csp.assigned)))
         new_solution = Solution(csp.users, csp.config["semester"])
         for assigned_class in csp.assigned:
             new_solution.add_class_for_user(assigned_class[0], assigned_class[1], assigned_class[2], assigned_class[3])
         for user in csp.users:
             csp.solutions[user].add(new_solution.timetables[user].get_assignment())
+        csp.all_solutions.append(new_solution)
         return
     next_item_to_assign = next(iter(csp.unassigned))
     curr_user, curr_mod, curr_lesson_type =  next_item_to_assign # Take any element from unassigned
     csp.domains[curr_user][curr_mod][curr_lesson_type] = sorted(csp.domains[curr_user][curr_mod][curr_lesson_type], key=lambda x: -x[1])
     domain = csp.domains[curr_user][curr_mod][curr_lesson_type]
-    shared_users = get_shared_users(csp, curr_mod, curr_user)
+    shared_users = get_shared_users(csp, curr_mod, curr_user, curr_lesson_type)
     for class_no, score in domain:
         prev_domains = copy.deepcopy(csp.domains)
         prev_lunch = copy.deepcopy(csp.has_lesson_in_window)
@@ -278,32 +300,27 @@ def backtrack(csp: Csp) -> None:
         # If it is a shared module, lesson type, and user, once the lesson is assigned, it needs to be assigned for all users in the group. Same for unassigning.
         is_valid = True
         for shared_user in shared_users:
-            assign(csp, shared_user, curr_mod, curr_lesson_type, class_no)
-            if update_domains(csp, shared_user, curr_mod, curr_lesson_type, class_no) == False:
+            if assign(csp, shared_user, curr_mod, curr_lesson_type, class_no) == False or update_domains(csp, shared_user, curr_mod, curr_lesson_type, class_no) == False:
                 is_valid = False
         if get_current_state(csp.assigned) in csp.reached_states:
             continue
         if is_valid:
             csp.reached_states.add(get_current_state(csp.assigned))
             backtrack(csp)
-            # if csp.max_solutions is not None and len(csp.all_solutions) >= csp.max_solutions:
-            #     return
-            if all(len(csp.solutions[user]) >= csp.max_solutions_per_user for user in csp.users):
+            if csp.max_solutions is not None and len(csp.all_solutions) >= csp.max_solutions:
+                return
+            if csp.max_solutions_per_user is not None and all(len(csp.solutions[user]) >= csp.max_solutions_per_user for user in csp.users):
                 return
         # Else unassign and restore 
         for shared_user in shared_users:
             unassign(csp, shared_user, curr_mod, curr_lesson_type, class_no)
-        csp.domains.clear()
-        csp.domains.update(prev_domains)
+        csp.domains = copy.deepcopy(prev_domains)
         csp.has_lesson_in_window.clear()
         csp.has_lesson_in_window.update(prev_lunch)
     return
 
-def main():
-    sem = CONFIG["semester"]
-
-    csp = Csp(CONFIG)
-
+def filter_invalid_slots(csp):
+    # print(f"filter_invalid_slots: {json.dumps(csp.domains, indent=2)}")
     for user in csp.users:
         config = csp.config[user]
         earliest_start_time = config["earliest_start"] if config["enable_late_start"] else None
@@ -340,30 +357,58 @@ def main():
                 
                     # Check that domain is not empty:
                     if len(lesson_type_val) == 0:
-                        print(f"No slots available for {user} {mod_key} {lesson_type_key}")
-                        print("no solution")
-                        return
+                        # print(f"No slots available for {user} {mod_key} {lesson_type_key}")
+                        return False
 
                 # Assign slots that only have 1 possible value
                 if len(lesson_type_val) == 1:
-                    assign(csp, user, mod_key, lesson_type_key, lesson_type_val[0][0])
-                    is_valid = update_domains(csp, user, mod_key, lesson_type_key, lesson_type_val[0][0])
+                    # print(f"{mod_key} {lesson_type_key} only has one possible class: {lesson_type_val[0][0]}")
+                    class_no = lesson_type_val[0][0]
+                    shared_users = get_shared_users(csp, mod_key, user, lesson_type_key)
+                    is_valid = True
+                    for shared_user in shared_users:
+                        if assign(csp, shared_user, mod_key, lesson_type_key, class_no) == False or update_domains(csp, shared_user, mod_key, lesson_type_key, class_no) == False:
+                            is_valid = False
                     if not is_valid:
-                        print(f"no solution after assigning {user} {mod_key} {lesson_type_key}")
-                        return
+                        # print(json.dumps(csp.domains, indent=2))
+                        # print(f"no solution after assigning {user} {mod_key} {lesson_type_key}")
+                        return False
+    # print(f"config after filter_invalid_slots: {csp.config}")
+    # print(f"assigned after filter_invalid_slots: {csp.assigned}")
+    return True
+
+
+def solve_for_timetables(config: dict, max_solutions: int = None, max_solutions_per_user: int = None, data=None):
+    # print(json.dumps(config, indent=2))
+    # print("")
+    csp = Csp(config, max_solutions=max_solutions, max_solutions_per_user=max_solutions_per_user, data=data)
+    # print(f"csp object in solve_for_timetables: {json.dumps(csp.config, indent=2)}")
+    # print(f"csp object in solve_for_timetables: {json.dumps(csp.domains, indent=2)}")
+
+    if not filter_invalid_slots(csp):
+        # print("NO SOLUTION")
+        return csp.all_solutions
             
     backtrack(csp)
-    if len(csp.all_solutions) == 0:
-        print("no solution, len=0")
-        return
+    # if len(csp.all_solutions) == 0:
+    #     # print("no solution, len=0")
+    #     pass
+    # else:
+    #     # print(f"solve_for_timetables:\n{str(csp.all_solutions[0])}")
+    
+    return csp.all_solutions
+
+
+
+def main():
+    solutions = solve_for_timetables(CONFIG, max_solutions=10)
+    print(f"solved for {len(solutions)} solutions")
+
     with open("solutions.txt", "w") as f:
-        for i, solution in enumerate(csp.all_solutions):
-            new_solution = Solution(csp.users, sem)
-            for assigned_class in solution:
-                new_solution.add_class_for_user(assigned_class[0], assigned_class[1], assigned_class[2], assigned_class[3])
-            f.write(f"\n\nSolution {i + 1}:")
-            for user, timetable in new_solution.timetables.items():
-                f.write(f"\n{user}: {timetable.get_url()}")
+        for i, solution in enumerate(solutions):
+            f.write(f"\n\nSolution {i + 1}:\n")
+            f.write(f"{str(solution)}")
+        print("DONE")
 
 
 

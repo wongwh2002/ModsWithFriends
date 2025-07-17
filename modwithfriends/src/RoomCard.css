@@ -68,8 +68,6 @@ div.dividor {
   border-top: 2px solid rgb(186, 186, 186);
   transform: translateY(10px);
   position: relative;
-  padding-bottom: 10px;
-  margin-top: 10px;
 }
 
 p.room-name {
@@ -140,21 +138,21 @@ div.add-duplicate-container {
   width: 30px;
   border-radius: 15px;
   background-color: rgba(186, 186, 186, 0);
-  transform: translateY(-13px);
+  transform: translateY(-17px);
 }
 
 p.plus-sign {
   margin: 0;
-  transform: translateY(-2px);
+  transform: translateY(-3px);
   font-size: 18px;
   color: rgba(0,0,0,0);
 }
 
-div.dividor:hover div.add-duplicate-container {
+div.room-wrapper:hover div.add-duplicate-container {
   background-color: rgba(186, 186, 186, 1);
 }
 
-div.dividor:hover p.plus-sign {
+div.room-wrapper:hover p.plus-sign {
   color: rgba(0,0,0,1);
 }
 

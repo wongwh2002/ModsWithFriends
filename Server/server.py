@@ -18,6 +18,19 @@ from generate import generate_timetable
 app = Flask(__name__)
 CORS(app)
 
+@app.route('/modInfo', methods=['GET'])
+def get_mod_info():
+    modCode = request.args.get('modCode')
+    if not modCode:
+        return jsonify({'error': 'Missing url param'}), 400
+
+    try:
+        response = requests.get(f"https://api.nusmods.com/v2/2024-2025/modules/{modCode}.json")
+        data = response.json()
+        return jsonify({'modInfo' : data})
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
+
 @app.route('/expand', methods=['GET'])
 def expand_url():
     url = request.args.get('url')
