@@ -142,7 +142,6 @@ div.sm-container {
   align-items: flex-start;
   flex-wrap: wrap;
   row-gap: 15px;
-  padding-bottom: 30px;
 }
 
 p.module {
@@ -199,7 +198,7 @@ div.flex-row {
 }
 
 div.attending-container {
-  padding-top: 30px;
+  padding-top: 60px;
   flex-wrap: wrap;
   row-gap: 20px;
 }
@@ -399,4 +398,9 @@ div.clear-mods-container {
 div.position-right {
   position: absolute;
   right: 50px;
+}
+
+p.placeholder {
+  font-size: 15px;
+  color: grey;
 }

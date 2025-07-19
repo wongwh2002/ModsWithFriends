@@ -14,6 +14,7 @@ import e from 'cors';
 function Preference({username, setGenerationDone, setGenerationError, setImagesData}) {
 
   const dropDownRef = useRef();
+  const searchBarRef = useRef();
   const startTimeRef = useRef();
   const endTimeRef = useRef();
   const lunchStartRef = useRef();
@@ -154,6 +155,15 @@ function Preference({username, setGenerationDone, setGenerationError, setImagesD
 
     document.addEventListener("mousedown", handleClickOutside);
 
+    const handleKeyDown = (e) => {
+      if (e.key === "Escape" && searchBarRef.current === document.activeElement) {
+        setSearchValue("");
+        setAc([]);
+      }
+    };
+
+    window.addEventListener("keydown", handleKeyDown);
+
     //getURL("https://shorten.nusmods.com?shortUrl=pfayfa")
     //.then( data => console.log(data))
 
@@ -162,6 +172,7 @@ function Preference({username, setGenerationDone, setGenerationError, setImagesD
 
     return () => {
       document.removeEventListener("mousedown", handleClickOutside);
+      window.removeEventListener("keydown", handleKeyDown);
     }
   }, []);
 
@@ -179,21 +190,18 @@ function Preference({username, setGenerationDone, setGenerationError, setImagesD
 
   const autocomplete = (value) => {
     setSearchValue(value);
-    console.log(moduleData);
+    //console.log(moduleData);
     if (value == "") {
       setAc([]);
     } else {
-      setAc([])
-      for (let i in moduleData) {
-        if (moduleData[i]["moduleCode"].toLowerCase().startsWith(value.toLowerCase())) {
-          setAc(ac => [...ac, moduleData[i]]);
-        }
-      }
+      const matches = moduleData.filter(mod =>
+        mod.moduleCode.toLowerCase().startsWith(value.toLowerCase())
+      );
+      setAc(matches);
     }
   }
 
   const findModule = (code) => {
-    //console.log(code);
     return moduleData.find(mod => mod.moduleCode === code);
   }
 
@@ -364,6 +372,10 @@ function Preference({username, setGenerationDone, setGenerationError, setImagesD
     setSelectedMods([]);
   }
 
+  const focusInput = () => {
+    searchBarRef.current?.focus();
+  }
+
   return (
     <div className='preference-overall'>
       <div className='preference-wrapper'>
@@ -390,10 +402,10 @@ function Preference({username, setGenerationDone, setGenerationError, setImagesD
             <div className='dropdown-container' ref={dropDownRef}>
               <input className='search-module' placeholder='Search Module / Paste NUSMODS link' 
                 value={searchValue} onChange={(e) => autocomplete(e.target.value)}
-                onPaste={e => handleLink(e)}></input>
+                onPaste={e => handleLink(e)} ref={searchBarRef}></input>
               <div className={ac.length != 0 ? 'dropdown' : 'invisible dropdown'}>
                 {ac.map(mod => {
-                  return <DropdownItem mod={mod} selectedMods={selectedMods} setSelectedMods={setSelectedMods} />
+                  return <DropdownItem mod={mod} selectedMods={selectedMods} setSelectedMods={setSelectedMods} focusInput={focusInput}/>
                 })}
               </div>
             </div>
@@ -412,7 +424,7 @@ function Preference({username, setGenerationDone, setGenerationError, setImagesD
                     )
                   })}     
                 </div> : <></>}
-                <p className='time'> {CMod} </p>
+                <p className={CMod === "" && !clickCMod ? 'placeholder time' : 'time'}> {CMod === "" && !clickCMod ? "Select Module" : CMod} </p>
                 <img className='dd' src={dropdown} />
               </div>
               <div className='longer-dd select-time' ref={cTypeRef} onClick={() => {closeAll(); setClickCType(!clickCType);}}>
@@ -429,7 +441,7 @@ function Preference({username, setGenerationDone, setGenerationError, setImagesD
                     }
                   })}    
                 </div> : <></>}
-                <p className='time'> {CType} </p>
+                <p className={CType === "" && !clickCType ? 'placeholder time' : 'time'}> {CType === "" && !clickCType ? "Select Lesson Type" : CType} </p>
                 <img className='dd' src={dropdown} />
               </div>
               <div className='longer-dd select-time' ref={cLessonRef} onClick={() => {closeAll(); setClickCLesson(!clickCLesson);}}>
@@ -446,7 +458,7 @@ function Preference({username, setGenerationDone, setGenerationError, setImagesD
                     }
                   })}     
                 </div> : <></>}
-                <p className='time'> {CLesson} </p>
+                <p className={CLesson === "" && !clickCLesson ? 'placeholder time' : 'time'}> {CLesson === "" && !clickCLesson ? "Select Class No." : CLesson} </p>
                 <img className='dd' src={dropdown} />
               </div>
               <div className={CLesson === "" ? 'unclickable add-item-container' : 'add-item-container'} onClick={() => addFixedMod()}>
@@ -465,7 +477,7 @@ function Preference({username, setGenerationDone, setGenerationError, setImagesD
                     )
                   })}     
                 </div> : <></>}
-                <p className='time'> {OMod} </p>
+                <p className={OMod === "" && !clickOMod ? 'placeholder time' : 'time'}> {OMod === "" && !clickOMod ? "Select Module" : OMod} </p>
                 <img className='dd' src={dropdown} />
               </div>
               <div className='longer-dd select-time' ref={oTypeRef} onClick={() => {closeAll(); setClickOType(!clickOType);}}>
@@ -482,7 +494,7 @@ function Preference({username, setGenerationDone, setGenerationError, setImagesD
                     }
                   })}     
                 </div> : <></>}
-                <p className='time'> {OType} </p>
+                <p className={OType === "" && !clickOType ? 'placeholder time' : 'time'}> {OType === "" && !clickOType ? "Select Lesson Type" : OType} </p>
                 <img className='dd' src={dropdown} />
               </div>
               <div className={OType === "" ? 'unclickable add-item-container' : 'add-item-container'} onClick={() => addOptionalMod()}>
