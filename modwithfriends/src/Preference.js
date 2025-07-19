@@ -413,7 +413,7 @@ function Preference({username, setGenerationDone, setGenerationError, setImagesD
           {selectedMods.length === 0 ? <></> : 
           <div className='mod-modification'>
             <div className='compulsary-mods-container'>
-              <p className='fm'>Preallocated/Decided classes: </p>
+              <p className='fm'>Preallocated / Decided classes: </p>
               <div className='longer-dd select-time' ref={cModRef} onClick={() => {closeAll(); setClickCMod(!clickCMod);}}>
                 {clickCMod ? <div className='extend-dd time-dd dropdown'>
                   {(selectedMods).map(mod => {
@@ -441,7 +441,7 @@ function Preference({username, setGenerationDone, setGenerationError, setImagesD
                     }
                   })}    
                 </div> : <></>}
-                <p className={CType === "" && !clickCType ? 'placeholder time' : 'time'}> {CType === "" && !clickCType ? "Select Lesson Type" : CType} </p>
+                <p className={CType === "" && !clickCType ? 'placeholder time' : 'time'}> {CType === "" && !clickCType ? "Select Type" : CType} </p>
                 <img className='dd' src={dropdown} />
               </div>
               <div className='longer-dd select-time' ref={cLessonRef} onClick={() => {closeAll(); setClickCLesson(!clickCLesson);}}>
@@ -458,7 +458,7 @@ function Preference({username, setGenerationDone, setGenerationError, setImagesD
                     }
                   })}     
                 </div> : <></>}
-                <p className={CLesson === "" && !clickCLesson ? 'placeholder time' : 'time'}> {CLesson === "" && !clickCLesson ? "Select Class No." : CLesson} </p>
+                <p className={CLesson === "" && !clickCLesson ? 'placeholder time' : 'time'}> {CLesson === "" && !clickCLesson ? "Select ClassNo." : CLesson} </p>
                 <img className='dd' src={dropdown} />
               </div>
               <div className={CLesson === "" ? 'unclickable add-item-container' : 'add-item-container'} onClick={() => addFixedMod()}>
@@ -494,7 +494,7 @@ function Preference({username, setGenerationDone, setGenerationError, setImagesD
                     }
                   })}     
                 </div> : <></>}
-                <p className={OType === "" && !clickOType ? 'placeholder time' : 'time'}> {OType === "" && !clickOType ? "Select Lesson Type" : OType} </p>
+                <p className={OType === "" && !clickOType ? 'placeholder time' : 'time'}> {OType === "" && !clickOType ? "Select Type" : OType} </p>
                 <img className='dd' src={dropdown} />
               </div>
               <div className={OType === "" ? 'unclickable add-item-container' : 'add-item-container'} onClick={() => addOptionalMod()}>

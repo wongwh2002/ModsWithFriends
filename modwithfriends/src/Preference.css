@@ -305,7 +305,7 @@ div.time-dd {
 
 div.longer-dd {
   margin-right: 15px;
-  width: 180px;
+  min-width: 180px;
 }
 
 div.extend-dd {
@@ -363,6 +363,8 @@ div.compulsary-mods-container, div.optional-mods-container {
   display: flex;
   flex-direction: row;
   align-items: center;
+  flex-wrap: wrap;
+  row-gap: 10px;
 }
 
 p.add {
