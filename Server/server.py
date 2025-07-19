@@ -143,7 +143,7 @@ def new_session_login():
     data = request.get_json()
     name, password = data["name"], data["password"]
     db.add_student(name, password)
-    db._list_students()
+    db.list_students()
     return "some json"
 
 
