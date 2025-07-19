@@ -11,7 +11,8 @@ import NewRoomOverlay from './NewRoomOverlay';
 import RoomCard from './RoomCard';
 import e from 'cors';
 
-function Preference({username, setGenerationDone, setGenerationError, setImagesData}) {
+function Preference({username, setGenerationDone, setGenerationError, setImagesData,
+  semesterTwo}) {
 
   const dropDownRef = useRef();
   const searchBarRef = useRef();
@@ -63,7 +64,7 @@ function Preference({username, setGenerationDone, setGenerationError, setImagesD
   //const [imagesData, setImagesData] = useState([]);
   
   const timeOptions = ['0800', '0900', '1000', '1100', '1200', '1300', 
-    '1400', '1500', '1600', '1700', '1800'];
+    '1400', '1500', '1600', '1700', '1800', '1900', '2000', '2100'];
 
   const durationOptions = ['1HR', '2HR', '3HR'];
 
@@ -441,7 +442,7 @@ function Preference({username, setGenerationDone, setGenerationError, setImagesD
                     }
                   })}    
                 </div> : <></>}
-                <p className={CType === "" && !clickCType ? 'placeholder time' : 'time'}> {CType === "" && !clickCType ? "Select Type" : CType} </p>
+                <p className={CType === "" && !clickCType ? 'placeholder time' : 'time'}> {CType === "" && !clickCType ? "Select Lesson Type" : CType} </p>
                 <img className='dd' src={dropdown} />
               </div>
               <div className='longer-dd select-time' ref={cLessonRef} onClick={() => {closeAll(); setClickCLesson(!clickCLesson);}}>
@@ -458,7 +459,7 @@ function Preference({username, setGenerationDone, setGenerationError, setImagesD
                     }
                   })}     
                 </div> : <></>}
-                <p className={CLesson === "" && !clickCLesson ? 'placeholder time' : 'time'}> {CLesson === "" && !clickCLesson ? "Select ClassNo." : CLesson} </p>
+                <p className={CLesson === "" && !clickCLesson ? 'placeholder time' : 'time'}> {CLesson === "" && !clickCLesson ? "Select Class No." : CLesson} </p>
                 <img className='dd' src={dropdown} />
               </div>
               <div className={CLesson === "" ? 'unclickable add-item-container' : 'add-item-container'} onClick={() => addFixedMod()}>
@@ -494,7 +495,7 @@ function Preference({username, setGenerationDone, setGenerationError, setImagesD
                     }
                   })}     
                 </div> : <></>}
-                <p className={OType === "" && !clickOType ? 'placeholder time' : 'time'}> {OType === "" && !clickOType ? "Select Type" : OType} </p>
+                <p className={OType === "" && !clickOType ? 'placeholder time' : 'time'}> {OType === "" && !clickOType ? "Select Lesson Type" : OType} </p>
                 <img className='dd' src={dropdown} />
               </div>
               <div className={OType === "" ? 'unclickable add-item-container' : 'add-item-container'} onClick={() => addOptionalMod()}>
@@ -604,7 +605,10 @@ function Preference({username, setGenerationDone, setGenerationError, setImagesD
           </div> </> : <></>}
         </div> : 
         <div className={rooms.length === 0 ? 'rooms-body': 'pad-top rooms-body'}>
-          { rooms.length === 0 ? <></> :
+          { rooms.length === 0 ? 
+          <div className='center-flex'>
+            <p className='no-room-msg'>Select modules to create rooms</p> 
+          </div>  :
             rooms.map((room, idx) => {
               return <RoomCard roomInfo={room} setRoomInfo={setRooms} user={username} idx={idx} />
             })

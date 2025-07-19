@@ -406,3 +406,14 @@ p.placeholder {
   font-size: 15px;
   color: grey;
 }
+
+div.center-flex {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+p.no-room-msg {
+  font-size: 15px;
+  font-style: italic;
+}

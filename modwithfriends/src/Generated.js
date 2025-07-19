@@ -2,6 +2,8 @@ import React from 'react';
 import {useEffect} from 'react';
 import './Generated.css'
 import GeneratedTimetable from './GeneratedTimetable';
+import arrow from './assets/arrow.png';
+import { Link } from 'react-router-dom';
 
 function Generated({generationDone, generationError, imagesData}) {
 
@@ -23,6 +25,11 @@ function Generated({generationDone, generationError, imagesData}) {
   return (
     <div className='generated-wrapper'>
       <div className='generated-container'>
+        <div className='back-container'>
+          <Link to='/session' className='link'>
+            <img className='back-arrow' src={arrow} />
+          </Link>
+        </div>
         {generationDone && !generationError ? imagesData.map(imageData => {
           return <GeneratedTimetable imageData={imageData}/>
         }) :  generationError ? 

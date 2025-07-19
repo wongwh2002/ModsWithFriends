@@ -14,6 +14,7 @@ function App() {
   const [generationDone, setGenerationDone] = useState(true);
   const [generationError, setGenerationError] = useState(false);
   const [imagesData, setImagesData] = useState([]);
+  const [semesterTwo, setSemesterTwo] = useState(false);
 
   return (
     <BrowserRouter>
@@ -22,19 +23,22 @@ function App() {
         createSession={createSession} setCreateSession={setCreateSession}
         joinSession={joinSession} setJoinSession={setJoinSession}
         shareSession={shareSession} setShareSession={setShareSession}
-        username={username} setUsername={setUsername}/>} />
+        username={username} setUsername={setUsername} semesterTwo={semesterTwo}
+        setSemesterTwo={setSemesterTwo}/>} />
         <Route path='/session' element={<SessionPage createSession={createSession}
         setCreateSession={setCreateSession} joinSession={joinSession}
         setJoinSession={setJoinSession} shareSession={shareSession}
         setShareSession={setShareSession} body={body} setBody={setBody}
         username={username} setUsername={setUsername} setGenerationDone={setGenerationDone}
-        setGenerationError={setGenerationError} setImagesData={setImagesData}/>} />
+        setGenerationError={setGenerationError} setImagesData={setImagesData}
+        semesterTwo={semesterTwo} setSemesterTwo={setSemesterTwo}/>} />
         <Route path='/generate' element={<GeneratePage createSession={createSession}
         setCreateSession={setCreateSession} joinSession={joinSession} 
         setJoinSession={setJoinSession} shareSession={shareSession}
         setShareSession={setShareSession} body={body} setBody={setBody}
         username={username} setUsername={setUsername} generationDone={generationDone}
-        generationError={generationError} imagesData={imagesData}/>} />
+        generationError={generationError} imagesData={imagesData}
+        semesterTwo={semesterTwo} setSemesterTwo={setSemesterTwo}/>} />
       </Routes>
     </BrowserRouter>
   );
