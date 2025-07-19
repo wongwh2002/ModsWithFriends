@@ -115,6 +115,7 @@ div.preference-body, div.rooms-body{
   padding-top: 10px;
   display: flex;
   flex-direction: column;
+  position: relative;
 }
 
 div.rooms.body{
@@ -134,7 +135,7 @@ div.add-modules {
 }
 
 div.sm-container {
-  padding-top: 30px;
+  padding-top: 50px;
   width: 80vw;
   display: flex;
   flex-direction: row;
@@ -280,6 +281,7 @@ div.select-time {
   align-items: center;
   border-radius: 5px;
   position: relative;
+  box-shadow:0 0 0 1px rgba(186,186,186,0.5);  
 }
 
 div.select-time:hover {
@@ -296,6 +298,10 @@ div.time-dd {
   width: 120px;
   height: 120px;
   transform: translate3d(10px, 70px, 0);
+  box-shadow:
+  1px 0 0 0 rgba(186,186,186,0.5),   
+  -1px 0 0 0 rgba(186,186,186,0.5),  
+  0 1px 0 0 rgba(186,186,186,0.5);  
 }
 
 div.longer-dd {
@@ -374,6 +380,7 @@ div.add-item-container {
   border-radius: 15px;
   background-color: #E1DEE3;
   cursor: pointer;
+  box-shadow: 0 0 0 1px rgba(186, 186, 186, 0.5);
 }
 
 div.unclickable {
@@ -383,4 +390,13 @@ div.unclickable {
 div.mod-modification {
   display: flex;
   flex-direction: column;
+}
+
+div.clear-mods-container {
+  padding-top: 20px;
+}
+
+div.position-right {
+  position: absolute;
+  right: 50px;
 }

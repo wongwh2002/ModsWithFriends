@@ -125,7 +125,7 @@ function Preference({username, setGenerationDone, setGenerationError, setImagesD
     fetch('/modules.json')
       .then(response => response.json())
       .then(data => setModuleData(data));
-
+    
     function handleClickOutside(e) {
       const refs = [
         dropDownRef.current,
@@ -193,7 +193,8 @@ function Preference({username, setGenerationDone, setGenerationError, setImagesD
   }
 
   const findModule = (code) => {
-    return moduleData.find(mod => mod.moduleCode === code)
+    //console.log(code);
+    return moduleData.find(mod => mod.moduleCode === code);
   }
 
   const handleLink = async (e) => {
@@ -204,14 +205,24 @@ function Preference({username, setGenerationDone, setGenerationError, setImagesD
         setSearchValue("");
         return;
       }
-      const matches = [...url.matchAll(/([A-Z]{2,4}[0-9]{4})/g)];
-      const moduleCodes = new Set(matches.map(match => match[1]));
-      const pastedMods = Array.from(moduleCodes).map(code => findModule(code));
+      console.log(url);
+      const matches = [...url.matchAll(/([A-Z]{2,4}[0-9]{4}[A-Z]{0,2})/g)].map(m => m[1]);
+      const counts = matches.reduce((acc, code) => {
+        acc[code] = (acc[code] || 0) + 1;
+        return acc;
+      }, {});
+      const uniqueOnce = matches.filter(code => counts[code] === 1);
+      const pastedMods = Array.from(uniqueOnce).map(code => {
+        const mod = findModule(code);
+        if (!mod) {
+          console.warn("No module found for code:", code);
+        }
+        return mod;
+      });
       let appendMods = [];
       for (const mod of pastedMods) {
         let classes = {};
         let data = await getModuleInfo(mod.moduleCode);
-        //console.log(data);
         for (const semester of data["semesterData"]) {
           if (semester.semester === 1) {
             for (const lesson of semester.timetable) {
@@ -349,6 +360,10 @@ function Preference({username, setGenerationDone, setGenerationError, setImagesD
     //console.log(selectedMods);
   }
   
+  const clearMods = () => {
+    setSelectedMods([]);
+  }
+
   return (
     <div className='preference-overall'>
       <div className='preference-wrapper'>
@@ -474,6 +489,11 @@ function Preference({username, setGenerationDone, setGenerationError, setImagesD
                 <p className='add'>Add Constraint</p>
               </div>
             </div> 
+          </div>}
+          {selectedMods.length === 0 ? <></> : <div className='clear-mods-container'>
+            <div className='position-right add-item-container' onClick={() => clearMods()}>
+              <p className='add'>Clear All Mods</p>
+            </div>
           </div>}
           {selectedMods.length === 0 ? <></> :
           <div className='sm-container'>

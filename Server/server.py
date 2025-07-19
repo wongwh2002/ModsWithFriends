@@ -24,7 +24,7 @@ def get_mod_info():
         return jsonify({'error': 'Missing url param'}), 400
 
     try:
-        response = requests.get(f"https://api.nusmods.com/v2/2024-2025/modules/{modCode}.json")
+        response = requests.get(f"https://api.nusmods.com/v2/2025-2026/modules/{modCode}.json")
         data = response.json()
         return jsonify({'modInfo' : data})
     except Exception as e:
