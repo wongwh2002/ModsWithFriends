@@ -1,4 +1,5 @@
 from collections import defaultdict
+import json
 from pprint import pprint
 import psycopg2
 import hashlib
@@ -8,12 +9,18 @@ import random
 import datetime
 import requests
 
+SEM1 = "sem1"
+SEM2 = "sem2"
+
 
 class mods_database:
     def __init__(self):
         self
         self.conn = self._init_con()
         self.cursor = self.conn.cursor()
+        self.sem1_data = None
+        self.sem2_data = None
+        self.all_module_data = None
 
     def _init_con(self):
         conn = psycopg2.connect(
@@ -122,6 +129,7 @@ class mods_database:
                 """
         params = (student_id, hashed_password)
         self.cursor.execute(sql, params)
+        return True
 
     def list_students(self):
         sql = """SELECT * FROM students"""
@@ -203,7 +211,7 @@ class mods_database:
     def _load_mod_data(self, mod, year, semester) -> tuple[dict, dict, dict]:
         return_dict = {}
 
-        print(f"loading data for {mod} semester {semester}")
+        # print(f"loading data for {mod} semester {semester}")
         data = requests.get(
             f"https://api.nusmods.com/v2/{year}-{year + 1}/modules/{mod}.json"
         ).json()
@@ -246,7 +254,7 @@ class mods_database:
 
             return_dict[mod][lesson_type][class_no]["slots"].append(slot_info)
 
-        print(f"loaded data for {mod}")
+        # print(f"loaded data for {mod}")
         return return_dict
 
     def _load_modules_data(self):
@@ -254,25 +262,73 @@ class mods_database:
         SEM_2 = 2
         year, _ = self._get_year_and_sem()
         all_modules = self._get_all_modules_names(year)
+        print(f"[TOTAL MODULES] len: {len(all_modules)}")
         module_dict = {}
-        for module in all_modules[:1]:
-
+        for module in all_modules[6400:]:  # has a limit, must do 800 at a time
             modulecode = module["moduleCode"]
-            pprint(module)
             module_dict[modulecode] = {
                 "title": module["title"],
-                "sem1": self._load_mod_data(modulecode, year, SEM_1),
-                "sem2": self._load_mod_data(modulecode, year, SEM_2),
+                SEM1: self._load_mod_data(modulecode, year, SEM_1),
+                SEM2: self._load_mod_data(modulecode, year, SEM_2),
             }
         return module_dict
 
     def _populate_modules_db(self):
         all_modules_dict = self._load_modules_data()
-        for module, module_info in all_modules_dict.items():
-            
+        for modulecode, module_info in all_modules_dict.items():
+            title = module_info["title"]
+            sem1 = module_info[SEM1]
+            sem1_json = json.dumps(sem1) if sem1 else None
+            sem2 = module_info[SEM2]
+            sem2_json = json.dumps(sem2) if sem2 else None
+            sql = """INSERT INTO MODULES (module_id, title, sem1_json, sem2_json) 
+                VALUES (%s, %s, %s, %s)
+                ON CONFLICT (module_id) DO NOTHING
+                """
+            params = (
+                modulecode,
+                title,
+                sem1_json,
+                sem2_json,
+            )
+            self.cursor.execute(sql, params)
+
+    def get_modules_db(self):
+        sql = """SELECT * FROM modules"""
+        self.cursor.execute(sql)
+        rows = self.cursor.fetchall()
+        module_data = {}
+        for row in rows:
+            module_data[row[0]] = {"title": row[1], SEM1: row[2], SEM2: row[3]}
+        print(f"[MODULE_DATA] Length: {len(module_data)}")
+        self.all_module_data = module_data
+
+    def _get_sem_data(self, sem):
+        if self.all_module_data == None:
+            self.get_modules_db()
+        return_data = {}
+        for module_code, mod_info in self.all_module_data.items():
+            sem_data = mod_info.get(sem) or {}
+            merged = {"title": mod_info.get("title")}
+            if isinstance(sem_data, dict):
+                merged.update(
+                    sem_data.get(module_code, {})
+                )  # flatten nested module_code dict
+            return_data[module_code] = merged
+        return return_data
+
+    def get_sem1_data(self):
+        if self.sem1_data == None:
+            self.sem1_data = self._get_sem_data(SEM1)
+        return self.sem1_data
+
+    def get_sem2_data(self):
+        if self.sem2_data == None:
+            self.sem2_data = self._get_sem_data(SEM2)
+        return self.sem2_data
 
 
 if __name__ == "__main__":
     db = mods_database()
-
-    pprint(db._reset_db())
+    # module_data = db.get_modules_db()
+    sem1_data = db.get_sem2_data()

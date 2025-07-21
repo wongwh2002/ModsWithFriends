@@ -142,9 +142,35 @@ def new_session_login():
     print("[Login]")
     data = request.get_json()
     name, password = data["name"], data["password"]
-    db.add_student(name, password)
+    session_id = data["session_id"]
+    success = db.add_student(name, password)
     db.list_students()
-    return "some json"
+    if success:
+        return jsonify({"status": "success", "message": "Student added"}), 200
+    else:
+        return jsonify({"status": "exists", "message": "Student already exists"}), 409
+
+
+@app.route("/get_new_session", methods=["POST"])
+def get_new_session_id():
+    new_id = db.generate_session_id()
+    if new_id:
+        return new_id, 200
+    return "unable to generate unique session id", 400
+
+
+@app.route("/sem1_data", methods=["POST"])
+def get_sem1_data():
+    print("[GETTING SEM1 DATA]")
+    sem1_data = db.get_sem1_data()
+    return jsonify(sem1_data), 200
+
+
+@app.route("/sem2_data", methods=["POST"])
+def get_sem2_data():
+    print("[GETTING SEM1 DATA]")
+    sem2_data = db.get_sem2_data()
+    return jsonify(sem2_data), 200
 
 
 @app.route("/Server/<filename>")
