@@ -1,8 +1,12 @@
+from collections import defaultdict
+from pprint import pprint
 import psycopg2
 import hashlib
 import secrets
 import uuid
 import random
+import datetime
+import requests
 
 
 class mods_database:
@@ -47,7 +51,9 @@ class mods_database:
         self.cursor.execute("DROP TABLE IF EXISTS modules")
         sql = """CREATE TABLE modules(
         module_id VARCHAR PRIMARY KEY,
-        module_name VARCHAR NOT NULL
+        title TEXT,
+        sem1_json JSONB,
+        sem2_json JSONB
         )"""
         self.cursor.execute(sql)
 
@@ -172,7 +178,101 @@ class mods_database:
         check student usrname and password
     """
 
+    def add_new_session(self, new_session_id):
+        self.cursor.execute(
+            "INSERT INTO sessions (session_id) VALUES (%s)", (new_session_id,)
+        )
+
+    def _get_all_modules_names(self, year):
+        all_modules = requests.get(
+            f"https://api.nusmods.com/v2/{year}-{year + 1}/moduleList.json"
+        ).json()
+        return all_modules
+
+    def _get_year_and_sem(self):
+        date = datetime.datetime.now()
+        year = date.year
+        month = date.month
+        if month < 6:
+            year -= 1
+            sem = 2
+        else:
+            sem = 1
+        return (year, sem)
+
+    def _load_mod_data(self, mod, year, semester) -> tuple[dict, dict, dict]:
+        return_dict = {}
+
+        print(f"loading data for {mod} semester {semester}")
+        data = requests.get(
+            f"https://api.nusmods.com/v2/{year}-{year + 1}/modules/{mod}.json"
+        ).json()
+        semesters = data["semesterData"]
+        if len(semesters) == 1:
+            if semester != semesters[0]["semester"]:
+                return None
+
+        if semester == 2:
+            semester_timetable: list = (
+                data["semesterData"][0]["timetable"]
+                if data["semesterData"][0]["semester"] == 2
+                else data["semesterData"][1]["timetable"]
+            )
+        elif semester == 1:
+            semester_timetable: list = (
+                data["semesterData"][0]["timetable"]
+                if data["semesterData"][0]["semester"] == 1
+                else data["semesterData"][1]["timetable"]
+            )
+
+        for lesson in semester_timetable:
+            slot_info = {
+                "startTime": lesson["startTime"],
+                "endTime": lesson["endTime"],
+                "weeks": lesson["weeks"],
+                "day": lesson["day"],
+            }
+            lesson_type = lesson["lessonType"]
+            class_no = lesson["classNo"]
+
+            if mod not in return_dict:
+                return_dict[mod] = {}
+
+            if lesson_type not in return_dict[mod]:
+                return_dict[mod][lesson_type] = {}
+
+            if class_no not in return_dict[mod][lesson_type]:
+                return_dict[mod][lesson_type][class_no] = {"slots": []}
+
+            return_dict[mod][lesson_type][class_no]["slots"].append(slot_info)
+
+        print(f"loaded data for {mod}")
+        return return_dict
+
+    def _load_modules_data(self):
+        SEM_1 = 1
+        SEM_2 = 2
+        year, _ = self._get_year_and_sem()
+        all_modules = self._get_all_modules_names(year)
+        module_dict = {}
+        for module in all_modules[:1]:
+
+            modulecode = module["moduleCode"]
+            pprint(module)
+            module_dict[modulecode] = {
+                "title": module["title"],
+                "sem1": self._load_mod_data(modulecode, year, SEM_1),
+                "sem2": self._load_mod_data(modulecode, year, SEM_2),
+            }
+        return module_dict
+
+    def _populate_modules_db(self):
+        all_modules_dict = self._load_modules_data()
+        for module, module_info in all_modules_dict.items():
+            
+
 
 if __name__ == "__main__":
     db = mods_database()
-    print(db.generate_session_id())
+
+    pprint(db._reset_db())
