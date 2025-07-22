@@ -31,12 +31,6 @@ CONFIG = {
                 "Lecture": "04"
             }
         },
-        "weights": {  # Weights for optimization criteria
-            "morning_class": 1,  # Preference for morning classes
-            "afternoon_class": 5,  # Preference for afternoon classes
-            "day_length_penalty": -0.01,  # Penalty for long days
-            "day_present_penalty": -10,  # Penalty for having classes on a day
-        },
         "enable_lunch_break": False,  # Whether to enforce lunch breaks
         "enable_late_start": False,  # Whether to enforce earliest start time
         "enable_early_end": False,  # Whether to enforce latest end time
@@ -75,12 +69,6 @@ CONFIG = {
             #     "Tutorial": "03"
             # },
         },
-        "weights": {  # Weights for optimization criteria
-            "morning_class": 1,  # Preference for morning classes
-            "afternoon_class": 5,  # Preference for afternoon classes
-            "day_length_penalty": -0.01,  # Penalty for long days
-            "day_present_penalty": -10,  # Penalty for having classes on a day
-        },
         "enable_lunch_break": False,  # Whether to enforce lunch breaks
         "enable_late_start": False,  # Whether to enforce earliest start time
         "enable_early_end": False,  # Whether to enforce latest end time
@@ -107,12 +95,6 @@ CONFIG = {
         },
         "compulsory_classes": {
             "CG2023": {"Lecture": "01",}
-        },
-        "weights": {  # Weights for optimization criteria
-            "morning_class": 1,  # Preference for morning classes
-            "afternoon_class": 5,  # Preference for afternoon classes
-            "day_length_penalty": -0.01,  # Penalty for long days
-            "day_present_penalty": -10,  # Penalty for having classes on a day
         },
         "enable_lunch_break": False,  # Whether to enforce lunch breaks
         "enable_late_start": False,  # Whether to enforce earliest start time
@@ -142,12 +124,6 @@ CONFIG = {
             # "CS2107": {
             #     "Tutorial": "01"
             # },
-        },
-        "weights": {  # Weights for optimization criteria
-            "morning_class": 1,  # Preference for morning classes
-            "afternoon_class": 5,  # Preference for afternoon classes
-            "day_length_penalty": -0.01,  # Penalty for long days
-            "day_present_penalty": -10,  # Penalty for having classes on a day
         },
         "enable_lunch_break": False,  # Whether to enforce lunch breaks
         "enable_late_start": False,  # Whether to enforce earliest start time

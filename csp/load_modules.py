@@ -48,7 +48,7 @@ def load_mods(modules: list[str], semester) -> tuple[dict, dict, dict]:
             else:
                 return_dict[mod][lessonType_key][lesson["classNo"]] = {
                 "size": lesson["size"],
-                "lessonType": lesson["lessonType"],
+                # "lessonType": lesson["lessonType"],
                 "slots": [slot_info]
             }
 
