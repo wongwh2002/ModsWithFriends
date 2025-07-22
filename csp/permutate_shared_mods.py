@@ -81,7 +81,6 @@ def permutate_shared_mods(config, data):
             if frozen not in visited:
                 is_valid = True
                 visited.add(frozen)
-                # new_config = copy.deepcopy(config)
                 # Check if valid
                 for user, mod, lt, cn in current:
                     if set_compulsory_class(config[user]["compulsory_classes"], mod, lt, cn) == False:
