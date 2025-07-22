@@ -115,6 +115,7 @@ div.preference-body, div.rooms-body{
   padding-top: 10px;
   display: flex;
   flex-direction: column;
+  position: relative;
 }
 
 div.rooms.body{
@@ -134,10 +135,11 @@ div.add-modules {
 }
 
 div.sm-container {
-  padding-top: 30px;
+  padding-top: 50px;
   width: 80vw;
   display: flex;
   flex-direction: row;
+  align-items: flex-start;
   flex-wrap: wrap;
   row-gap: 15px;
 }
@@ -196,7 +198,7 @@ div.flex-row {
 }
 
 div.attending-container {
-  padding-top: 30px;
+  padding-top: 60px;
   flex-wrap: wrap;
   row-gap: 20px;
 }
@@ -205,7 +207,7 @@ div.start-time {
   padding-top: 30px;
 }
 
-p.dwm, p.st, p.et, p.lo, p.lt, p.duration {
+p.dwm, p.st, p.et, p.lo, p.lt, p.duration, p.fm, p.om{
   margin: 0;
   padding-right: 20px;
   font-size: 18px;
@@ -213,6 +215,7 @@ p.dwm, p.st, p.et, p.lo, p.lt, p.duration {
 
 div.end-time {
   padding-top: 30px;
+  padding-bottom: 30px;
 }
 
 div.lunch-option {
@@ -277,6 +280,7 @@ div.select-time {
   align-items: center;
   border-radius: 5px;
   position: relative;
+  box-shadow:0 0 0 1px rgba(186,186,186,0.5);  
 }
 
 div.select-time:hover {
@@ -293,6 +297,19 @@ div.time-dd {
   width: 120px;
   height: 120px;
   transform: translate3d(10px, 70px, 0);
+  box-shadow:
+  1px 0 0 0 rgba(186,186,186,0.5),   
+  -1px 0 0 0 rgba(186,186,186,0.5),  
+  0 1px 0 0 rgba(186,186,186,0.5);  
+}
+
+div.longer-dd {
+  margin-right: 15px;
+  min-width: 180px;
+}
+
+div.extend-dd {
+  width: 200px;
 }
 
 div.time-container:hover {
@@ -338,4 +355,65 @@ p.plus {
   margin: 0;
   font-size: 30px;
   transform: translateY(-3px);
+}
+
+div.compulsary-mods-container, div.optional-mods-container {
+  padding-top: 30px;
+  padding-right: 30px;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  flex-wrap: wrap;
+  row-gap: 10px;
+}
+
+p.add {
+  margin: 0;
+  font-size: 12px;
+}
+
+div.add-item-container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 120px;
+  height: 30px;
+  border-radius: 15px;
+  background-color: #E1DEE3;
+  cursor: pointer;
+  box-shadow: 0 0 0 1px rgba(186, 186, 186, 0.5);
+}
+
+div.unclickable {
+  cursor: not-allowed;
+}
+
+div.mod-modification {
+  display: flex;
+  flex-direction: column;
+}
+
+div.clear-mods-container {
+  padding-top: 20px;
+}
+
+div.position-right {
+  position: absolute;
+  right: 50px;
+}
+
+p.placeholder {
+  font-size: 15px;
+  color: grey;
+}
+
+div.center-flex {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+p.no-room-msg {
+  font-size: 15px;
+  font-style: italic;
 }

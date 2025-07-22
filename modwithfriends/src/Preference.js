@@ -11,14 +11,21 @@ import NewRoomOverlay from './NewRoomOverlay';
 import RoomCard from './RoomCard';
 import e from 'cors';
 
-function Preference({username, setGenerationDone, setGenerationError}) {
+function Preference({username, setGenerationDone, setGenerationError, setImagesData,
+  semesterTwo}) {
 
   const dropDownRef = useRef();
+  const searchBarRef = useRef();
   const startTimeRef = useRef();
   const endTimeRef = useRef();
   const lunchStartRef = useRef();
   const lunchEndRef = useRef();
   const durationRef = useRef();
+  const cModRef = useRef();
+  const cTypeRef = useRef();
+  const cLessonRef = useRef();
+  const oModRef = useRef();
+  const oTypeRef = useRef();
   
   const [searchValue, setSearchValue] = useState("");
   const [moduleData, setModuleData] = useState([]);
@@ -44,11 +51,29 @@ function Preference({username, setGenerationDone, setGenerationError}) {
   const [createRoom, setCreateRoom] = useState(false);
   const [rooms, setRooms] = useState([])
   const [isPreference, setIsPreference] = useState(true);
+  const [clickCMod, setClickCMod] = useState(false);
+  const [CMod, setCMod] = useState("");
+  const [clickCType, setClickCType] = useState(false);
+  const [CType, setCType] = useState("");
+  const [clickCLesson, setClickCLesson] = useState(false);
+  const [CLesson, setCLesson] = useState("");
+  const [clickOMod, setClickOMod] = useState(false);
+  const [OMod, setOMod] = useState("");
+  const [clickOType, setClickOType] = useState(false);
+  const [OType, setOType] = useState("");
+  //const [imagesData, setImagesData] = useState([]);
   
   const timeOptions = ['0800', '0900', '1000', '1100', '1200', '1300', 
-    '1400', '1500', '1600', '1700', '1800'];
+    '1400', '1500', '1600', '1700', '1800', '1900', '2000', '2100'];
 
   const durationOptions = ['1HR', '2HR', '3HR'];
+
+  const getModuleInfo = async (modCode) => {
+    const encoded = encodeURIComponent(modCode);
+    const response = await fetch(`http://localhost:4000/modInfo?modCode=${encoded}` )
+    const data = await response.json();
+    return data.modInfo;
+  }
 
   const getURL = async (url) => {
     const encoded = encodeURIComponent(url);
@@ -91,13 +116,18 @@ function Preference({username, setGenerationDone, setGenerationError}) {
     setClickLunchEnd(false);
     setClickLunchStart(false);
     setClickDuration(false);
+    setClickCLesson(false);
+    setClickCMod(false);
+    setClickCType(false);
+    setClickOMod(false);
+    setClickOType(false);
   }
 
   useEffect(() => {
     fetch('/modules.json')
       .then(response => response.json())
       .then(data => setModuleData(data));
-
+    
     function handleClickOutside(e) {
       const refs = [
         dropDownRef.current,
@@ -105,7 +135,12 @@ function Preference({username, setGenerationDone, setGenerationError}) {
         endTimeRef.current,
         lunchStartRef.current,
         lunchEndRef.current,
-        durationRef.current
+        durationRef.current,
+        cModRef.current,
+        cTypeRef.current,
+        cLessonRef.current,
+        oModRef.current,
+        oTypeRef.current
       ];
     
       const clickedInsideAny = refs
@@ -121,6 +156,15 @@ function Preference({username, setGenerationDone, setGenerationError}) {
 
     document.addEventListener("mousedown", handleClickOutside);
 
+    const handleKeyDown = (e) => {
+      if (e.key === "Escape" && searchBarRef.current === document.activeElement) {
+        setSearchValue("");
+        setAc([]);
+      }
+    };
+
+    window.addEventListener("keydown", handleKeyDown);
+
     //getURL("https://shorten.nusmods.com?shortUrl=pfayfa")
     //.then( data => console.log(data))
 
@@ -129,6 +173,7 @@ function Preference({username, setGenerationDone, setGenerationError}) {
 
     return () => {
       document.removeEventListener("mousedown", handleClickOutside);
+      window.removeEventListener("keydown", handleKeyDown);
     }
   }, []);
 
@@ -137,7 +182,8 @@ function Preference({username, setGenerationDone, setGenerationError}) {
     if (rooms.length === 0) {
       updatedRooms = selectedMods.map(mod => ({
         module : mod.moduleCode,
-        users : []
+        users : [],
+        isOriginal: true
       }));
       setRooms(updatedRooms);
     }
@@ -145,21 +191,19 @@ function Preference({username, setGenerationDone, setGenerationError}) {
 
   const autocomplete = (value) => {
     setSearchValue(value);
-    console.log(moduleData);
+    //console.log(moduleData);
     if (value == "") {
       setAc([]);
     } else {
-      setAc([])
-      for (let i in moduleData) {
-        if (moduleData[i]["moduleCode"].toLowerCase().startsWith(value.toLowerCase())) {
-          setAc(ac => [...ac, moduleData[i]]);
-        }
-      }
+      const matches = moduleData.filter(mod =>
+        mod.moduleCode.toLowerCase().startsWith(value.toLowerCase())
+      );
+      setAc(matches);
     }
   }
 
   const findModule = (code) => {
-    return moduleData.find(mod => mod.moduleCode === code)
+    return moduleData.find(mod => mod.moduleCode === code);
   }
 
   const handleLink = async (e) => {
@@ -170,10 +214,40 @@ function Preference({username, setGenerationDone, setGenerationError}) {
         setSearchValue("");
         return;
       }
-      const matches = [...url.matchAll(/([A-Z]{2,4}[0-9]{4})/g)];
-      const moduleCodes = new Set(matches.map(match => match[1]));
-      const pastedMods = Array.from(moduleCodes).map(code => findModule(code));
-      setSelectedMods(pastedMods);
+      console.log(url);
+      const matches = [...url.matchAll(/([A-Z]{2,4}[0-9]{4}[A-Z]{0,2})/g)].map(m => m[1]);
+      const counts = matches.reduce((acc, code) => {
+        acc[code] = (acc[code] || 0) + 1;
+        return acc;
+      }, {});
+      const uniqueOnce = matches.filter(code => counts[code] === 1);
+      const pastedMods = Array.from(uniqueOnce).map(code => {
+        const mod = findModule(code);
+        if (!mod) {
+          console.warn("No module found for code:", code);
+        }
+        return mod;
+      });
+      let appendMods = [];
+      for (const mod of pastedMods) {
+        let classes = {};
+        let data = await getModuleInfo(mod.moduleCode);
+        for (const semester of data["semesterData"]) {
+          if (semester.semester === 1) {
+            for (const lesson of semester.timetable) {
+              const lessonType = lesson.lessonType;
+              const classNo = lesson.classNo;
+
+              if (!classes[lessonType]) {
+                  classes[lessonType] = [];
+              }
+              classes[lessonType].push(classNo);
+            }
+          }
+        }
+        appendMods.push({...mod, 'classes': classes});
+      }
+      setSelectedMods(appendMods);
     }
     setSearchValue("");
   }
@@ -221,7 +295,7 @@ function Preference({username, setGenerationDone, setGenerationError}) {
     
     console.log(jsonContent);
 
-    fetch('http://127.0.0.1:4000/generate', {
+    await fetch('http://127.0.0.1:4000/generate', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json'
@@ -231,12 +305,78 @@ function Preference({username, setGenerationDone, setGenerationError}) {
       //console.log(`Status Returned: ${response.status}`);
       if (response.status === 500) {
         setGenerationError(true);  
-      }
-      setGenerationDone(true);
-      console.log("Done generating");
-    })
+      } 
+      //setImagesData(data['images_data']);
+      return response.json();
+    }).then(({images_urls}) => {
+      return Promise.all(
+        images_urls.map(url => {
+          return fetch(`http://localhost:4000/${url}`).then(res => res.blob()).then(blob => URL.createObjectURL(blob))
+        })
+      )
+    }).then(setImagesData)
+    .catch(console.error);
+    setGenerationDone(true);
+    console.log("Done generating");
+  }
+
+  const addFixedMod = () => {
+    if (CLesson === "") return;
+    setSelectedMods(prevSelectedMods => 
+      prevSelectedMods.map(mod => {
+        if (mod.moduleCode === CMod) {
+          if (!mod['fixed']) {
+            mod['fixed'] = [];
+          }
+          const fixedIndex = mod['fixed'].findIndex(fixedMod => Object.keys(fixedMod)[0] === CType);
+
+          if (fixedIndex !== -1) {
+            mod['fixed'][fixedIndex] = {[CType]: CLesson};
+          } else {
+            mod['fixed'].push({[CType]: CLesson});
+          }
+          return {
+            ...mod,
+            'fixed': [...mod['fixed']]
+          };
+        }
+        return mod;
+      })
+    );
+    //console.log(selectedMods);
+    setCMod("");
+    setCType("");
+    setCLesson("");
+  }
+
+  const addOptionalMod = () => {
+    if (OType === "") return;
+    setSelectedMods(prevSelectedMods => 
+      prevSelectedMods.map(mod => {
+        if (mod.moduleCode === OMod) {
+          if (!mod['optional']) {
+            mod['optional'] = [];
+          }
+          if (!mod['optional'].includes(OType)) {
+            mod['optional'].push(OType);
+          }
+        }
+        return mod;
+      })
+    )
+    setOMod("");
+    setOType("");
+    //console.log(selectedMods);
   }
   
+  const clearMods = () => {
+    setSelectedMods([]);
+  }
+
+  const focusInput = () => {
+    searchBarRef.current?.focus();
+  }
+
   return (
     <div className='preference-overall'>
       <div className='preference-wrapper'>
@@ -263,14 +403,111 @@ function Preference({username, setGenerationDone, setGenerationError}) {
             <div className='dropdown-container' ref={dropDownRef}>
               <input className='search-module' placeholder='Search Module / Paste NUSMODS link' 
                 value={searchValue} onChange={(e) => autocomplete(e.target.value)}
-                onPaste={e => handleLink(e)}></input>
+                onPaste={e => handleLink(e)} ref={searchBarRef}></input>
               <div className={ac.length != 0 ? 'dropdown' : 'invisible dropdown'}>
                 {ac.map(mod => {
-                  return <DropdownItem mod={mod} selectedMods={selectedMods} setSelectedMods={setSelectedMods} />
+                  return <DropdownItem mod={mod} selectedMods={selectedMods} setSelectedMods={setSelectedMods} focusInput={focusInput}/>
                 })}
               </div>
             </div>
           </div>
+          {selectedMods.length === 0 ? <></> : 
+          <div className='mod-modification'>
+            <div className='compulsary-mods-container'>
+              <p className='fm'>Preallocated / Decided classes: </p>
+              <div className='longer-dd select-time' ref={cModRef} onClick={() => {closeAll(); setClickCMod(!clickCMod);}}>
+                {clickCMod ? <div className='extend-dd time-dd dropdown'>
+                  {(selectedMods).map(mod => {
+                    return (
+                      <div className='time-container' onClick={() => {setCMod(mod["moduleCode"]); setCType(""); setCLesson("");}}>
+                        <p className='time'>{mod["moduleCode"]}</p>
+                      </div>
+                    )
+                  })}     
+                </div> : <></>}
+                <p className={CMod === "" && !clickCMod ? 'placeholder time' : 'time'}> {CMod === "" && !clickCMod ? "Select Module" : CMod} </p>
+                <img className='dd' src={dropdown} />
+              </div>
+              <div className='longer-dd select-time' ref={cTypeRef} onClick={() => {closeAll(); setClickCType(!clickCType);}}>
+                {clickCType ? <div className='extend-dd time-dd dropdown'>
+                  {selectedMods.map(module => {
+                    if (module.moduleCode === CMod) {
+                      return Object.keys(module["classes"]).map(type => {
+                        return (
+                          <div className='time-container' onClick={() => {setCType(type); setCLesson("")}}>
+                            <p className='time'>{type}</p>
+                          </div>
+                        )
+                      })
+                    }
+                  })}    
+                </div> : <></>}
+                <p className={CType === "" && !clickCType ? 'placeholder time' : 'time'}> {CType === "" && !clickCType ? "Select Lesson Type" : CType} </p>
+                <img className='dd' src={dropdown} />
+              </div>
+              <div className='longer-dd select-time' ref={cLessonRef} onClick={() => {closeAll(); setClickCLesson(!clickCLesson);}}>
+                {clickCLesson ? <div className='extend-dd time-dd dropdown'>
+                  {selectedMods.map(module => {
+                    if (module.moduleCode === CMod) {
+                      return module["classes"][CType].map(lesson => {
+                        return (
+                          <div className='time-container' onClick={() => setCLesson(lesson)}>
+                            <p className='time'>{lesson}</p>
+                          </div>
+                        )
+                      })
+                    }
+                  })}     
+                </div> : <></>}
+                <p className={CLesson === "" && !clickCLesson ? 'placeholder time' : 'time'}> {CLesson === "" && !clickCLesson ? "Select Class No." : CLesson} </p>
+                <img className='dd' src={dropdown} />
+              </div>
+              <div className={CLesson === "" ? 'unclickable add-item-container' : 'add-item-container'} onClick={() => addFixedMod()}>
+                <p className='add'>Add Constraint</p>
+              </div>
+            </div>
+            <div className='optional-mods-container'>
+              <p className='om'>Classes you are skipping: </p>
+              <div className='longer-dd select-time' ref={oModRef} onClick={() => {closeAll(); setClickOMod(!clickOMod);}}>
+                {clickOMod ? <div className='extend-dd time-dd dropdown'>
+                  {selectedMods.map(mod => {
+                    return (
+                      <div className='time-container' onClick={() => {setOMod(mod["moduleCode"]); setOType("");}}>
+                        <p className='time'>{mod["moduleCode"]}</p>
+                      </div>
+                    )
+                  })}     
+                </div> : <></>}
+                <p className={OMod === "" && !clickOMod ? 'placeholder time' : 'time'}> {OMod === "" && !clickOMod ? "Select Module" : OMod} </p>
+                <img className='dd' src={dropdown} />
+              </div>
+              <div className='longer-dd select-time' ref={oTypeRef} onClick={() => {closeAll(); setClickOType(!clickOType);}}>
+                {clickOType ? <div className='extend-dd time-dd dropdown'>
+                  {selectedMods.map(module => {
+                    if (module.moduleCode === OMod) {
+                      return Object.keys(module["classes"]).map(type => {
+                        return (
+                          <div className='time-container' onClick={() => setOType(type)}>
+                            <p className='time'>{type}</p>
+                          </div>
+                        )
+                      })
+                    }
+                  })}     
+                </div> : <></>}
+                <p className={OType === "" && !clickOType ? 'placeholder time' : 'time'}> {OType === "" && !clickOType ? "Select Lesson Type" : OType} </p>
+                <img className='dd' src={dropdown} />
+              </div>
+              <div className={OType === "" ? 'unclickable add-item-container' : 'add-item-container'} onClick={() => addOptionalMod()}>
+                <p className='add'>Add Constraint</p>
+              </div>
+            </div> 
+          </div>}
+          {selectedMods.length === 0 ? <></> : <div className='clear-mods-container'>
+            <div className='position-right add-item-container' onClick={() => clearMods()}>
+              <p className='add'>Clear All Mods</p>
+            </div>
+          </div>}
           {selectedMods.length === 0 ? <></> :
           <div className='sm-container'>
             {selectedMods.map((selectedMod, index) => {
@@ -368,7 +605,10 @@ function Preference({username, setGenerationDone, setGenerationError}) {
           </div> </> : <></>}
         </div> : 
         <div className={rooms.length === 0 ? 'rooms-body': 'pad-top rooms-body'}>
-          { rooms.length === 0 ? <></> :
+          { rooms.length === 0 ? 
+          <div className='center-flex'>
+            <p className='no-room-msg'>Select modules to create rooms</p> 
+          </div>  :
             rooms.map((room, idx) => {
               return <RoomCard roomInfo={room} setRoomInfo={setRooms} user={username} idx={idx} />
             })

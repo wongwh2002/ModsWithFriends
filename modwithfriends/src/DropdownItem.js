@@ -1,11 +1,37 @@
 import React from 'react';
 import './DropdownItem.css';
 
-function DropdownItem({mod, selectedMods, setSelectedMods}) {
+function DropdownItem({mod, selectedMods, setSelectedMods, focusInput}) {
+
+  const getModuleInfo = async (modCode) => {
+    const encoded = encodeURIComponent(modCode);
+    const response = await fetch(`http://localhost:4000/modInfo?modCode=${encoded}` )
+    const data = await response.json();
+    return data.modInfo;
+  }
   
-  const addSelectedMods = () => {
-    if (selectedMods.includes(mod) == false) {
-      setSelectedMods(selectedMods => [...selectedMods, mod]);
+  const addSelectedMods = async () => {
+    if (!selectedMods.some(selectedMod => selectedMod["moduleCode"] == mod["moduleCode"])) {
+      let classes = {};
+      let data = await getModuleInfo(mod.moduleCode);
+      console.log(data);
+      for (const semester of data["semesterData"]) {
+        if (semester.semester === 1) {
+          for (const lesson of semester.timetable) {
+            const lessonType = lesson.lessonType;
+            const classNo = lesson.classNo;
+
+            if (!classes[lessonType]) {
+                classes[lessonType] = [];
+            }
+            classes[lessonType].push(classNo);
+          }
+        }
+      }
+
+      setSelectedMods(selectedMods => [...selectedMods, {...mod, 'classes': classes}]);
+      focusInput();
+      //console.log(selectedMods);
     }
   }
 

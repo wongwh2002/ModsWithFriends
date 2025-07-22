@@ -1,4 +1,4 @@
-from flask import Flask, request, jsonify, send_file, send_from_directory
+from flask import Flask, request, jsonify, send_file, send_from_directory, Response
 from flask_cors import CORS
 import requests
 import asyncio
@@ -12,11 +12,23 @@ import sys
 csp_path = os.path.abspath(os.path.join(os.path.dirname(__file__), './../csp'))
 sys.path.insert(0, csp_path)
 
-import generate
 from generate import generate_timetable
 
 app = Flask(__name__)
 CORS(app)
+
+@app.route('/modInfo', methods=['GET'])
+def get_mod_info():
+    modCode = request.args.get('modCode')
+    if not modCode:
+        return jsonify({'error': 'Missing url param'}), 400
+
+    try:
+        response = requests.get(f"https://api.nusmods.com/v2/2025-2026/modules/{modCode}.json")
+        data = response.json()
+        return jsonify({'modInfo' : data})
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
 
 @app.route('/expand', methods=['GET'])
 def expand_url():
@@ -73,8 +85,9 @@ async def capture_element_screenshot(url):
 async def screenshot_json(id, url):
     try:
         image_bytes = await capture_element_screenshot(url)
-        with open(f"{id}.png", "wb") as f:
-          f.write(image_bytes)
+        #with open(f"{id}.png", "wb") as f:
+        #  f.write(image_bytes)
+        return image_bytes
     except Exception as e:
         print(e)
         return "Something went wrong while taking screenshot", 500
@@ -96,6 +109,8 @@ async def capture_element_screenshot(url):
         return image_bytes
 
 
+image_cache = {}
+
 @app.route('/generate', methods=['POST'])
 def generate():
     data = request.get_json()
@@ -111,8 +126,22 @@ def generate():
       return "No results avaliable", 400
     loop = asyncio.new_event_loop()
     asyncio.set_event_loop(loop)
-    loop.run_until_complete(asyncio.gather(*screenshot_functions))
-    return "Screenshots saved", 200
+    results = loop.run_until_complete(asyncio.gather(*screenshot_functions))
+    
+    for idx, img_bytes in enumerate(results, start=1):
+        image_cache[idx] = img_bytes
+
+    image_urls = [f"/image/{i}" for i in range(1, len(results)+1)]
+
+    return {'images_urls': image_urls}, 200
+
+@app.route('/image/<int:index>')
+def get_image(index):
+    img_bytes = image_cache.get(index)
+    if not img_bytes:
+        return "Image not found", 404
+    #print(img_bytes)
+    return Response(img_bytes, mimetype='image/png')
     
 @app.route('/Server/<filename>')
 def serve_file(filename):
