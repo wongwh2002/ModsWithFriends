@@ -3,7 +3,7 @@ import copy
 import json
 from config_2 import CONFIG
 from csp_timetable import solve_for_timetables
-from load_modules import load_mods, abbreviations, reverse_abbreviations
+from load_modules import load_mods
 import time
 
 SHARED_LESSON_TYPES = ['TUT', 'LAB']
@@ -16,17 +16,16 @@ def set_compulsory_class(compulsory_classes_config, mod, lesson_type, class_no):
     set for the mod and lesson type
     """
 
-    lesson_type_key = reverse_abbreviations[lesson_type]
 
     if mod not in compulsory_classes_config:
         compulsory_classes_config[mod] = {
-            lesson_type_key: class_no
+            lesson_type: class_no
         }
         return True
-    if lesson_type_key not in compulsory_classes_config[mod]:
-        compulsory_classes_config[mod][lesson_type_key] = class_no
+    if lesson_type not in compulsory_classes_config[mod]:
+        compulsory_classes_config[mod][lesson_type] = class_no
         return True
-    if compulsory_classes_config[mod][lesson_type_key] == class_no:
+    if compulsory_classes_config[mod][lesson_type] == class_no:
         return True
     return False
 

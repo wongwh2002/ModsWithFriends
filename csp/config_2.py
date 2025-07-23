@@ -28,7 +28,7 @@ CONFIG = {
         },
         "compulsory_classes": {
             "CG2023": {
-                "Lecture": "04"
+                "LEC": "04"
             }
         },
         "enable_lunch_break": False,  # Whether to enforce lunch breaks
@@ -56,17 +56,17 @@ CONFIG = {
         "days_without_lunch": [],  # Days where lunch break isn't required
         "days_without_class": [],
         "optional_classes": {  # Classes that can be optionally included
-            "EE2211": ["Lecture"],
+            "EE2211": ["LEC"],
         },
         "compulsory_classes": {
             # "CS2107": {
-            #     "Tutorial": "07"
+            #     "TUT": "07"
             # },
             # "CS3243": {
-            #     "Tutorial": "01"
+            #     "TUT": "01"
             # },
             # "EE2211": {
-            #     "Tutorial": "03"
+            #     "TUT": "03"
             # },
         },
         "enable_lunch_break": False,  # Whether to enforce lunch breaks
@@ -94,7 +94,7 @@ CONFIG = {
         "optional_classes": {  # Classes that can be optionally included
         },
         "compulsory_classes": {
-            "CG2023": {"Lecture": "01",}
+            "CG2023": {"LEC": "01",}
         },
         "enable_lunch_break": False,  # Whether to enforce lunch breaks
         "enable_late_start": False,  # Whether to enforce earliest start time
@@ -122,7 +122,7 @@ CONFIG = {
         },
         "compulsory_classes": {
             # "CS2107": {
-            #     "Tutorial": "01"
+            #     "TUT": "01"
             # },
         },
         "enable_lunch_break": False,  # Whether to enforce lunch breaks
