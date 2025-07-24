@@ -3,7 +3,7 @@ import copy
 import json
 import math
 import os
-from load_modules import load_mods, abbreviations, reverse_abbreviations
+from load_modules import load_mods
 from solution import Solution
 from config_2 import CONFIG
 
@@ -77,10 +77,9 @@ class Csp:
             for mod in self.config[user]["modules"]:
                 for lesson_type, lesson_type_info in self.data[mod].items():
                     self.unassigned.add((user, mod, lesson_type))
-                    if (mod in self.config[user]["compulsory_classes"]) and (reverse_abbreviations[lesson_type] in self.config[user]["compulsory_classes"][mod]):
+                    if (mod in self.config[user]["compulsory_classes"]) and (lesson_type in self.config[user]["compulsory_classes"][mod]):
                         # print(f"{mod} {lesson_type} is compulsory for {user}")
-                        lesson_type_str = reverse_abbreviations[lesson_type]
-                        self.domains[user][mod][lesson_type] = [(self.config[user]["compulsory_classes"][mod][lesson_type_str], 0)]
+                        self.domains[user][mod][lesson_type] = [(self.config[user]["compulsory_classes"][mod][lesson_type], 0)]
                     else:
                         for class_no in lesson_type_info:
                             self.domains[user][mod][lesson_type].append((class_no, 0))
@@ -94,7 +93,7 @@ class Csp:
         for user in self.users:
             for module_code, optional_lesson_types in self.config[user]["optional_classes"].items():
                 for lesson_type in optional_lesson_types:
-                    self.optional_classes[user].add((module_code, abbreviations[lesson_type]))
+                    self.optional_classes[user].add((module_code, lesson_type))
 
         self.lunch_days: dict[str, list[str]] = {}
         for user in self.users:

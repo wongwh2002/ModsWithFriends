@@ -7,12 +7,14 @@ import JoinSessionOverlay from './JoinSessionOverlay';
 
 function GeneratePage({createSession, setCreateSession, joinSession, setJoinSession, 
   shareSession, setShareSession, body, setBody, username, setUsername, generationDone,
-  generationError}) {
+  generationError, imagesData, semesterTwo, setSemesterTwo}) {
   return (
     <div>
       <Header setCreateSession={setCreateSession} setJoinSession={setJoinSession} setShareSession={setShareSession} setBody={setBody} body={body}/>
-      <Generated generationDone={generationDone} generationError={generationError}/>
-      {createSession ? <NewSessionOverlay setBody={setBody} setCreateSession={setCreateSession} setUsername={setUsername}/>
+      <Generated generationDone={generationDone} generationError={generationError} imagesData={imagesData}/>
+      {createSession ? <NewSessionOverlay setBody={setBody} 
+      setCreateSession={setCreateSession} setUsername={setUsername}
+      semesterTwo={semesterTwo} setSemesterTwo={setSemesterTwo}/>
       : <></>}
       {joinSession ? <JoinSessionOverlay setBody={setBody} setJoinSession={setJoinSession} setUsername={setUsername}/>
       : <></>}

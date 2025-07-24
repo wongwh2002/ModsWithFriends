@@ -29,8 +29,8 @@ function Header({setCreateSession, setJoinSession, setShareSession, setBody, bod
       </div>
       <div className='header-buttons'>
         <button className='session' onClick={createSession}>New Session</button>
-        {body == '-' ? <button className='session' onClick={joinSession}>Join Session</button>
-        : <button className='session' onClick={shareSession}>Share Session</button>}
+        <button className='session' onClick={joinSession}>Join Session</button>
+        {body === '-' ? <></> : <button className='session' onClick={shareSession}>Share Session</button>}
       </div>
     </div>
   )

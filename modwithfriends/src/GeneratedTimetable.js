@@ -1,10 +1,10 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import './GeneratedTimetable.css';
 
-function GeneratedTimetable({imgPath}) {
+function GeneratedTimetable({imageData}) {
   return (
     <div className='gt-container'>
-      <img src={imgPath} className='gt-pic'/>
+      <img src={imageData} className='gt-pic'/>
     </div>
   )
 }

@@ -1,7 +1,7 @@
 import React from 'react';
 import './DropdownItem.css';
 
-function DropdownItem({mod, selectedMods, setSelectedMods}) {
+function DropdownItem({mod, selectedMods, setSelectedMods, focusInput}) {
 
   const getModuleInfo = async (modCode) => {
     const encoded = encodeURIComponent(modCode);
@@ -30,7 +30,8 @@ function DropdownItem({mod, selectedMods, setSelectedMods}) {
       }
 
       setSelectedMods(selectedMods => [...selectedMods, {...mod, 'classes': classes}]);
-      console.log(selectedMods);
+      focusInput();
+      //console.log(selectedMods);
     }
   }
 

@@ -28,14 +28,8 @@ CONFIG = {
         },
         "compulsory_classes": {
             "CG2023": {
-                "Lecture": "04"
+                "LEC": "04"
             }
-        },
-        "weights": {  # Weights for optimization criteria
-            "morning_class": 1,  # Preference for morning classes
-            "afternoon_class": 5,  # Preference for afternoon classes
-            "day_length_penalty": -0.01,  # Penalty for long days
-            "day_present_penalty": -10,  # Penalty for having classes on a day
         },
         "enable_lunch_break": False,  # Whether to enforce lunch breaks
         "enable_late_start": False,  # Whether to enforce earliest start time
@@ -62,24 +56,18 @@ CONFIG = {
         "days_without_lunch": [],  # Days where lunch break isn't required
         "days_without_class": [],
         "optional_classes": {  # Classes that can be optionally included
-            "EE2211": ["Lecture"],
+            "EE2211": ["LEC"],
         },
         "compulsory_classes": {
             # "CS2107": {
-            #     "Tutorial": "07"
+            #     "TUT": "07"
             # },
             # "CS3243": {
-            #     "Tutorial": "01"
+            #     "TUT": "01"
             # },
             # "EE2211": {
-            #     "Tutorial": "03"
+            #     "TUT": "03"
             # },
-        },
-        "weights": {  # Weights for optimization criteria
-            "morning_class": 1,  # Preference for morning classes
-            "afternoon_class": 5,  # Preference for afternoon classes
-            "day_length_penalty": -0.01,  # Penalty for long days
-            "day_present_penalty": -10,  # Penalty for having classes on a day
         },
         "enable_lunch_break": False,  # Whether to enforce lunch breaks
         "enable_late_start": False,  # Whether to enforce earliest start time
@@ -106,13 +94,7 @@ CONFIG = {
         "optional_classes": {  # Classes that can be optionally included
         },
         "compulsory_classes": {
-            "CG2023": {"Lecture": "01",}
-        },
-        "weights": {  # Weights for optimization criteria
-            "morning_class": 1,  # Preference for morning classes
-            "afternoon_class": 5,  # Preference for afternoon classes
-            "day_length_penalty": -0.01,  # Penalty for long days
-            "day_present_penalty": -10,  # Penalty for having classes on a day
+            "CG2023": {"LEC": "01",}
         },
         "enable_lunch_break": False,  # Whether to enforce lunch breaks
         "enable_late_start": False,  # Whether to enforce earliest start time
@@ -140,14 +122,8 @@ CONFIG = {
         },
         "compulsory_classes": {
             # "CS2107": {
-            #     "Tutorial": "01"
+            #     "TUT": "01"
             # },
-        },
-        "weights": {  # Weights for optimization criteria
-            "morning_class": 1,  # Preference for morning classes
-            "afternoon_class": 5,  # Preference for afternoon classes
-            "day_length_penalty": -0.01,  # Penalty for long days
-            "day_present_penalty": -10,  # Penalty for having classes on a day
         },
         "enable_lunch_break": False,  # Whether to enforce lunch breaks
         "enable_late_start": False,  # Whether to enforce earliest start time

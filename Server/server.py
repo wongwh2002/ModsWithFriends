@@ -1,4 +1,4 @@
-from flask import Flask, request, jsonify, send_file, send_from_directory
+from flask import Flask, request, jsonify, send_file, send_from_directory, Response
 from flask_cors import CORS
 import requests
 import asyncio
@@ -95,8 +95,9 @@ async def capture_element_screenshot(url):
 async def screenshot_json(id, url):
     try:
         image_bytes = await capture_element_screenshot(url)
-        with open(f"{id}.png", "wb") as f:
-            f.write(image_bytes)
+        # with open(f"{id}.png", "wb") as f:
+        #  f.write(image_bytes)
+        return image_bytes
     except Exception as e:
         print(e)
         return "Something went wrong while taking screenshot", 500
@@ -118,6 +119,11 @@ async def capture_element_screenshot(url):
         return image_bytes
 
 
+image_cache = {}
+
+image_cache = {}
+
+
 @app.route("/generate", methods=["POST"])
 def generate():
     data = request.get_json()
@@ -133,8 +139,23 @@ def generate():
         return "No results avaliable", 400
     loop = asyncio.new_event_loop()
     asyncio.set_event_loop(loop)
-    loop.run_until_complete(asyncio.gather(*screenshot_functions))
-    return "Screenshots saved", 200
+    results = loop.run_until_complete(asyncio.gather(*screenshot_functions))
+
+    for idx, img_bytes in enumerate(results, start=1):
+        image_cache[idx] = img_bytes
+
+    image_urls = [f"/image/{i}" for i in range(1, len(results) + 1)]
+
+    return {"images_urls": image_urls}, 200
+
+
+@app.route("/image/<int:index>")
+def get_image(index):
+    img_bytes = image_cache.get(index)
+    if not img_bytes:
+        return "Image not found", 404
+    # print(img_bytes)
+    return Response(img_bytes, mimetype="image/png")
 
 
 @app.route("/login", methods=["POST"])

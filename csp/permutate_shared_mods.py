@@ -3,12 +3,12 @@ import copy
 import json
 from config_2 import CONFIG
 from csp_timetable import solve_for_timetables
-from load_modules import load_mods, abbreviations, reverse_abbreviations
+from load_modules import load_mods
 import time
 
 SHARED_LESSON_TYPES = ['TUT', 'LAB']
 
-def set_compulsory_class(config, user, mod, lesson_type, class_no):
+def set_compulsory_class(compulsory_classes_config, mod, lesson_type, class_no):
 
     """
     Sets the specified class as compulsory for the user in config. 
@@ -16,18 +16,16 @@ def set_compulsory_class(config, user, mod, lesson_type, class_no):
     set for the mod and lesson type
     """
 
-    lesson_type_key = reverse_abbreviations[lesson_type]
 
-    user_config = config[user]
-    if mod not in user_config["compulsory_classes"]:
-        user_config["compulsory_classes"][mod] = {
-            lesson_type_key: class_no
+    if mod not in compulsory_classes_config:
+        compulsory_classes_config[mod] = {
+            lesson_type: class_no
         }
         return True
-    if lesson_type_key not in user_config["compulsory_classes"][mod]:
-        user_config["compulsory_classes"][mod][lesson_type_key] = class_no
+    if lesson_type not in compulsory_classes_config[mod]:
+        compulsory_classes_config[mod][lesson_type] = class_no
         return True
-    if user_config["compulsory_classes"][mod][lesson_type_key] == class_no:
+    if compulsory_classes_config[mod][lesson_type] == class_no:
         return True
     return False
 
@@ -38,7 +36,29 @@ def remove_compulsory_class(config, user, mod, lesson_type, class_no):
         del config[user]["compulsory_classes"][mod]
 
 
+def backup_compulsory_classes(config: dict):
+    compulsory_classes_dict: dict[str, list[tuple[str, str, str]]] = {}
+    users = config["users"]
+    for user in users:
+        compulsory_classes_dict[user] = []
+        for mod_key, mod_value in config[user]["compulsory_classes"].items():
+            for lesson_type, class_no in mod_value.items():
+                compulsory_classes_dict[user].append((mod_key, lesson_type, class_no))
+    return compulsory_classes_dict
+
+
+def restore_compulsory_classes(config: dict, compulsory_classes_copy: dict[str, list[tuple[str, str, str]]]):
+    users = config["users"]
+    for user in users:
+        user_compulsory_classes = defaultdict(lambda: defaultdict(str))
+        backup_copy = compulsory_classes_copy[user]
+        for (mod, lesson_type, class_no) in backup_copy:
+            user_compulsory_classes[mod][lesson_type] = class_no
+        config[user]["compulsory_classes"] = user_compulsory_classes
+
+
 def permutate_shared_mods(config, data):
+    compulsory_classes_copy = backup_compulsory_classes(config)
     visited = set()
     unassigned = []
     for mod in config["shared"]:
@@ -60,19 +80,21 @@ def permutate_shared_mods(config, data):
             if frozen not in visited:
                 is_valid = True
                 visited.add(frozen)
-                new_config = copy.deepcopy(config)
                 # Check if valid
                 for user, mod, lt, cn in current:
-                    if set_compulsory_class(new_config, user, mod, lt, cn) == False:
+                    if set_compulsory_class(config[user]["compulsory_classes"], mod, lt, cn) == False:
                         is_valid = False
+                        restore_compulsory_classes(config, compulsory_classes_copy)
 
                 if is_valid:
-                    solutions = solve_for_timetables(new_config, max_solutions=1, data=copy.deepcopy(data))
+                    solutions = solve_for_timetables(config, max_solutions=1, data=data)
                     if len(solutions) == 0:
                         is_valid = False
 
                 if is_valid:
                     all_permutations.append(current)
+                
+                restore_compulsory_classes(config, compulsory_classes_copy)
             
             continue
 
@@ -91,7 +113,7 @@ def edit_config_for_one_person(config, user, assignment):
     config["shared"] = {}
     config["users"] = [user]
     for assigned_mod, assigned_lt, assigned_cn in assignment:
-        assert set_compulsory_class(config, user, assigned_mod, assigned_lt, assigned_cn) == True
+        assert set_compulsory_class(config[user]["compulsory_classes"], assigned_mod, assigned_lt, assigned_cn) == True
 
 def get_solutions(config):
     return_dict = {}

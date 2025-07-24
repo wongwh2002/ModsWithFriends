@@ -76,7 +76,7 @@
               13
             ],
             "venue": "S1A-0217",
-            "day": "Friday"
+            "day": "Tuesday"
           },
           {
             "startTime": "1200",
@@ -97,7 +97,7 @@
               13
             ],
             "venue": "S1A-0217",
-            "day": "Tuesday"
+            "day": "Friday"
           }
         ]
       }
@@ -135,48 +135,14 @@
     }
   },
   "CG2028": {
-    "LAB": {
-      "01": {
-        "size": 80,
-        "lessonType": "Laboratory",
-        "slots": [
-          {
-            "startTime": "0900",
-            "endTime": "1200",
-            "weeks": [
-              4,
-              5
-            ],
-            "venue": "E4-03-06",
-            "day": "Thursday"
-          }
-        ]
-      },
-      "02": {
-        "size": 80,
-        "lessonType": "Laboratory",
-        "slots": [
-          {
-            "startTime": "1400",
-            "endTime": "1700",
-            "weeks": [
-              4,
-              5
-            ],
-            "venue": "E4-03-06",
-            "day": "Thursday"
-          }
-        ]
-      }
-    },
     "TUT": {
-      "01": {
+      "02": {
         "size": 30,
         "lessonType": "Tutorial",
         "slots": [
           {
-            "startTime": "1000",
-            "endTime": "1100",
+            "startTime": "1100",
+            "endTime": "1200",
             "weeks": [
               1,
               2,
@@ -190,13 +156,13 @@
           }
         ]
       },
-      "02": {
+      "01": {
         "size": 30,
         "lessonType": "Tutorial",
         "slots": [
           {
-            "startTime": "1100",
-            "endTime": "1200",
+            "startTime": "1000",
+            "endTime": "1100",
             "weeks": [
               1,
               2,
@@ -247,6 +213,40 @@
             ],
             "venue": "E3-06-02",
             "day": "Friday"
+          }
+        ]
+      }
+    },
+    "LAB": {
+      "01": {
+        "size": 80,
+        "lessonType": "Laboratory",
+        "slots": [
+          {
+            "startTime": "0900",
+            "endTime": "1200",
+            "weeks": [
+              4,
+              5
+            ],
+            "venue": "E4-03-06",
+            "day": "Thursday"
+          }
+        ]
+      },
+      "02": {
+        "size": 80,
+        "lessonType": "Laboratory",
+        "slots": [
+          {
+            "startTime": "1400",
+            "endTime": "1700",
+            "weeks": [
+              4,
+              5
+            ],
+            "venue": "E4-03-06",
+            "day": "Thursday"
           }
         ]
       }
@@ -368,6 +368,54 @@
       }
     },
     "LEC": {
+      "04": {
+        "size": 80,
+        "lessonType": "Lecture",
+        "slots": [
+          {
+            "startTime": "1600",
+            "endTime": "1800",
+            "weeks": [
+              1,
+              2,
+              3,
+              4,
+              5,
+              6,
+              7,
+              8,
+              9,
+              10,
+              11,
+              12,
+              13
+            ],
+            "venue": "LT1",
+            "day": "Tuesday"
+          },
+          {
+            "startTime": "1600",
+            "endTime": "1800",
+            "weeks": [
+              1,
+              2,
+              3,
+              4,
+              5,
+              6,
+              7,
+              8,
+              9,
+              10,
+              11,
+              12,
+              13
+            ],
+            "venue": "LT1",
+            "day": "Thursday"
+          }
+        ]
+      },
       "03": {
         "size": 80,
         "lessonType": "Lecture",
@@ -391,7 +439,7 @@
               13
             ],
             "venue": "EA-06-03",
-            "day": "Tuesday"
+            "day": "Thursday"
           },
           {
             "startTime": "1600",
@@ -412,7 +460,7 @@
               13
             ],
             "venue": "EA-06-03",
-            "day": "Thursday"
+            "day": "Tuesday"
           }
         ]
       },
@@ -461,54 +509,6 @@
             ],
             "venue": "LT3",
             "day": "Thursday"
-          }
-        ]
-      },
-      "04": {
-        "size": 80,
-        "lessonType": "Lecture",
-        "slots": [
-          {
-            "startTime": "1600",
-            "endTime": "1800",
-            "weeks": [
-              1,
-              2,
-              3,
-              4,
-              5,
-              6,
-              7,
-              8,
-              9,
-              10,
-              11,
-              12,
-              13
-            ],
-            "venue": "LT1",
-            "day": "Thursday"
-          },
-          {
-            "startTime": "1600",
-            "endTime": "1800",
-            "weeks": [
-              1,
-              2,
-              3,
-              4,
-              5,
-              6,
-              7,
-              8,
-              9,
-              10,
-              11,
-              12,
-              13
-            ],
-            "venue": "LT1",
-            "day": "Tuesday"
           }
         ]
       },
@@ -564,6 +564,26 @@
   },
   "CG2027": {
     "TUT": {
+      "03": {
+        "size": 30,
+        "lessonType": "Tutorial",
+        "slots": [
+          {
+            "startTime": "1200",
+            "endTime": "1300",
+            "weeks": [
+              8,
+              9,
+              10,
+              11,
+              12,
+              13
+            ],
+            "venue": "E3-06-02",
+            "day": "Thursday"
+          }
+        ]
+      },
       "04": {
         "size": 30,
         "lessonType": "Tutorial",
@@ -601,26 +621,6 @@
             ],
             "venue": "E3-06-02",
             "day": "Tuesday"
-          }
-        ]
-      },
-      "03": {
-        "size": 30,
-        "lessonType": "Tutorial",
-        "slots": [
-          {
-            "startTime": "1200",
-            "endTime": "1300",
-            "weeks": [
-              8,
-              9,
-              10,
-              11,
-              12,
-              13
-            ],
-            "venue": "E3-06-02",
-            "day": "Thursday"
           }
         ]
       },

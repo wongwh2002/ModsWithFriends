@@ -4,7 +4,13 @@ import "./Overlay.css";
 import x from "./assets/x.png";
 import { Link } from "react-router-dom";
 
-function NewSessionOverlay({ setBody, setCreateSession, setUsername }) {
+function NewSessionOverlay({
+  setBody,
+  setCreateSession,
+  setUsername,
+  semesterTwo,
+  setSemesterTwo,
+}) {
   const [name, setName] = useState("");
   const [password, setPassword] = useState("");
 
@@ -36,8 +42,22 @@ function NewSessionOverlay({ setBody, setCreateSession, setUsername }) {
         <div className="close">
           <img src={x} className="x" onClick={closeOverlay}></img>
         </div>
-        <div className="form">
-          <p className="session-type">Session ID: </p>
+        <div className="flex-jb">
+          <div className="form">
+            <p className="session-type">Session ID: </p>
+          </div>
+          <div className="switch-container">
+            <p className="sem">Semester</p>
+            <label
+              class="switch"
+              onChange={() => {
+                setSemesterTwo((prev) => !prev);
+              }}
+            >
+              <input type="checkbox" checked={semesterTwo} />
+              <span class="slider"></span>
+            </label>
+          </div>
         </div>
         <div className="form">
           <p className={name ? "filled fill" : "fill"}>Name</p>

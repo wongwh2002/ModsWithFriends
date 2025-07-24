@@ -71,3 +71,8 @@ p.no-timetable {
   font-style: italic;
   color: grey;
 }
+
+img.back-arrow {
+  height: 20px;
+  transform: rotate(180deg);
+}

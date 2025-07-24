@@ -73,6 +73,7 @@ button.create-session:hover {
 p.session-type {
   font-size: 20px;
   margin: 0;
+  transform: translateY(3px);
 }
 
 p.fill {
@@ -162,4 +163,68 @@ button.greyed-out {
 
 button.greyed-out:hover {
   cursor: not-allowed;
+}
+
+.switch {
+  font-size: 17px;
+  position: relative;
+  display: inline-block;
+  width: 3.5em;
+  height: 2em;
+}
+
+/* Hide default HTML checkbox */
+.switch input {
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+
+/* The slider */
+.slider {
+  position: absolute;
+  cursor: pointer;
+  inset: 0;
+  border: 1.5px solid rgb(147, 147, 147);
+  border-radius: 50px;
+  transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+.slider:before {
+  position: absolute;
+  content: "1";
+  height: 1.4em;
+  width: 1.4em;
+  left: 0.2em;
+  bottom: 0.2em;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color:#DECFCE;
+  border-radius: inherit;
+  transition: all 0.4s cubic-bezier(0.23, 1, 0.320, 1);
+}
+
+.switch input:checked + .slider:before {
+  transform: translateX(1.5em);
+  content:'2';
+}
+
+div.switch-container {
+  display: flex;
+  flex-direction: row;
+  padding: 25px;
+}
+
+div.flex-jb {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+}
+
+p.sem {
+  margin: 0;
+  font-size: 18px;
+  padding-right: 5px;
+  transform: translateY(3px);
 }
