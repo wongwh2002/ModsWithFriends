@@ -142,7 +142,7 @@ def new_session_login():
     print("[Login]")
     data = request.get_json()
     name, password = data["name"], data["password"]
-    session_id = data["session_id"]
+    # session_id = data["session_id"]
     success = db.add_student(name, password)
     db.list_students()
     if success:

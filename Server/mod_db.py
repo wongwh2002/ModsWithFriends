@@ -169,14 +169,27 @@ class mods_database:
         self.cursor.execute("SELECT 1 FROM sessions WHERE session_id = %s", (id,))
         return self.cursor.fetchone() is not None
 
+    def _is_group_exists(self, id):
+        self.cursor.execute("SELECT 1 FROM groups WHERE group_id = %s", (id,))
+        return self.cursor.fetchone() is not None
+
     def _return_unique_session_id(self):
         while True:
             new_session_id = self._generate_random_id()
             if not self._is_session_exists(new_session_id):
                 return new_session_id
 
+    def _return_unique_group_id(self):
+        while True:
+            new_group_id = uuid.uuid4()
+            if not self._is_group_exists(new_group_id):
+                return new_group_id
+
     def generate_session_id(self):
         return self._return_unique_session_id()
+
+    def generate_group_id(self):
+        return self._return_unique_group_id()
 
     """
         to create new session:
@@ -327,8 +340,35 @@ class mods_database:
             self.sem2_data = self._get_sem_data(SEM2)
         return self.sem2_data
 
+    def add_group(self, module_id, session_id):
+        new_group_id = self.generate_group_id()
+        sql = """INSERT INTO groups"""
+
+    def get_group_id(self, module_id, session_id):
+        pass
+
+    def add_student_group(self, student_id, group_id):
+        pass
+
+    def get_student_group(self, student_id, group_id):
+        pass
+
+    def add_student_sessions(self, student_id, session_id, preference_json):
+        pass
+
+    def get_student_sessions(self, student_id, session_id):
+        pass
+
+    def add_student_modules(self, student_id, sessions_id, module_id):
+        pass
+
+    def get_student_session_modules(self, student_id, sessions_id, module_id):
+        pass
+
 
 if __name__ == "__main__":
     db = mods_database()
     # module_data = db.get_modules_db()
-    sem1_data = db.get_sem2_data()
+    # print(db.generate_group_id())
+    sem2 = db.get_sem2_data()
+    pprint(sem2["CG2023"])
