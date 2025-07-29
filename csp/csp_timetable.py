@@ -3,7 +3,7 @@ import copy
 import json
 import math
 import os
-from load_modules import load_mods
+from load_modules import group_same_timing, load_mods
 from solution import Solution
 from config_2 import CONFIG
 
@@ -50,6 +50,7 @@ class Csp:
 
         if not data:
             self.data = load_mods(list(self.all_modules), self.config["semester"])
+            self.data = group_same_timing(self.data)
 
             # For reference
             folder_path = "storage"

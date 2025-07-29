@@ -3,7 +3,7 @@ import copy
 import json
 from config_2 import CONFIG
 from csp_timetable import solve_for_timetables
-from load_modules import load_mods
+from load_modules import group_same_timing, load_mods
 import time
 
 SHARED_LESSON_TYPES = ['TUT', 'LAB']
@@ -122,6 +122,7 @@ def get_solutions(config):
         for mod in config[user]["modules"]:
             all_modules.add(mod)
     data = load_mods(list(all_modules), config["semester"])
+    data = group_same_timing(data)
 
     # Ensure that there are solutions
     valid_solution = solve_for_timetables(config, max_solutions=1, data=data)
