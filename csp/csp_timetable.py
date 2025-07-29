@@ -163,8 +163,9 @@ def are_disjoint(list1: list, list2: list) -> bool:
 
 def are_clashing_slots(slot1, slot2):
     # No clash if weeks are disjoint
-    if are_disjoint(slot1["weeks"], slot2["weeks"]):
-        return False
+    if type(slot1["weeks"]) is list and type(slot2["weeks"]) is list:
+        if are_disjoint(slot1["weeks"], slot2["weeks"]):
+            return False
     # No clash if days are different
     if slot1["day"] != slot2["day"]:
         return False
