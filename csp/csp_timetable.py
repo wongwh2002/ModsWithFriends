@@ -34,6 +34,7 @@ COMMON_LESSON_TYPES = ['LAB', 'TUT']
 
 
 class Csp:
+
     def __init__(self, config, max_solutions = None, max_solutions_per_user = None, data = None):
 
         self.max_solutions = max_solutions
@@ -79,8 +80,11 @@ class Csp:
                 for lesson_type, lesson_type_info in self.data[mod].items():
                     self.unassigned.add((user, mod, lesson_type))
                     if (mod in self.config[user]["compulsory_classes"]) and (lesson_type in self.config[user]["compulsory_classes"][mod]):
+                        class_no_in_domain = self.find_class_no(self.data, mod, lesson_type, self.config[user]["compulsory_classes"][mod][lesson_type])
+                        if not class_no_in_domain:
+                            raise Exception("No such class number")
                         # print(f"{mod} {lesson_type} is compulsory for {user}")
-                        self.domains[user][mod][lesson_type] = [(self.config[user]["compulsory_classes"][mod][lesson_type], 0)]
+                        self.domains[user][mod][lesson_type] = [(class_no_in_domain, 0)]
                     else:
                         for class_no in lesson_type_info:
                             self.domains[user][mod][lesson_type].append((class_no, 0))
@@ -128,6 +132,17 @@ class Csp:
         start, end = lunch_window
         list = [_ for _ in range(start, end, 30)]
         return [mins_to_str(i) for i in list]
+
+    @staticmethod
+    def find_class_no(data: dict, mod: str, lesson_type: str, class_no: str) -> str:
+        class_numbers = data[mod][lesson_type]
+        if class_no in class_numbers:
+            return class_no
+        for cn, cn_info in class_numbers.items():
+            if class_no in cn_info["allClassNos"]:
+                return cn
+        return None
+    
 
 
 
@@ -236,7 +251,7 @@ def update_domains(csp: Csp, user: str, mod: str, lesson_type: str, class_no: st
         for affected_day, start_time, end_time in affected_days:
             if affected_day in csp.lunch_days[user]:
                 if not has_consecutive_slots(csp.has_lesson_in_window[user][affected_day], min_no_of_consecutive_slots):
-                    # print(f"No lunch slot for {user} on {affected_day}")
+                    print(f"No lunch slot for {user} on {affected_day}")
                     return False
     for (unassigned_user, unassigned_mod, unassigned_lesson_type) in csp.unassigned:
         if unassigned_user == user:
@@ -402,7 +417,7 @@ def solve_for_timetables(config: dict, max_solutions: int = None, max_solutions_
 
 
 def main():
-    solutions = solve_for_timetables(CONFIG, max_solutions=10)
+    solutions = solve_for_timetables(CONFIG)
     print(f"solved for {len(solutions)} solutions")
 
     with open("solutions.txt", "w") as f:

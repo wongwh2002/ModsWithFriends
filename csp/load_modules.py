@@ -50,7 +50,7 @@ def group_same_timing(data: dict):
                     groups.append([class_no])
             for group in groups:
                 info = data[mod][lesson_type][group[0]]
-                info["allClassNo"] = group
+                info["allClassNos"] = group
                 new_data[mod][lesson_type][group[0]] = info
     return new_data
 

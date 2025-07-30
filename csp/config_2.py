@@ -1,10 +1,10 @@
 CONFIG = {
     "semester": 1,
     "users": [
-        "A",
+        # "A",
         "B",
-        "C",
-        "D"
+        # "C",
+        # "D"
     ],
     "A": {
         "modules" : [
@@ -59,17 +59,17 @@ CONFIG = {
             "EE2211": ["LEC"],
         },
         "compulsory_classes": {
-            # "CS2107": {
-            #     "TUT": "07"
-            # },
-            # "CS3243": {
-            #     "TUT": "01"
-            # },
-            # "EE2211": {
-            #     "TUT": "03"
-            # },
+            "CS2107": {
+                "TUT": "11"
+            },
+            "CS3243": {
+                "TUT": "01"
+            },
+            "EE2211": {
+                "TUT": "03"
+            },
         },
-        "enable_lunch_break": False,  # Whether to enforce lunch breaks
+        "enable_lunch_break": True,
         "enable_late_start": False,  # Whether to enforce earliest start time
         "enable_early_end": False,  # Whether to enforce latest end time
         "enable_weights": True,  # Whether to minimize day length
@@ -132,10 +132,10 @@ CONFIG = {
     },
 
     "shared": {
-        "CS2107": [["B", "D", "C"]],
-        "CS3243": [["B", "D"]],
-        "EE2211": [["B", "D"]],
-        "EE2026": [["A", "C"]]
+        # "CS2107": [["B", "D", "C"]],
+        # "CS3243": [["B", "D"]],
+        # "EE2211": [["B", "D"]],
+        # "EE2026": [["A", "C"]]
         # "CS2107": [["B"]],
         # "CS3243": [["B"]],
         # "EE2211": [["B"]],
