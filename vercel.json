@@ -1,0 +1,37 @@
+{
+  "builds": [
+    {
+      "src": "modwithfriends/package.json",
+      "use": "@vercel/static-build",
+      "config": {
+        "distDir": "modwithfriends/build"
+      }
+    },
+    {
+      "src": "Server/server.py",
+      "use": "@vercel/python"
+    }
+  ],
+  "routes": [
+    {
+      "src": "/modInfo",
+      "dest": "/Server/server.py"
+    },
+    {
+      "src": "/expand",
+      "dest": "/Server/server.py"
+    },
+    {
+      "src": "/screenshot",
+      "dest": "/Server/server.py"
+    },
+    {
+      "src": "/generate",
+      "dest": "/Server/server.py"
+    },
+    {
+      "src": "/(.*)",
+      "dest": "/modwithfriends/build/index.html"
+    }
+  ]
+}
