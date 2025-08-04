@@ -1,17 +1,12 @@
 {
-  "builds": [
-    {
-      "src": "modwithfriends/package.json",
-      "use": "@vercel/static-build",
-      "config": {
-        "distDir": "modwithfriends/build"
-      }
-    },
-    {
-      "src": "Server/server.py",
-      "use": "@vercel/python"
+  "buildCommand": "cd modwithfriends && npm run build",
+  "outputDirectory": "modwithfriends/build",
+  "functions": {
+    "Server/server.py": {
+      "runtime": "python3.9",
+      "maxDuration": 30
     }
-  ],
+  },
   "routes": [
     {
       "src": "/modInfo",
@@ -27,6 +22,18 @@
     },
     {
       "src": "/generate",
+      "dest": "/Server/server.py"
+    },
+    {
+      "src": "/image/(.*)",
+      "dest": "/Server/server.py"
+    },
+    {
+      "src": "/login",
+      "dest": "/Server/server.py"
+    },
+    {
+      "src": "/Server/(.*)",
       "dest": "/Server/server.py"
     },
     {

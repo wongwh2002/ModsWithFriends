@@ -15,7 +15,6 @@ SEM2 = "sem2"
 
 class mods_database:
     def __init__(self):
-        self
         self.conn = self._init_con()
         self.cursor = self.conn.cursor()
         self.sem1_data = None
@@ -157,6 +156,18 @@ class mods_database:
             "SELECT 1 FROM students WHERE student_id = %s", (student_id,)
         )
         return self.cursor.fetchone() is not None
+
+    def authenticate_student(self, student_id, password):
+        """Authenticate a student with their ID and password"""
+        sql = """SELECT password FROM students WHERE student_id = %s"""
+        self.cursor.execute(sql, (student_id,))
+        result = self.cursor.fetchone()
+        
+        if not result:
+            return False
+        
+        stored_hash = result[0]
+        return self._verify_password(stored_hash, password)
 
     def _generate_random_id(self):
         min = 0
@@ -342,28 +353,55 @@ class mods_database:
 
     def add_group(self, module_id, session_id):
         new_group_id = self.generate_group_id()
-        sql = """INSERT INTO groups"""
+        sql = """INSERT INTO groups (group_id, module_id, session_id)
+                VALUES (%s, %s, %s)"""
+        params = (new_group_id, module_id, session_id)
+        self.cursor.execute(sql, params)
+        return new_group_id
 
     def get_group_id(self, module_id, session_id):
-        pass
+        sql = """SELECT group_id FROM groups 
+                WHERE module_id = %s AND session_id = %s"""
+        self.cursor.execute(sql, (module_id, session_id))
+        result = self.cursor.fetchone()
+        return result[0] if result else None
 
     def add_student_group(self, student_id, group_id):
-        pass
+        sql = """INSERT INTO student_groups (student_id, group_id)
+                VALUES (%s, %s)
+                ON CONFLICT (student_id, group_id) DO NOTHING"""
+        self.cursor.execute(sql, (student_id, group_id))
 
-    def get_student_group(self, student_id, group_id):
-        pass
+    def get_student_group(self, student_id):
+        sql = """SELECT group_id FROM student_groups WHERE student_id = %s"""
+        self.cursor.execute(sql, (student_id,))
+        return [row[0] for row in self.cursor.fetchall()]
 
     def add_student_sessions(self, student_id, session_id, preference_json):
-        pass
+        sql = """INSERT INTO student_sessions (student_id, session_id, preference)
+                VALUES (%s, %s, %s)
+                ON CONFLICT (student_id, session_id) 
+                DO UPDATE SET preference = EXCLUDED.preference"""
+        self.cursor.execute(sql, (student_id, session_id, json.dumps(preference_json)))
 
     def get_student_sessions(self, student_id, session_id):
-        pass
+        sql = """SELECT preference FROM student_sessions 
+                WHERE student_id = %s AND session_id = %s"""
+        self.cursor.execute(sql, (student_id, session_id))
+        result = self.cursor.fetchone()
+        return json.loads(result[0]) if result and result[0] else None
 
-    def add_student_modules(self, student_id, sessions_id, module_id):
-        pass
+    def add_student_modules(self, student_id, session_id, module_id):
+        sql = """INSERT INTO student_session_modules (student_id, session_id, module_id)
+                VALUES (%s, %s, %s)
+                ON CONFLICT (student_id, session_id, module_id) DO NOTHING"""
+        self.cursor.execute(sql, (student_id, session_id, module_id))
 
-    def get_student_session_modules(self, student_id, sessions_id, module_id):
-        pass
+    def get_student_session_modules(self, student_id, session_id):
+        sql = """SELECT module_id FROM student_session_modules 
+                WHERE student_id = %s AND session_id = %s"""
+        self.cursor.execute(sql, (student_id, session_id))
+        return [row[0] for row in self.cursor.fetchall()]
 
 
 if __name__ == "__main__":
