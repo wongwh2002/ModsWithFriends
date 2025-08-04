@@ -3,8 +3,7 @@
   "outputDirectory": "modwithfriends/build",
   "functions": {
     "Server/server.py": {
-      "runtime": "python3.9",
-      "maxDuration": 30
+      "runtime": "python3.9"
     }
   },
   "routes": [
