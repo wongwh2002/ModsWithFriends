@@ -8,6 +8,11 @@ import uuid
 import random
 import datetime
 import requests
+import os
+from dotenv import load_dotenv
+
+load_dotenv()
+
 
 SEM1 = "sem1"
 SEM2 = "sem2"
@@ -22,13 +27,9 @@ class mods_database:
         self.all_module_data = None
 
     def _init_con(self):
-        conn = psycopg2.connect(
-            database="postgres",
-            host="127.0.0.1",
-            user="wongwh",
-            password="wongwh",
-            port="5432",
-        )
+        database_url = os.getenv("POSTGRES_URL")
+        pprint(database_url)
+        conn = psycopg2.connect(database_url)
         conn.autocommit = True
         return conn
 
@@ -162,10 +163,10 @@ class mods_database:
         sql = """SELECT password FROM students WHERE student_id = %s"""
         self.cursor.execute(sql, (student_id,))
         result = self.cursor.fetchone()
-        
+
         if not result:
             return False
-        
+
         stored_hash = result[0]
         return self._verify_password(stored_hash, password)
 
@@ -408,5 +409,6 @@ if __name__ == "__main__":
     db = mods_database()
     # module_data = db.get_modules_db()
     # print(db.generate_group_id())
-    sem2 = db.get_sem2_data()
-    pprint(sem2["CG2023"])
+    # sem2 = db.get_sem2_data()
+    # pprint(sem2["CG2023"])
+    db._populate_modules_db()
