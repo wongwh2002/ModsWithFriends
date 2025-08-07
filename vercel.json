@@ -15,6 +15,10 @@
       "dest": "/Server/server.py"
     },
     {
+      "src": "/modwithfriends/build/static/(.*)",
+      "dest": "/modwithfriends/build/static/$1"
+    },
+    {
       "src": "/(.*)",
       "dest": "/modwithfriends/build/index.html"
     }
