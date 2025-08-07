@@ -172,6 +172,15 @@ class mods_database:
         stored_hash = result[0]
         return self._verify_password(stored_hash, password)
 
+    def join_session(self, student_id, password, session_id):
+        if self._is_student_exists(student_id):
+            if not self.authenticate_student(student_id, password):
+                return False
+        else:
+            self.add_student(student_id, password)
+        self.add_student_sessions(student_id, session_id, json.dumps({}))
+        return True
+
     def _generate_random_id(self):
         min = 0
         max = 999
@@ -180,7 +189,7 @@ class mods_database:
         digits = [(len(str(max)) - len(digit)) * "0" + digit for digit in digits]
         return "-".join(digits) + random.choice(choice)
 
-    def _is_session_exists(self, id):
+    def is_session_exists(self, id):
         self.cursor.execute("SELECT 1 FROM sessions WHERE session_id = %s", (id,))
         return self.cursor.fetchone() is not None
 
@@ -191,7 +200,7 @@ class mods_database:
     def _return_unique_session_id(self):
         while True:
             new_session_id = self._generate_random_id()
-            if not self._is_session_exists(new_session_id):
+            if not self.is_session_exists(new_session_id):
                 return new_session_id
 
     def _return_unique_group_id(self):

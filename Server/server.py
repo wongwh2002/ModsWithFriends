@@ -164,29 +164,39 @@ def get_image(index):
 @app.route("/new_session", methods=["POST"])
 def new_session_login():
     print("[Login]")
-    data = request.get_json()
-    name, password = data["name"], data["password"]
-    session_id = data["session_id"]
+    name, password, session_id = get_login_info()
     success = db.add_student(name, password)
     db.add_new_session(session_id)
     db.add_student_sessions(name, session_id, json.dumps({}))
-    db.list_students()
     if success:
         return jsonify({"status": "success", "message": "Student added"}), 200
     else:
         return jsonify({"status": "exists", "message": "Student already exists"}), 400
 
 
+def get_login_info():
+    data = request.get_json()
+    name, password = data["name"], data["password"]
+    session_id = data["session_id"]
+    return name, password, session_id
+
+
 @app.route("/save_preferences", methods=["POST"])
 def save_preference():
+    session_id, name, preferences = get_preferences_data()
+    db.add_student_sessions(name, session_id, json.dumps(preferences))
+    return "updated student preference", 200
+
+
+def get_preferences_data():
     data = request.get_json()
     session_id, name, preferences = (
         data["session_id"],
         data["name"],
         data["preferences"],
     )
-    db.add_student_sessions(name, session_id, json.dumps(preferences))
-    return "updated student preference", 200
+
+    return session_id, name, preferences
 
 
 @app.route("/get_preferences", methods=["POST"])
@@ -203,6 +213,17 @@ def get_new_session_id():
     if new_id:
         return new_id, 200
     return "unable to generate unique session id", 400
+
+
+@app.route("/join_session", methods=["POST"])
+def join_session():
+    name, password, session_id = get_login_info()
+    if not db.is_session_exists(session_id):
+        return "session does not exist", 400
+    success = db.join_session(name, password, session_id)
+    if success:
+        return "joined session", 200
+    return "wrong password", 400
 
 
 @app.route("/sem1_data", methods=["GET"])
