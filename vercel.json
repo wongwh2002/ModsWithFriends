@@ -1,14 +1,22 @@
 {
   "builds": [
     {
-      "src": "/Server/server.py",
+      "src": "modwithfriends/build/index.html",
+      "use": "@vercel/static"
+    },
+    {
+      "src": "Server/server.py",
       "use": "@vercel/python"
     }
   ],
   "routes": [
     {
-      "src": "/(.*)",
+      "src": "/api/(.*)",
       "dest": "/Server/server.py"
+    },
+    {
+      "src": "/(.*)",
+      "dest": "/modwithfriends/build/index.html"
     }
   ]
 }
