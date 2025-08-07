@@ -21,6 +21,11 @@ CORS(app)
 db = mods_database()
 
 
+@app.route("/", methods=["GET"])
+def index():
+    return "ModsWithFriends backend is running.", 200
+
+
 @app.route("/modInfo", methods=["GET"])
 def get_mod_info():
     modCode = request.args.get("modCode")
