@@ -210,8 +210,8 @@ def get_preference():
 def get_new_session_id():
     new_id = db.generate_session_id()
     if new_id:
-        return new_id, 200
-    return "unable to generate unique session id", 400
+        return jsonify({"new_id": new_id}), 200
+    return jsonify({"error": "unable to generate unique session id"}), 400
 
 
 @app.route("/join_session", methods=["POST"])
