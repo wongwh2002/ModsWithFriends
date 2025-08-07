@@ -8,7 +8,7 @@
       "use": "@vercel/static-build"
     },
     {
-      "src": "../Server/server.py",
+      "src": "/Server/server.py",
       "use": "@vercel/python"
     }
   ],
