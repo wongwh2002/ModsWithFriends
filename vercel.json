@@ -15,8 +15,32 @@
       "dest": "/Server/server.py"
     },
     {
-      "src": "/modwithfriends/build/static/(.*)",
+      "src": "/static/(.*)",
       "dest": "/modwithfriends/build/static/$1"
+    },
+    {
+      "src": "/manifest.json",
+      "dest": "/modwithfriends/build/manifest.json"
+    },
+    {
+      "src": "/favicon.ico",
+      "dest": "/modwithfriends/build/favicon.ico"
+    },
+    {
+      "src": "/logo192.png",
+      "dest": "/modwithfriends/build/logo192.png"
+    },
+    {
+      "src": "/logo512.png",
+      "dest": "/modwithfriends/build/logo512.png"
+    },
+    {
+      "src": "/MWF_logo.png",
+      "dest": "/modwithfriends/build/MWF_logo.png"
+    },
+    {
+      "src": "/robots.txt",
+      "dest": "/modwithfriends/build/robots.txt"
     },
     {
       "src": "/(.*)",
