@@ -191,6 +191,14 @@ def save_preference():
     return "updated student preference", 200
 
 
+@app.route("/get_preferences", methods=["POST"])
+def get_preference():
+    data = request.get_json()
+    session_id, name = (data["session_id"], data["name"])
+    preferences = db.get_preference_from_student_sessions(name, session_id)
+    return preferences, 200
+
+
 @app.route("/get_new_session", methods=["GET"])
 def get_new_session_id():
     new_id = db.generate_session_id()
