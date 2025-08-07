@@ -28,7 +28,7 @@ function Preference({username, setGenerationDone, setGenerationError, setImagesD
   const oTypeRef = useRef();
   
   const [searchValue, setSearchValue] = useState("");
-  const [moduleData, setModuleData] = useState([]);
+  const [moduleData, setModuleData] = useState({});
   const [ac, setAc] = useState([]);
   const [selectedMods, setSelectedMods] = useState([]);
   const [days, setDays] = useState([
@@ -124,7 +124,7 @@ function Preference({username, setGenerationDone, setGenerationError, setImagesD
   }
 
   useEffect(() => {
-    fetch('/modules.json')
+    fetch(`http://localhost:4000/sem${semesterTwo ? '2' : '1'}_data`)
       .then(response => response.json())
       .then(data => setModuleData(data));
     
@@ -195,15 +195,30 @@ function Preference({username, setGenerationDone, setGenerationError, setImagesD
     if (value == "") {
       setAc([]);
     } else {
-      const matches = moduleData.filter(mod =>
-        mod.moduleCode.toLowerCase().startsWith(value.toLowerCase())
-      );
+      let matches = [];
+      //const matches = moduleData.filter(mod =>
+      //  mod.moduleCode.toLowerCase().startsWith(value.toLowerCase())
+      //);
+      for (module of Object.keys(moduleData)) {
+        if (module.toLowerCase().startsWith(value.toLowerCase())) {
+          matches.append({'moduleCode': module, 'title': module['title']});
+        }
+      }
       setAc(matches);
     }
   }
 
   const findModule = (code) => {
-    return moduleData.find(mod => mod.moduleCode === code);
+    let modData = moduleData[code];
+    let classes = {};
+    for (const key of Object.keys(modData)) {
+        classes[key] = [];
+        for (const number of Object.keys(modData[key])) {
+          classes[key].append(number);
+        }
+    }
+
+    return {'moduleCode': code, 'title': modData['title'], 'classes': classes};
   }
 
   const handleLink = async (e) => {
@@ -228,6 +243,7 @@ function Preference({username, setGenerationDone, setGenerationError, setImagesD
         }
         return mod;
       });
+      /*
       let appendMods = [];
       for (const mod of pastedMods) {
         let classes = {};
@@ -246,8 +262,8 @@ function Preference({username, setGenerationDone, setGenerationError, setImagesD
           }
         }
         appendMods.push({...mod, 'classes': classes});
-      }
-      setSelectedMods(appendMods);
+      }*/
+      setSelectedMods(pastedMods);
     }
     setSearchValue("");
   }

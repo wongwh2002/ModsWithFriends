@@ -10,11 +10,30 @@ function NewSessionOverlay({setBody, setCreateSession, setUsername, semesterTwo,
   const [name, setName] = useState("");
   const [password, setPassword] = useState("");
 
-  const generateID = () => {
-    //replace with generation of id 
-    setBody('000001');
+  const generateID = async () => {
+    await fetch("http://localhost:4000/get_new_session", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({})
+    })
+    .then(response => {
+      if (!response.ok) {
+        throw new Error("Failed to get session ID");
+      }
+      return response.text();
+    })
+    .then(sessionID => setBody(sessionID));
     setUsername(name);
     setCreateSession(false);
+    fetch("http://localhost:4000/login", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({'name': name, 'password': password})
+    });
   }
 
   const closeOverlay = () => {
