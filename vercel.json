@@ -1,11 +1,14 @@
 {
+  "projectSettings": {
+    "rootDirectory": "modwithfriends"
+  },
   "builds": [
     {
-      "src": "modwithfriends/build/index.html",
-      "use": "@vercel/static"
+      "src": "package.json",
+      "use": "@vercel/static-build"
     },
     {
-      "src": "Server/server.py",
+      "src": "../Server/server.py",
       "use": "@vercel/python"
     }
   ],
@@ -13,38 +16,7 @@
     {
       "src": "/api/(.*)",
       "dest": "/Server/server.py"
-    },
-    {
-      "src": "/static/(.*)",
-      "dest": "/modwithfriends/build/static/$1"
-    },
-    {
-      "src": "/manifest.json",
-      "dest": "/modwithfriends/build/manifest.json"
-    },
-    {
-      "src": "/favicon.ico",
-      "dest": "/modwithfriends/build/favicon.ico"
-    },
-    {
-      "src": "/logo192.png",
-      "dest": "/modwithfriends/build/logo192.png"
-    },
-    {
-      "src": "/logo512.png",
-      "dest": "/modwithfriends/build/logo512.png"
-    },
-    {
-      "src": "/MWF_logo.png",
-      "dest": "/modwithfriends/build/MWF_logo.png"
-    },
-    {
-      "src": "/robots.txt",
-      "dest": "/modwithfriends/build/robots.txt"
-    },
-    {
-      "src": "/(.*)",
-      "dest": "/modwithfriends/build/index.html"
     }
   ]
 }
+
