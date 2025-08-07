@@ -177,6 +177,26 @@ def new_session_login():
         return jsonify({"status": "exists", "message": "Student already exists"}), 400
 
 
+@app.route("/save_preferences", methods=["POST"])
+def save_preference():
+    data = request.get_json()
+    session_id, name, preferences = (
+        data["session_id"],
+        data["name"],
+        data["preferences"],
+    )
+    db.add_student_sessions(name, session_id, json.dumps(preferences))
+    return "updated student preference", 200
+
+
+@app.route("/get_preferences", methods=["POST"])
+def get_preference():
+    data = request.get_json()
+    session_id, name = (data["session_id"], data["name"])
+    preferences = db.get_preference_from_student_sessions(name, session_id)
+    return preferences, 200
+
+
 @app.route("/get_new_session", methods=["GET"])
 def get_new_session_id():
     new_id = db.generate_session_id()
@@ -205,5 +225,5 @@ def serve_file(filename):
 
 
 if __name__ == "__main__":
-    port = int(os.getenv('PORT', 4000))
-    app.run(host='0.0.0.0', port=port)
+    port = int(os.getenv("PORT", 4000))
+    app.run(host="0.0.0.0", port=port)
