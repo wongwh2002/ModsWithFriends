@@ -1,10 +1,8 @@
 {
   "builds": [
     {
-      "src": "modwithfriends/package.json",
-      "use": "@vercel/static-build",
-      "config": { "rootDirectory": 
-      "modwithfriends" }
+      "src": "modwithfriends/build/index.html",
+      "use": "@vercel/static"
     },
     {
       "src": "Server/server.py",

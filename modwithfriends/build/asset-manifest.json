@@ -1,0 +1,19 @@
+{
+  "files": {
+    "main.css": "/static/css/main.7bb03a36.css",
+    "main.js": "/static/js/main.96fb1dfb.js",
+    "static/js/453.30f478b7.chunk.js": "/static/js/453.30f478b7.chunk.js",
+    "static/media/Hero.png": "/static/media/Hero.23771ddf62a0a7598894.png",
+    "static/media/MWF_logo.png": "/static/media/MWF_logo.5a6c03c8e6b6f580c4c0.png",
+    "static/media/x.png": "/static/media/x.12ab8f991e1ac2a023c8.png",
+    "static/media/bin.png": "/static/media/bin.a6fd29509719f079bfd7.png",
+    "index.html": "/index.html",
+    "main.7bb03a36.css.map": "/static/css/main.7bb03a36.css.map",
+    "main.96fb1dfb.js.map": "/static/js/main.96fb1dfb.js.map",
+    "453.30f478b7.chunk.js.map": "/static/js/453.30f478b7.chunk.js.map"
+  },
+  "entrypoints": [
+    "static/css/main.7bb03a36.css",
+    "static/js/main.96fb1dfb.js"
+  ]
+}
