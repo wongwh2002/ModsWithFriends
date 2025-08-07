@@ -16,11 +16,26 @@ function NewSessionOverlay({
   const [newSessionID, setNewSessionID] = useState(0);
 
   useEffect(() => {
-    const getID = async () => {
-      setNewSessionID(await fetch("https://modswithfriends.onrender.com/get_new_session", {method: "GET"}));
-    }
-    getID();
-  }, [])
+    const fetchNewSession = async () => {
+      try {
+        const response = await fetch("https://modswithfriends.onrender.com/get_new_session", {
+          method: "GET",
+        });
+
+        const data = await response.json(); 
+
+        if (response.ok) {
+          setNewSessionID(data.new_id);
+        } else {
+          console.log(data.error);
+        }
+      } catch (error) {
+        console.log("Error fetching new session:", error);
+      }
+    };
+
+    fetchNewSession();
+  }, []);
 
   const generateID = async () => {
     //replace with generation of id
