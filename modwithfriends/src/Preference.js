@@ -70,14 +70,14 @@ function Preference({username, setGenerationDone, setGenerationError, setImagesD
 
   const getModuleInfo = async (modCode) => {
     const encoded = encodeURIComponent(modCode);
-    const response = await fetch(`http://localhost:4000/modInfo?modCode=${encoded}` )
+    const response = await fetch(`https://modswithfriends.onrender.com/modInfo?modCode=${encoded}` )
     const data = await response.json();
     return data.modInfo;
   }
 
   const getURL = async (url) => {
     const encoded = encodeURIComponent(url);
-    const response = await fetch(`http://localhost:4000/expand?url=${encoded}` )
+    const response = await fetch(`https://modswithfriends.onrender.com/expand?url=${encoded}` )
     const data = await response.json();
     return data.expandedUrl;
   }
@@ -295,7 +295,7 @@ function Preference({username, setGenerationDone, setGenerationError, setImagesD
     
     console.log(jsonContent);
 
-    await fetch('http://127.0.0.1:4000/generate', {
+    await fetch('https://modswithfriends.onrender.com//generate', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json'
@@ -311,7 +311,7 @@ function Preference({username, setGenerationDone, setGenerationError, setImagesD
     }).then(({images_urls}) => {
       return Promise.all(
         images_urls.map(url => {
-          return fetch(`http://localhost:4000/${url}`).then(res => res.blob()).then(blob => URL.createObjectURL(blob))
+          return fetch(`https://modswithfriends.onrender.com/${url}`).then(res => res.blob()).then(blob => URL.createObjectURL(blob))
         })
       )
     }).then(setImagesData)

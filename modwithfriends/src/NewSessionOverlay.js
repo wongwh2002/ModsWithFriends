@@ -20,7 +20,7 @@ function NewSessionOverlay({
     setUsername(name);
     setCreateSession(false);
     console.log("Creating session with name:");
-    await fetch("http://127.0.0.1:4000/login", {
+    await fetch("https://modswithfriends.onrender.com//login", {
       method: "POST",
       body: JSON.stringify({
         name: name,

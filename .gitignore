@@ -19,7 +19,7 @@ venv/
 node_modules/
 
 # Build outputs
-# build/
+build/
 dist/
 
 # IDE
