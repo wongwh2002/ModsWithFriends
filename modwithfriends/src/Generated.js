@@ -7,16 +7,16 @@ import { Link } from 'react-router-dom';
 
 function Generated({generationDone, generationError, imagesData}) {
 
-  const timetables = ["http://localhost:4000/Server/1.png",
-    "http://localhost:4000/Server/2.png",
-    "http://localhost:4000/Server/3.png",
-    "http://localhost:4000/Server/4.png",
-    "http://localhost:4000/Server/5.png",
-    "http://localhost:4000/Server/6.png",
-    "http://localhost:4000/Server/7.png",
-    "http://localhost:4000/Server/8.png",
-    "http://localhost:4000/Server/9.png",
-    "http://localhost:4000/Server/10.png",
+  const timetables = ["https://modswithfriends.onrender.com/Server/1.png",
+    "https://modswithfriends.onrender.com/Server/2.png",
+    "https://modswithfriends.onrender.com/Server/3.png",
+    "https://modswithfriends.onrender.com/Server/4.png",
+    "https://modswithfriends.onrender.com/Server/5.png",
+    "https://modswithfriends.onrender.com/Server/6.png",
+    "https://modswithfriends.onrender.com/Server/7.png",
+    "https://modswithfriends.onrender.com/Server/8.png",
+    "https://modswithfriends.onrender.com/Server/9.png",
+    "https://modswithfriends.onrender.com/Server/10.png",
   ];
   useEffect(() => {
     console.log(imagesData);
