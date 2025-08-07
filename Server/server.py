@@ -8,7 +8,7 @@ from playwright.async_api import async_playwright
 import json
 import os
 import sys
-from .mod_db import mods_database
+from mod_db import mods_database
 
 csp_path = os.path.abspath(os.path.join(os.path.dirname(__file__), "./../csp"))
 sys.path.insert(0, csp_path)
