@@ -163,21 +163,23 @@ def get_image(index):
     return Response(img_bytes, mimetype="image/png")
 
 
-@app.route("/login", methods=["POST"])
+@app.route("/new_session", methods=["POST"])
 def new_session_login():
     print("[Login]")
     data = request.get_json()
     name, password = data["name"], data["password"]
-    # session_id = data["session_id"]
+    session_id = data["session_id"]
     success = db.add_student(name, password)
+    db.add_new_session(session_id)
+    db.add_student_sessions(name, session_id, json.dumps({}))
     db.list_students()
     if success:
         return jsonify({"status": "success", "message": "Student added"}), 200
     else:
-        return jsonify({"status": "exists", "message": "Student already exists"}), 409
+        return jsonify({"status": "exists", "message": "Student already exists"}), 400
 
 
-@app.route("/get_new_session", methods=["POST"])
+@app.route("/get_new_session", methods=["GET"])
 def get_new_session_id():
     new_id = db.generate_session_id()
     if new_id:
@@ -185,14 +187,14 @@ def get_new_session_id():
     return "unable to generate unique session id", 400
 
 
-@app.route("/sem1_data", methods=["POST"])
+@app.route("/sem1_data", methods=["GET"])
 def get_sem1_data():
     print("[GETTING SEM1 DATA]")
     sem1_data = db.get_sem1_data()
     return jsonify(sem1_data), 200
 
 
-@app.route("/sem2_data", methods=["POST"])
+@app.route("/sem2_data", methods=["GET"])
 def get_sem2_data():
     print("[GETTING SEM1 DATA]")
     sem2_data = db.get_sem2_data()

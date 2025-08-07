@@ -10,6 +10,7 @@ import datetime
 import requests
 import os
 from dotenv import load_dotenv
+import string
 
 load_dotenv()
 
@@ -68,6 +69,7 @@ class mods_database:
         self.cursor.execute("DROP TABLE IF EXISTS sessions")
         sql = """CREATE TABLE sessions(
         session_id VARCHAR PRIMARY KEY
+        semester_no INT
         )"""
         self.cursor.execute(sql)
 
@@ -173,9 +175,10 @@ class mods_database:
     def _generate_random_id(self):
         min = 0
         max = 999
+        choice = string.ascii_uppercase + string.ascii_lowercase
         digits = [str(random.randint(min, max)) for i in range(2)]
         digits = [(len(str(max)) - len(digit)) * "0" + digit for digit in digits]
-        return "-".join(digits)
+        return "-".join(digits) + random.choice(choice)
 
     def _is_session_exists(self, id):
         self.cursor.execute("SELECT 1 FROM sessions WHERE session_id = %s", (id,))
@@ -215,6 +218,13 @@ class mods_database:
         self.cursor.execute(
             "INSERT INTO sessions (session_id) VALUES (%s)", (new_session_id,)
         )
+
+    def list_sessions(self):
+        sql = """SELECT * FROM sessions"""
+        self.cursor.execute(sql)
+        rows = self.cursor.fetchall()
+        for row in rows:
+            print(f"[List Sessions] {row}")
 
     def _get_all_modules_names(self, year):
         all_modules = requests.get(
@@ -325,7 +335,7 @@ class mods_database:
         module_data = {}
         for row in rows:
             module_data[row[0]] = {"title": row[1], SEM1: row[2], SEM2: row[3]}
-        print(f"[MODULE_DATA] Length: {len(module_data)}")
+        # print(f"[MODULE_DATA] Length: {len(module_data)}")
         self.all_module_data = module_data
 
     def _get_sem_data(self, sem):
@@ -385,7 +395,7 @@ class mods_database:
                 DO UPDATE SET preference = EXCLUDED.preference"""
         self.cursor.execute(sql, (student_id, session_id, json.dumps(preference_json)))
 
-    def get_student_sessions(self, student_id, session_id):
+    def get_preference_from_student_sessions(self, student_id, session_id):
         sql = """SELECT preference FROM student_sessions 
                 WHERE student_id = %s AND session_id = %s"""
         self.cursor.execute(sql, (student_id, session_id))
@@ -398,11 +408,16 @@ class mods_database:
                 ON CONFLICT (student_id, session_id, module_id) DO NOTHING"""
         self.cursor.execute(sql, (student_id, session_id, module_id))
 
-    def get_student_session_modules(self, student_id, session_id):
+    def get_modules_from_student_session_modules(self, student_id, session_id):
         sql = """SELECT module_id FROM student_session_modules 
                 WHERE student_id = %s AND session_id = %s"""
         self.cursor.execute(sql, (student_id, session_id))
         return [row[0] for row in self.cursor.fetchall()]
+
+
+def temp():
+    sessionId = db.generate_session_id()
+    db.add_new_session(sessionId)
 
 
 if __name__ == "__main__":
@@ -411,4 +426,4 @@ if __name__ == "__main__":
     # print(db.generate_group_id())
     # sem2 = db.get_sem2_data()
     # pprint(sem2["CG2023"])
-    db._populate_modules_db()
+    db.list_sessions()
