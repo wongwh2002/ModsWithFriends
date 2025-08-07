@@ -177,7 +177,7 @@ def new_session_login():
         return jsonify({"status": "exists", "message": "Student already exists"}), 409
 
 
-@app.route("/get_new_session", methods=["POST"])
+@app.route("/get_new_session", methods=["GET"])
 def get_new_session_id():
     new_id = db.generate_session_id()
     if new_id:
@@ -185,14 +185,14 @@ def get_new_session_id():
     return "unable to generate unique session id", 400
 
 
-@app.route("/sem1_data", methods=["POST"])
+@app.route("/sem1_data", methods=["GET"])
 def get_sem1_data():
     print("[GETTING SEM1 DATA]")
     sem1_data = db.get_sem1_data()
     return jsonify(sem1_data), 200
 
 
-@app.route("/sem2_data", methods=["POST"])
+@app.route("/sem2_data", methods=["GET"])
 def get_sem2_data():
     print("[GETTING SEM1 DATA]")
     sem2_data = db.get_sem2_data()

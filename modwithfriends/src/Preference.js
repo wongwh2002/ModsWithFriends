@@ -295,7 +295,7 @@ function Preference({username, setGenerationDone, setGenerationError, setImagesD
     
     console.log(jsonContent);
 
-    await fetch('http://127.0.0.1:4000/generate', {
+    await fetch('https://modswithfriends.onrender.com//generate', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json'
