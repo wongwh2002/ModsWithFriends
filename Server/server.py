@@ -195,7 +195,6 @@ def get_preferences_data():
         data["name"],
         data["preferences"],
     )
-
     return session_id, name, preferences
 
 
@@ -204,7 +203,7 @@ def get_preference():
     data = request.get_json()
     session_id, name = (data["session_id"], data["name"])
     preferences = db.get_preference_from_student_sessions(name, session_id)
-    return preferences, 200
+    return jsonify({"preferences": preferences}), 200
 
 
 @app.route("/get_new_session", methods=["GET"])
@@ -230,14 +229,14 @@ def join_session():
 def get_sem1_data():
     print("[GETTING SEM1 DATA]")
     sem1_data = db.get_sem1_data()
-    return jsonify(sem1_data), 200
+    return jsonify({"sem_data": sem1_data}), 200
 
 
 @app.route("/sem2_data", methods=["GET"])
 def get_sem2_data():
     print("[GETTING SEM1 DATA]")
     sem2_data = db.get_sem2_data()
-    return jsonify(sem2_data), 200
+    return jsonify({"sem_data": sem2_data}), 200
 
 
 @app.route("/Server/<filename>")
