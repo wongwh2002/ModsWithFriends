@@ -3,7 +3,7 @@ import copy
 import json
 import math
 import os
-from load_modules import load_mods, abbreviations, reverse_abbreviations
+from load_modules import group_same_timing, load_mods
 from solution import Solution
 from config_2 import CONFIG
 
@@ -34,6 +34,7 @@ COMMON_LESSON_TYPES = ['LAB', 'TUT']
 
 
 class Csp:
+
     def __init__(self, config, max_solutions = None, max_solutions_per_user = None, data = None):
 
         self.max_solutions = max_solutions
@@ -50,6 +51,7 @@ class Csp:
 
         if not data:
             self.data = load_mods(list(self.all_modules), self.config["semester"])
+            self.data = group_same_timing(self.data)
 
             # For reference
             folder_path = "storage"
@@ -77,10 +79,12 @@ class Csp:
             for mod in self.config[user]["modules"]:
                 for lesson_type, lesson_type_info in self.data[mod].items():
                     self.unassigned.add((user, mod, lesson_type))
-                    if (mod in self.config[user]["compulsory_classes"]) and (reverse_abbreviations[lesson_type] in self.config[user]["compulsory_classes"][mod]):
+                    if (mod in self.config[user]["compulsory_classes"]) and (lesson_type in self.config[user]["compulsory_classes"][mod]):
+                        class_no_in_domain = self.find_class_no(self.data, mod, lesson_type, self.config[user]["compulsory_classes"][mod][lesson_type])
+                        if not class_no_in_domain:
+                            raise Exception("No such class number")
                         # print(f"{mod} {lesson_type} is compulsory for {user}")
-                        lesson_type_str = reverse_abbreviations[lesson_type]
-                        self.domains[user][mod][lesson_type] = [(self.config[user]["compulsory_classes"][mod][lesson_type_str], 0)]
+                        self.domains[user][mod][lesson_type] = [(class_no_in_domain, 0)]
                     else:
                         for class_no in lesson_type_info:
                             self.domains[user][mod][lesson_type].append((class_no, 0))
@@ -94,7 +98,7 @@ class Csp:
         for user in self.users:
             for module_code, optional_lesson_types in self.config[user]["optional_classes"].items():
                 for lesson_type in optional_lesson_types:
-                    self.optional_classes[user].add((module_code, abbreviations[lesson_type]))
+                    self.optional_classes[user].add((module_code, lesson_type))
 
         self.lunch_days: dict[str, list[str]] = {}
         for user in self.users:
@@ -128,6 +132,17 @@ class Csp:
         start, end = lunch_window
         list = [_ for _ in range(start, end, 30)]
         return [mins_to_str(i) for i in list]
+
+    @staticmethod
+    def find_class_no(data: dict, mod: str, lesson_type: str, class_no: str) -> str:
+        class_numbers = data[mod][lesson_type]
+        if class_no in class_numbers:
+            return class_no
+        for cn, cn_info in class_numbers.items():
+            if class_no in cn_info["allClassNos"]:
+                return cn
+        return None
+    
 
 
 
@@ -163,8 +178,9 @@ def are_disjoint(list1: list, list2: list) -> bool:
 
 def are_clashing_slots(slot1, slot2):
     # No clash if weeks are disjoint
-    if are_disjoint(slot1["weeks"], slot2["weeks"]):
-        return False
+    if type(slot1["weeks"]) is list and type(slot2["weeks"]) is list:
+        if are_disjoint(slot1["weeks"], slot2["weeks"]):
+            return False
     # No clash if days are different
     if slot1["day"] != slot2["day"]:
         return False
@@ -235,7 +251,7 @@ def update_domains(csp: Csp, user: str, mod: str, lesson_type: str, class_no: st
         for affected_day, start_time, end_time in affected_days:
             if affected_day in csp.lunch_days[user]:
                 if not has_consecutive_slots(csp.has_lesson_in_window[user][affected_day], min_no_of_consecutive_slots):
-                    # print(f"No lunch slot for {user} on {affected_day}")
+                    print(f"No lunch slot for {user} on {affected_day}")
                     return False
     for (unassigned_user, unassigned_mod, unassigned_lesson_type) in csp.unassigned:
         if unassigned_user == user:
@@ -401,7 +417,7 @@ def solve_for_timetables(config: dict, max_solutions: int = None, max_solutions_
 
 
 def main():
-    solutions = solve_for_timetables(CONFIG, max_solutions=10)
+    solutions = solve_for_timetables(CONFIG)
     print(f"solved for {len(solutions)} solutions")
 
     with open("solutions.txt", "w") as f:

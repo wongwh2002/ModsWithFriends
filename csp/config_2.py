@@ -1,10 +1,10 @@
 CONFIG = {
     "semester": 1,
     "users": [
-        "A",
+        # "A",
         "B",
-        "C",
-        "D"
+        # "C",
+        # "D"
     ],
     "A": {
         "modules" : [
@@ -28,14 +28,8 @@ CONFIG = {
         },
         "compulsory_classes": {
             "CG2023": {
-                "Lecture": "04"
+                "LEC": "04"
             }
-        },
-        "weights": {  # Weights for optimization criteria
-            "morning_class": 1,  # Preference for morning classes
-            "afternoon_class": 5,  # Preference for afternoon classes
-            "day_length_penalty": -0.01,  # Penalty for long days
-            "day_present_penalty": -10,  # Penalty for having classes on a day
         },
         "enable_lunch_break": False,  # Whether to enforce lunch breaks
         "enable_late_start": False,  # Whether to enforce earliest start time
@@ -62,26 +56,20 @@ CONFIG = {
         "days_without_lunch": [],  # Days where lunch break isn't required
         "days_without_class": [],
         "optional_classes": {  # Classes that can be optionally included
-            "EE2211": ["Lecture"],
+            "EE2211": ["LEC"],
         },
         "compulsory_classes": {
-            # "CS2107": {
-            #     "Tutorial": "07"
-            # },
-            # "CS3243": {
-            #     "Tutorial": "01"
-            # },
-            # "EE2211": {
-            #     "Tutorial": "03"
-            # },
+            "CS2107": {
+                "TUT": "11"
+            },
+            "CS3243": {
+                "TUT": "01"
+            },
+            "EE2211": {
+                "TUT": "03"
+            },
         },
-        "weights": {  # Weights for optimization criteria
-            "morning_class": 1,  # Preference for morning classes
-            "afternoon_class": 5,  # Preference for afternoon classes
-            "day_length_penalty": -0.01,  # Penalty for long days
-            "day_present_penalty": -10,  # Penalty for having classes on a day
-        },
-        "enable_lunch_break": False,  # Whether to enforce lunch breaks
+        "enable_lunch_break": True,
         "enable_late_start": False,  # Whether to enforce earliest start time
         "enable_early_end": False,  # Whether to enforce latest end time
         "enable_weights": True,  # Whether to minimize day length
@@ -106,13 +94,7 @@ CONFIG = {
         "optional_classes": {  # Classes that can be optionally included
         },
         "compulsory_classes": {
-            "CG2023": {"Lecture": "01",}
-        },
-        "weights": {  # Weights for optimization criteria
-            "morning_class": 1,  # Preference for morning classes
-            "afternoon_class": 5,  # Preference for afternoon classes
-            "day_length_penalty": -0.01,  # Penalty for long days
-            "day_present_penalty": -10,  # Penalty for having classes on a day
+            "CG2023": {"LEC": "01",}
         },
         "enable_lunch_break": False,  # Whether to enforce lunch breaks
         "enable_late_start": False,  # Whether to enforce earliest start time
@@ -140,14 +122,8 @@ CONFIG = {
         },
         "compulsory_classes": {
             # "CS2107": {
-            #     "Tutorial": "01"
+            #     "TUT": "01"
             # },
-        },
-        "weights": {  # Weights for optimization criteria
-            "morning_class": 1,  # Preference for morning classes
-            "afternoon_class": 5,  # Preference for afternoon classes
-            "day_length_penalty": -0.01,  # Penalty for long days
-            "day_present_penalty": -10,  # Penalty for having classes on a day
         },
         "enable_lunch_break": False,  # Whether to enforce lunch breaks
         "enable_late_start": False,  # Whether to enforce earliest start time
@@ -156,10 +132,10 @@ CONFIG = {
     },
 
     "shared": {
-        "CS2107": [["B", "D", "C"]],
-        "CS3243": [["B", "D"]],
-        "EE2211": [["B", "D"]],
-        "EE2026": [["A", "C"]]
+        # "CS2107": [["B", "D", "C"]],
+        # "CS3243": [["B", "D"]],
+        # "EE2211": [["B", "D"]],
+        # "EE2026": [["A", "C"]]
         # "CS2107": [["B"]],
         # "CS3243": [["B"]],
         # "EE2211": [["B"]],

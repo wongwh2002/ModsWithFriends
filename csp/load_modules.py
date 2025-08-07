@@ -20,6 +20,41 @@ abbreviations = {
 
 reverse_abbreviations = {v: k for k, v in abbreviations.items()}
 
+
+def contain_same_slots(class_1_info, class_2_info):
+    class_1_set = set()
+    for slot in class_1_info["slots"]:
+        slot_tuple = (slot["startTime"], slot["endTime"], tuple(slot["weeks"]), slot["day"]) 
+        class_1_set.add(slot_tuple)
+    class_2_set = set()
+    for slot in class_2_info["slots"]:
+        slot_tuple = (slot["startTime"], slot["endTime"], tuple(slot["weeks"]), slot["day"]) 
+        class_2_set.add(slot_tuple)
+    return class_1_set == class_2_set
+        
+
+def group_same_timing(data: dict):
+    new_data = {}
+    for mod, mod_info in data.items():
+        new_data[mod] = {}
+        for lesson_type, lesson_type_info in mod_info.items():
+            new_data[mod][lesson_type] = {}
+            groups: list[list[str]] = []
+            for class_no, class_no_info in lesson_type_info.items():
+                for group in groups:
+                    class_no_to_compare = group[0]
+                    if contain_same_slots(lesson_type_info[class_no_to_compare], class_no_info):
+                        group.append(class_no)
+                        break
+                else:
+                    groups.append([class_no])
+            for group in groups:
+                info = data[mod][lesson_type][group[0]]
+                info["allClassNos"] = group
+                new_data[mod][lesson_type][group[0]] = info
+    return new_data
+
+
 def load_mods(modules: list[str], semester) -> tuple[dict, dict, dict]:
     return_dict = defaultdict(lambda: defaultdict(dict)) 
     # start_time_dict = defaultdict(lambda: defaultdict(list))
@@ -48,7 +83,6 @@ def load_mods(modules: list[str], semester) -> tuple[dict, dict, dict]:
             else:
                 return_dict[mod][lessonType_key][lesson["classNo"]] = {
                 "size": lesson["size"],
-                "lessonType": lesson["lessonType"],
                 "slots": [slot_info]
             }
 
