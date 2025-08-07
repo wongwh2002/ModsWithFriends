@@ -50,10 +50,11 @@ function NewSessionOverlay({
         password: password,
       }),
       headers: {
-        "Content-type": "application/json; charset=UTF-8",
+        "Content-Type": "application/json"
       },
+      body: JSON.stringify({'name': name, 'password': password})
     });
-  };
+  }
 
   const closeOverlay = () => {
     setCreateSession(false);

@@ -15,6 +15,28 @@ div.generated-container {
   flex-wrap: wrap;
 }
 
+div.zoom-in-container {
+  height: fit-content;
+  width: 100%;
+  padding: 20px;
+  border-radius: 10px;
+  background-color: #DAB8AE;
+  margin: 0 25px;
+  margin-top: 10px;
+}
+
+p.zoom-in-text {
+  font-size: 18px;
+  font-weight: 500;
+  margin-top: 0;
+  justify-self: center;
+}
+
+img.zoom-in-pic {
+  object-fit: contain;
+  width: 100%;
+}
+
 .loader {
   font-size: 10px;
   width: 1em;
