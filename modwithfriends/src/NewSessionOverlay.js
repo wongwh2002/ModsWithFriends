@@ -33,7 +33,6 @@ function NewSessionOverlay({
         console.log("Error fetching new session:", error);
       }
     };
-
     fetchNewSession();
   }, []);
 

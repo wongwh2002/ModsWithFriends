@@ -179,14 +179,13 @@ function Preference({username, setGenerationDone, setGenerationError, setImagesD
 
   useEffect(() => {
     let updatedRooms = [];
-    if (rooms.length === 0) {
-      updatedRooms = selectedMods.map(mod => ({
-        module : mod.moduleCode,
-        users : [],
-        isOriginal: true
-      }));
-      setRooms(updatedRooms);
-    }
+    updatedRooms = selectedMods.map(mod => ({
+      module : mod.moduleCode,
+      users : [],
+      isOriginal: true
+    }));
+    setRooms(updatedRooms);
+    console.log(rooms);
   }, [isPreference]);
 
   const autocomplete = (value) => {

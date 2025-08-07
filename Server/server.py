@@ -222,7 +222,7 @@ def join_session():
     success = db.join_session(name, password, session_id)
     if success:
         return "joined session", 200
-    return "wrong password", 400
+    return "wrong password", 401
 
 
 @app.route("/sem1_data", methods=["GET"])
