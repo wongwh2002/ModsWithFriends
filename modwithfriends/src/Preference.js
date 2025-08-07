@@ -124,9 +124,10 @@ function Preference({username, setGenerationDone, setGenerationError, setImagesD
   }
 
   useEffect(() => {
+    console.log(semesterTwo);
     fetch(`https://modswithfriends.onrender.com/sem${semesterTwo ? '2' : '1'}_data`)
       .then(response => response.json())
-      .then(data => setModuleData(data));
+      .then(data => {console.log(data["sem_data"]); setModuleData(data["sem_data"])});
     
     function handleClickOutside(e) {
       const refs = [
@@ -200,7 +201,7 @@ function Preference({username, setGenerationDone, setGenerationError, setImagesD
       //);
       for (module of Object.keys(moduleData)) {
         if (module.toLowerCase().startsWith(value.toLowerCase())) {
-          matches.append({'moduleCode': module, 'title': module['title']});
+          matches.push({'moduleCode': module, 'title': moduleData[module]['title']});
         }
       }
       setAc(matches);
