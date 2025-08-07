@@ -126,8 +126,6 @@ async def capture_element_screenshot(url):
 
 image_cache = {}
 
-image_cache = {}
-
 
 @app.route("/generate", methods=["POST"])
 def generate():

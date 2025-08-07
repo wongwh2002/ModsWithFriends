@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { useState } from "react";
 import "./Overlay.css";
 import x from "./assets/x.png";
@@ -13,16 +13,24 @@ function NewSessionOverlay({
 }) {
   const [name, setName] = useState("");
   const [password, setPassword] = useState("");
+  const [newSessionID, setNewSessionID] = useState(0);
+
+  useEffect(() => {
+    async () => {
+      setNewSessionID(await fetch("https://modswithfriends.onrender.com/get_new_session", {method: "GET"}));
+    }
+  }, [])
 
   const generateID = async () => {
     //replace with generation of id
-    setBody("000001");
+    setBody(newSessionID);
     setUsername(name);
     setCreateSession(false);
     console.log("Creating session with name:");
-    await fetch("https://modswithfriends.onrender.com//login", {
+    await fetch("https://modswithfriends.onrender.com//new_session", {
       method: "POST",
       body: JSON.stringify({
+        session_id: newSessionID,
         name: name,
         password: password,
       }),
@@ -44,7 +52,7 @@ function NewSessionOverlay({
         </div>
         <div className="flex-jb">
           <div className="form">
-            <p className="session-type">Session ID: </p>
+            <p className="session-type">Session ID: {newSessionID}</p>
           </div>
           <div className="switch-container">
             <p className="sem">Semester</p>
