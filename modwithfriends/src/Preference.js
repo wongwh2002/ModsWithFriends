@@ -124,7 +124,7 @@ function Preference({username, setGenerationDone, setGenerationError, setImagesD
   }
 
   useEffect(() => {
-    fetch(`http://localhost:4000/sem${semesterTwo ? '2' : '1'}_data`)
+    fetch(`https://modswithfriends.onrender.com/sem${semesterTwo ? '2' : '1'}_data`)
       .then(response => response.json())
       .then(data => setModuleData(data));
     
