@@ -27,7 +27,7 @@ class mods_database:
         self.all_module_data = None
 
     def _init_con(self):
-        database_url = os.getenv("POSTGRES_URL")
+        database_url = os.getenv("POSTGRES_URL_NON_POOLING")
         pprint(database_url)
         conn = psycopg2.connect(database_url)
         conn.autocommit = True
