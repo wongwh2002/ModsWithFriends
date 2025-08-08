@@ -349,11 +349,13 @@ class mods_database:
         self.all_module_data = module_data
 
     def _get_sem_data(self, sem):
-        if self.all_module_data == None:
+        if self.all_module_data is None:
             self.get_modules_db()
         return_data = {}
         for module_code, mod_info in self.all_module_data.items():
-            sem_data = mod_info.get(sem) or {}
+            sem_data = mod_info.get(sem)
+            if not sem_data or sem_data == {}:
+                continue  # Skip modules with no sem_data
             merged = {"title": mod_info.get("title")}
             if isinstance(sem_data, dict):
                 merged.update(
@@ -424,6 +426,13 @@ class mods_database:
         self.cursor.execute(sql, (student_id, session_id))
         return [row[0] for row in self.cursor.fetchall()]
 
+    def get_session_semester(self, session_id):
+        sql = """SELECT semester_no FROM sessions
+                WHERE session_id = %s"""
+        self.cursor.execute(sql, (session_id,))
+        result = self.cursor.fetchone()
+        return result[0] if (result and result[0]) else None
+
 
 def temp():
     sessionId = db.generate_session_id()
@@ -437,3 +446,8 @@ if __name__ == "__main__":
     # sem2 = db.get_sem2_data()
     # pprint(sem2["CG2023"])
     db.list_sessions()
+    sem1 = db.get_sem1_data()
+    print(sem1.get("CG2028"))
+    print(sem1.get("CG2023"))
+    sem2 = db.get_sem2_data()
+    print(sem2.get("CG2023"))
