@@ -13,12 +13,18 @@ from mod_db import mods_database
 csp_path = os.path.abspath(os.path.join(os.path.dirname(__file__), "./../csp"))
 sys.path.insert(0, csp_path)
 
-from generate import generate_timetable
+#from generate import generate_timetable
+from permutate_shared_mods import get_solutions
 
 app = Flask(__name__)
 CORS(app)
 
 db = mods_database()
+
+
+@app.route("/", methods=["GET"])
+def index():
+    return "ModsWithFriends backend is running.", 200
 
 
 @app.route("/modInfo", methods=["GET"])
@@ -121,13 +127,12 @@ async def capture_element_screenshot(url):
 
 image_cache = {}
 
-image_cache = {}
-
 
 @app.route("/generate", methods=["POST"])
 def generate():
     data = request.get_json()
-    generate_timetable(data)
+    solutions = get_solutions(data["config"])
+    user_solutions = solutions[data["user"]]
     screenshot_functions = []
     try:
         with open("./output.txt", "r") as f:
@@ -158,40 +163,82 @@ def get_image(index):
     return Response(img_bytes, mimetype="image/png")
 
 
-@app.route("/login", methods=["POST"])
+@app.route("/new_session", methods=["POST"])
 def new_session_login():
     print("[Login]")
-    data = request.get_json()
-    name, password = data["name"], data["password"]
-    # session_id = data["session_id"]
+    name, password, session_id = get_login_info()
     success = db.add_student(name, password)
-    db.list_students()
+    db.add_new_session(session_id)
+    db.add_student_sessions(name, session_id, json.dumps({}))
     if success:
         return jsonify({"status": "success", "message": "Student added"}), 200
     else:
-        return jsonify({"status": "exists", "message": "Student already exists"}), 409
+        return jsonify({"status": "exists", "message": "Student already exists"}), 400
 
 
-@app.route("/get_new_session", methods=["POST"])
+def get_login_info():
+    data = request.get_json()
+    name, password = data["name"], data["password"]
+    session_id = data["session_id"]
+    return name, password, session_id
+
+
+@app.route("/save_preferences", methods=["POST"])
+def save_preference():
+    session_id, name, preferences = get_preferences_data()
+    db.add_student_sessions(name, session_id, json.dumps(preferences))
+    return "updated student preference", 200
+
+
+def get_preferences_data():
+    data = request.get_json()
+    session_id, name, preferences = (
+        data["session_id"],
+        data["name"],
+        data["preferences"],
+    )
+    return session_id, name, preferences
+
+
+@app.route("/get_preferences", methods=["POST"])
+def get_preference():
+    data = request.get_json()
+    session_id, name = (data["session_id"], data["name"])
+    preferences = db.get_preference_from_student_sessions(name, session_id)
+    return jsonify({"preferences": preferences}), 200
+
+
+@app.route("/get_new_session", methods=["GET"])
 def get_new_session_id():
     new_id = db.generate_session_id()
     if new_id:
-        return new_id, 200
-    return "unable to generate unique session id", 400
+        return jsonify({"new_id": new_id}), 200
+    return jsonify({"error": "unable to generate unique session id"}), 400
 
 
-@app.route("/sem1_data", methods=["POST"])
+@app.route("/join_session", methods=["POST"])
+def join_session():
+    name, password, session_id = get_login_info()
+    if not db.is_session_exists(session_id):
+        return "session does not exist", 400
+    success = db.join_session(name, password, session_id)
+    if success:
+        return "joined session", 200
+    return "wrong password", 401
+
+
+@app.route("/sem1_data", methods=["GET"])
 def get_sem1_data():
     print("[GETTING SEM1 DATA]")
     sem1_data = db.get_sem1_data()
-    return jsonify(sem1_data), 200
+    return jsonify({"sem_data": sem1_data}), 200
 
 
-@app.route("/sem2_data", methods=["POST"])
+@app.route("/sem2_data", methods=["GET"])
 def get_sem2_data():
-    print("[GETTING SEM1 DATA]")
+    print("[GETTING SEM2 DATA]")
     sem2_data = db.get_sem2_data()
-    return jsonify(sem2_data), 200
+    return jsonify({"sem_data": sem2_data}), 200
 
 
 @app.route("/Server/<filename>")
@@ -200,4 +247,5 @@ def serve_file(filename):
 
 
 if __name__ == "__main__":
-    app.run(port=4000)
+    port = int(os.getenv("PORT", 4000))
+    app.run(host="0.0.0.0", port=port)

@@ -5,6 +5,7 @@ div.gt-container {
   margin: 25px;
   border-radius: 10px;
   padding: 10px;
+  overflow: visible;
 }
 
 img.gt-pic {

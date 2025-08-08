@@ -5,7 +5,7 @@ function DropdownItem({mod, selectedMods, setSelectedMods, focusInput}) {
 
   const getModuleInfo = async (modCode) => {
     const encoded = encodeURIComponent(modCode);
-    const response = await fetch(`http://localhost:4000/modInfo?modCode=${encoded}` )
+    const response = await fetch(`https://modswithfriends.onrender.com/modInfo?modCode=${encoded}` )
     const data = await response.json();
     return data.modInfo;
   }

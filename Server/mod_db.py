@@ -8,6 +8,12 @@ import uuid
 import random
 import datetime
 import requests
+import os
+from dotenv import load_dotenv
+import string
+
+load_dotenv()
+
 
 SEM1 = "sem1"
 SEM2 = "sem2"
@@ -22,13 +28,9 @@ class mods_database:
         self.all_module_data = None
 
     def _init_con(self):
-        conn = psycopg2.connect(
-            database="postgres",
-            host="127.0.0.1",
-            user="wongwh",
-            password="wongwh",
-            port="5432",
-        )
+        database_url = os.getenv("POSTGRES_URL_NON_POOLING")
+        pprint(database_url)
+        conn = psycopg2.connect(database_url)
         conn.autocommit = True
         return conn
 
@@ -67,6 +69,7 @@ class mods_database:
         self.cursor.execute("DROP TABLE IF EXISTS sessions")
         sql = """CREATE TABLE sessions(
         session_id VARCHAR PRIMARY KEY
+        semester_no INT
         )"""
         self.cursor.execute(sql)
 
@@ -162,21 +165,31 @@ class mods_database:
         sql = """SELECT password FROM students WHERE student_id = %s"""
         self.cursor.execute(sql, (student_id,))
         result = self.cursor.fetchone()
-        
+
         if not result:
             return False
-        
+
         stored_hash = result[0]
         return self._verify_password(stored_hash, password)
+
+    def join_session(self, student_id, password, session_id):
+        if self._is_student_exists(student_id):
+            if not self.authenticate_student(student_id, password):
+                return False
+        else:
+            self.add_student(student_id, password)
+        self.add_student_sessions(student_id, session_id, json.dumps({}))
+        return True
 
     def _generate_random_id(self):
         min = 0
         max = 999
+        choice = string.ascii_uppercase + string.ascii_lowercase
         digits = [str(random.randint(min, max)) for i in range(2)]
         digits = [(len(str(max)) - len(digit)) * "0" + digit for digit in digits]
-        return "-".join(digits)
+        return "-".join(digits) + random.choice(choice)
 
-    def _is_session_exists(self, id):
+    def is_session_exists(self, id):
         self.cursor.execute("SELECT 1 FROM sessions WHERE session_id = %s", (id,))
         return self.cursor.fetchone() is not None
 
@@ -187,7 +200,7 @@ class mods_database:
     def _return_unique_session_id(self):
         while True:
             new_session_id = self._generate_random_id()
-            if not self._is_session_exists(new_session_id):
+            if not self.is_session_exists(new_session_id):
                 return new_session_id
 
     def _return_unique_group_id(self):
@@ -214,6 +227,13 @@ class mods_database:
         self.cursor.execute(
             "INSERT INTO sessions (session_id) VALUES (%s)", (new_session_id,)
         )
+
+    def list_sessions(self):
+        sql = """SELECT * FROM sessions"""
+        self.cursor.execute(sql)
+        rows = self.cursor.fetchall()
+        for row in rows:
+            print(f"[List Sessions] {row}")
 
     def _get_all_modules_names(self, year):
         all_modules = requests.get(
@@ -324,7 +344,7 @@ class mods_database:
         module_data = {}
         for row in rows:
             module_data[row[0]] = {"title": row[1], SEM1: row[2], SEM2: row[3]}
-        print(f"[MODULE_DATA] Length: {len(module_data)}")
+        # print(f"[MODULE_DATA] Length: {len(module_data)}")
         self.all_module_data = module_data
 
     def _get_sem_data(self, sem):
@@ -384,7 +404,7 @@ class mods_database:
                 DO UPDATE SET preference = EXCLUDED.preference"""
         self.cursor.execute(sql, (student_id, session_id, json.dumps(preference_json)))
 
-    def get_student_sessions(self, student_id, session_id):
+    def get_preference_from_student_sessions(self, student_id, session_id):
         sql = """SELECT preference FROM student_sessions 
                 WHERE student_id = %s AND session_id = %s"""
         self.cursor.execute(sql, (student_id, session_id))
@@ -397,16 +417,22 @@ class mods_database:
                 ON CONFLICT (student_id, session_id, module_id) DO NOTHING"""
         self.cursor.execute(sql, (student_id, session_id, module_id))
 
-    def get_student_session_modules(self, student_id, session_id):
+    def get_modules_from_student_session_modules(self, student_id, session_id):
         sql = """SELECT module_id FROM student_session_modules 
                 WHERE student_id = %s AND session_id = %s"""
         self.cursor.execute(sql, (student_id, session_id))
         return [row[0] for row in self.cursor.fetchall()]
 
 
+def temp():
+    sessionId = db.generate_session_id()
+    db.add_new_session(sessionId)
+
+
 if __name__ == "__main__":
     db = mods_database()
     # module_data = db.get_modules_db()
     # print(db.generate_group_id())
-    sem2 = db.get_sem2_data()
-    pprint(sem2["CG2023"])
+    # sem2 = db.get_sem2_data()
+    # pprint(sem2["CG2023"])
+    db.list_sessions()

@@ -1,8 +1,9 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { useState } from "react";
 import "./Overlay.css";
 import x from "./assets/x.png";
 import { Link } from "react-router-dom";
+import { useStateContext } from "./Context";
 
 function NewSessionOverlay({
   setBody,
@@ -13,24 +14,51 @@ function NewSessionOverlay({
 }) {
   const [name, setName] = useState("");
   const [password, setPassword] = useState("");
+  const [newSessionID, setNewSessionID] = useState(0);
+
+  const { resetStates } = useStateContext();
+
+  useEffect(() => {
+    const fetchNewSession = async () => {
+      try {
+        const response = await fetch("https://modswithfriends.onrender.com/get_new_session", {
+          method: "GET",
+        });
+
+        const data = await response.json(); 
+
+        if (response.ok) {
+          setNewSessionID(data.new_id);
+        } else {
+          console.log(data.error);
+        }
+      } catch (error) {
+        console.log("Error fetching new session:", error);
+      }
+    };
+    fetchNewSession();
+  }, []);
 
   const generateID = async () => {
     //replace with generation of id
-    setBody("000001");
+    resetStates();
+    setBody(newSessionID);
     setUsername(name);
     setCreateSession(false);
     console.log("Creating session with name:");
-    await fetch("http://127.0.0.1:4000/login", {
+    await fetch("https://modswithfriends.onrender.com//new_session", {
       method: "POST",
       body: JSON.stringify({
+        session_id: newSessionID,
         name: name,
         password: password,
       }),
       headers: {
-        "Content-type": "application/json; charset=UTF-8",
+        "Content-Type": "application/json"
       },
+      body: JSON.stringify({'name': name, 'password': password})
     });
-  };
+  }
 
   const closeOverlay = () => {
     setCreateSession(false);
@@ -44,7 +72,7 @@ function NewSessionOverlay({
         </div>
         <div className="flex-jb">
           <div className="form">
-            <p className="session-type">Session ID: </p>
+            <p className="session-type">Session ID: {newSessionID}</p>
           </div>
           <div className="switch-container">
             <p className="sem">Semester</p>

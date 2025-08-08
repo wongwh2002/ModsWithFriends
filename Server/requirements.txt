@@ -3,3 +3,6 @@ flask-cors==6.0.1
 playwright==1.46.0
 pyppeteer==2.0.0
 requests==2.32.3
+psycopg2-binary==2.9.10
+python-dotenv==1.1.1
+gunicorn==20.1.0
