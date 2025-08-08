@@ -223,9 +223,10 @@ class mods_database:
         check student usrname and password
     """
 
-    def add_new_session(self, new_session_id):
+    def add_new_session(self, new_session_id, semester_no):
         self.cursor.execute(
-            "INSERT INTO sessions (session_id) VALUES (%s)", (new_session_id,)
+            "INSERT INTO sessions (session_id, semester_no) VALUES (%s, %s)",
+            (new_session_id, semester_no),
         )
 
     def list_sessions(self):
@@ -426,7 +427,7 @@ class mods_database:
 
 def temp():
     sessionId = db.generate_session_id()
-    db.add_new_session(sessionId)
+    db.add_new_session(sessionId, 1)
 
 
 if __name__ == "__main__":

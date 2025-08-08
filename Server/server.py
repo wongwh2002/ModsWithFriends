@@ -164,9 +164,9 @@ def get_image(index):
 @app.route("/new_session", methods=["POST"])
 def new_session_login():
     print("[Login]")
-    name, password, session_id = get_login_info()
+    name, password, session_id, semester_no = get_login_info()
     success = db.add_student(name, password)
-    db.add_new_session(session_id)
+    db.add_new_session(session_id, semester_no)
     db.add_student_sessions(name, session_id, json.dumps({}))
     if success:
         return jsonify({"status": "success", "message": "Student added"}), 200
@@ -178,7 +178,8 @@ def get_login_info():
     data = request.get_json()
     name, password = data["name"], data["password"]
     session_id = data["session_id"]
-    return name, password, session_id
+    semester_no = data["semester_no"]
+    return name, password, session_id, semester_no
 
 
 @app.route("/save_preferences", methods=["POST"])
@@ -216,7 +217,7 @@ def get_new_session_id():
 
 @app.route("/join_session", methods=["POST"])
 def join_session():
-    name, password, session_id = get_login_info()
+    name, password, session_id, semester_no = get_login_info()
     if not db.is_session_exists(session_id):
         return "session does not exist", 400
     success = db.join_session(name, password, session_id)
