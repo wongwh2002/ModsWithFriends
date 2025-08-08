@@ -9,7 +9,6 @@ import dropdown from './assets/dropdown.png';
 import { Link } from 'react-router-dom';
 import NewRoomOverlay from './NewRoomOverlay';
 import RoomCard from './RoomCard';
-import e from 'cors';
 import { useStateContext } from './Context';
 
 function Preference({username, setGenerationDone, setGenerationError, setImagesData,
@@ -45,7 +44,7 @@ function Preference({username, setGenerationDone, setGenerationError, setImagesD
   //const [imagesData, setImagesData] = useState([]);
   
   const timeOptions = ['0800', '0900', '1000', '1100', '1200', '1300', 
-    '1400', '1500', '1600', '1700', '1800', '1900', '2000', '2100'];
+    '1400', '1500', '1600', '1700', '1800', '1900', '2000', '2100', '2200'];
 
   const durationOptions = ['1HR', '2HR', '3HR'];
 
@@ -258,47 +257,94 @@ function Preference({username, setGenerationDone, setGenerationError, setImagesD
   }
 
   function get24hr(timeStr) {
+    if (timeStr == null || timeStr == "") {
+      return null;
+    }
     return parseInt(timeStr[0]+timeStr[1], 10);
   }
 
-  const requestGeneration = async () => {
-    setGenerationDone(false);
-    setGenerationError(false);
+  const dayMapping = {
+    "Mon": 1,
+    "Tues": 2,
+    "Weds": 3,
+    "Thurs": 4,
+    "Fri": 5
+  };
+
+  const abbreviations = {
+    "Lecture": "LEC",
+    "Laboratory": "LAB",
+    "Tutorial": "TUT",
+    "Packaged Lecture": "PLEC",
+    "Packaged Tutorial": "PTUT",
+    "Sectional Teaching": "SEC",
+    "Recitation": "REC",
+    "Design Lecture": "DLEC",
+    "Seminar-style Module Teaching": "SEM",
+    "Tutorial Type 2": "TUT2",
+    "Tutorial Type 3": "TUT3",
+    "Workshop": "WS",
+  }
+
+  const preferencesToJson = () => {
     let mods = selectedMods.map(mod => mod.moduleCode);
-    let st = get24hr(startTime)*60;
-    console.log(`Start time = ${startTime}, Converted = ${st}`);
-    let et = get24hr(endTime)*60;
-    let lw = [0,0];
+    let st = startTime === "" ? null : get24hr(startTime)*60;
+    //console.log(`Start time = ${startTime}, Converted = ${st}`);
+    let et = endTime === "" ? null : get24hr(endTime)*60;
+    let lw = null;
+    let ld = null;
     if (lunchCheck) {
-      lw = [get24hr(lunchStart)*60, get24hr(lunchEnd)*60];
+      lw = st !== null && et !== null ? [get24hr(lunchStart)*60, get24hr(lunchEnd)*60] : null;
+      ld = parseInt(duration[0], 10)*60;
     }
-    let ld = parseInt(duration[0], 10)*60;
-    let no_class = [];
+    const noClass = days
+      .filter(day => day.selected)
+      .map(day => dayMapping[day.day]);
+
+    const optionalClass = selectedMods.reduce((acc, mod) => {
+      if (mod.optional && mod.optional.length > 0) {
+        const abbreviatedOptional = mod.optional.map(option => abbreviations[option]);
+        acc[mod.moduleCode] = abbreviatedOptional;
+      }
+      return acc;
+    }, {});
+
+    const compulsoryClasses = selectedMods.reduce((acc, mod) => {
+      if (mod.fixed && mod.fixed.length > 0) {
+        const compulsoryData = mod.fixed.reduce((innerAcc, item) => {
+          const classType = Object.keys(item)[0];
+          const value = item[classType];
+          const abbreviatedClass = abbreviations[classType];
+          innerAcc[abbreviatedClass] = value;
+          return innerAcc;
+        }, {});
+        acc[mod.moduleCode] = compulsoryData;
+      }
+      return acc;
+    }, {});
 
     const jsonContent = JSON.stringify({
         modules: mods,
-        semester: 2,
+        semester: semesterTwo ? "2" : "1",
         earliest_start: st,
         latest_end: et,
         lunch_window: lw,
         lunch_duration: ld,
         days_without_lunch: [],
-        days_without_class: no_class,
-        optional_classes: {},
-        compulsory_classes: {},
-        weights: {
-          morning_class: 1,
-          afternoon_class: 5,
-          day_length_penalty: -0.01,
-          day_present_penalty: -10,
-        },
+        days_without_class: noClass,
+        optional_classes: optionalClass,
+        compulsory_classes: compulsoryClasses,
         enable_lunch_break: lunchCheck,
-        enable_late_start: false,
-        enable_early_end: false,
-        enable_weights: true,
       });
+    return jsonContent;
+  }
+
+  const requestGeneration = async () => {
+    setGenerationDone(false);
+    setGenerationError(false);
     
-    console.log(jsonContent);
+    const jsonContent = preferencesToJson();
+    //console.log(jsonContent);
 
     await fetch('https://modswithfriends.onrender.com//generate', {
       method: 'POST',
@@ -324,6 +370,10 @@ function Preference({username, setGenerationDone, setGenerationError, setImagesD
     setGenerationDone(true);
     console.log("Done generating");
   }
+
+  useEffect(() => {
+    console.log(preferencesToJson());
+  }, [selectedMods])
 
   const addFixedMod = () => {
     if (CLesson === "") return;
