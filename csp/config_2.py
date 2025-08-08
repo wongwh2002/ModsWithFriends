@@ -1,10 +1,10 @@
 CONFIG = {
     "semester": 1,
     "users": [
-        # "A",
+        "A",
         "B",
-        # "C",
-        # "D"
+        "C",
+        "D"
     ],
     "A": {
         "modules" : [
@@ -16,8 +16,8 @@ CONFIG = {
             "ES2631"
         ],
 
-        "earliest_start": 10 * 60,  # Earliest class start time (10:00 AM in minutes)
-        "latest_end": 18 * 60,  # Latest class end time (6:00 PM in minutes)
+        "earliest_start": None,
+        "latest_end": None,
 
         "lunch_window": (12 * 60, 14 * 60),  # Preferred lunch window (11AM-1PM)
         "lunch_duration": 60,  # Lunch break duration (60 minutes)
@@ -32,9 +32,6 @@ CONFIG = {
             }
         },
         "enable_lunch_break": False,  # Whether to enforce lunch breaks
-        "enable_late_start": False,  # Whether to enforce earliest start time
-        "enable_early_end": False,  # Whether to enforce latest end time
-        "enable_weights": True,  # Whether to minimize day length
     },
 
     "B": {
@@ -59,20 +56,20 @@ CONFIG = {
             "EE2211": ["LEC"],
         },
         "compulsory_classes": {
-            "CS2107": {
-                "TUT": "11"
-            },
-            "CS3243": {
-                "TUT": "01"
-            },
-            "EE2211": {
-                "TUT": "03"
-            },
+            # "CS2107": {
+            #     "TUT": "11"
+            # },
+            # "CS3243": {
+            #     "TUT": "01"
+            # },
+            # "EE2211": {
+            #     "TUT": "03"
+            # },
+            "CDE2501": {
+                "TUT": "FA5"
+            }
         },
         "enable_lunch_break": True,
-        "enable_late_start": False,  # Whether to enforce earliest start time
-        "enable_early_end": False,  # Whether to enforce latest end time
-        "enable_weights": True,  # Whether to minimize day length
     },
 
     "C": {
@@ -84,8 +81,8 @@ CONFIG = {
             'ES2631',
         ],
 
-        "earliest_start": 10 * 60,  # Earliest class start time (10:00 AM in minutes)
-        "latest_end": 18 * 60,  # Latest class end time (6:00 PM in minutes)
+        "earliest_start": None,
+        "latest_end": None,
 
         "lunch_window": (12 * 60, 14 * 60),  # Preferred lunch window (11AM-1PM)
         "lunch_duration": 60,  # Lunch break duration (60 minutes)
@@ -97,9 +94,6 @@ CONFIG = {
             "CG2023": {"LEC": "01",}
         },
         "enable_lunch_break": False,  # Whether to enforce lunch breaks
-        "enable_late_start": False,  # Whether to enforce earliest start time
-        "enable_early_end": False,  # Whether to enforce latest end time
-        "enable_weights": True,  # Whether to minimize day length
     },
 
     "D": {
@@ -111,8 +105,8 @@ CONFIG = {
             'CS2107',
         ],
 
-        "earliest_start": 10 * 60,  # Earliest class start time (10:00 AM in minutes)
-        "latest_end": 18 * 60,  # Latest class end time (6:00 PM in minutes)
+        "earliest_start": None,
+        "latest_end": None,
 
         "lunch_window": (12 * 60, 14 * 60),  # Preferred lunch window (11AM-1PM)
         "lunch_duration": 60,  # Lunch break duration (60 minutes)
@@ -126,18 +120,12 @@ CONFIG = {
             # },
         },
         "enable_lunch_break": False,  # Whether to enforce lunch breaks
-        "enable_late_start": False,  # Whether to enforce earliest start time
-        "enable_early_end": False,  # Whether to enforce latest end time
-        "enable_weights": True,  # Whether to minimize day length
     },
 
     "shared": {
-        # "CS2107": [["B", "D", "C"]],
-        # "CS3243": [["B", "D"]],
-        # "EE2211": [["B", "D"]],
-        # "EE2026": [["A", "C"]]
-        # "CS2107": [["B"]],
-        # "CS3243": [["B"]],
-        # "EE2211": [["B"]],
+        "CS2107": [["B", "D", "C"]],
+        "CS3243": [["B", "D"]],
+        "EE2211": [["B", "D"]],
+        "EE2026": [["A", "C"]],
     },
 }

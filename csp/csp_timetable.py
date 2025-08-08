@@ -251,7 +251,7 @@ def update_domains(csp: Csp, user: str, mod: str, lesson_type: str, class_no: st
         for affected_day, start_time, end_time in affected_days:
             if affected_day in csp.lunch_days[user]:
                 if not has_consecutive_slots(csp.has_lesson_in_window[user][affected_day], min_no_of_consecutive_slots):
-                    print(f"No lunch slot for {user} on {affected_day}")
+                    # print(f"No lunch slot for {user} on {affected_day}")
                     return False
     for (unassigned_user, unassigned_mod, unassigned_lesson_type) in csp.unassigned:
         if unassigned_user == user:
@@ -339,8 +339,8 @@ def filter_invalid_slots(csp):
     # print(f"filter_invalid_slots: {json.dumps(csp.domains, indent=2)}")
     for user in csp.users:
         config = csp.config[user]
-        earliest_start_time = config["earliest_start"] if config["enable_late_start"] else None
-        latest_end_time = config["latest_end"] if config["enable_early_end"] else None
+        earliest_start_time = config["earliest_start"]
+        latest_end_time = config["latest_end"]
         school_days_strings = [WEEKDAYS[i] for i in range(5) if (i + 1) not in config["days_without_class"]]
 
         for mod_key, mod_val in csp.domains[user].items():
