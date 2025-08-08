@@ -10,6 +10,7 @@ import { Link } from 'react-router-dom';
 import NewRoomOverlay from './NewRoomOverlay';
 import RoomCard from './RoomCard';
 import e from 'cors';
+import { useStateContext } from './Context';
 
 function Preference({username, setGenerationDone, setGenerationError, setImagesData,
   semesterTwo}) {
@@ -27,40 +28,20 @@ function Preference({username, setGenerationDone, setGenerationError, setImagesD
   const oModRef = useRef();
   const oTypeRef = useRef();
   
+  const {moduleData, setModuleData, selectedMods, setSelectedMods,
+      days, setDays, lunchCheck, setLunchCheck, clickStartTime, setClickStartTime,
+      clickEndTime, setClickEndTime, startTime, setStartTime, endTime, setEndTime,
+      clickLunchStart, setClickLunchStart, clickLunchEnd, setClickLunchEnd, lunchStart,
+      setLunchStart, lunchEnd, setLunchEnd, clickDuration, setClickDuration, duration, 
+      setDuration, clickCMod, setClickCMod, CMod, setCMod, clickCType, setClickCType,
+      CType, setCType, clickCLesson, setClickCLesson, CLesson, setCLesson, clickOMod,
+      setClickOMod, OMod, setOMod, clickOType, setClickOType, OType, setOType} = useStateContext();
+
   const [searchValue, setSearchValue] = useState("");
-  const [moduleData, setModuleData] = useState({});
   const [ac, setAc] = useState([]);
-  const [selectedMods, setSelectedMods] = useState([]);
-  const [days, setDays] = useState([
-    {"day":"Mon", "selected":false}, 
-    {"day":"Tues", "selected":false},
-    {"day":"Weds", "selected":false}, 
-    {"day":"Thurs", "selected":false}, 
-    {"day":"Fri", "selected":false}]);
-  const [lunchCheck, setLunchCheck] = useState(false);
-  const [clickStartTime, setClickStartTime] = useState(false);
-  const [clickEndTime, setClickEndTime] = useState(false);
-  const [startTime, setStartTime] = useState(null);
-  const [endTime, setEndTime] = useState(null);
-  const [clickLunchStart, setClickLunchStart] = useState(false);
-  const [clickLunchEnd, setClickLunchEnd] = useState(false);
-  const [lunchStart, setLunchStart] = useState(null);
-  const [lunchEnd, setLunchEnd] = useState(null);
-  const [clickDuration, setClickDuration] = useState(false);
-  const [duration, setDuration] = useState("");
   const [createRoom, setCreateRoom] = useState(false);
   const [rooms, setRooms] = useState([])
   const [isPreference, setIsPreference] = useState(true);
-  const [clickCMod, setClickCMod] = useState(false);
-  const [CMod, setCMod] = useState("");
-  const [clickCType, setClickCType] = useState(false);
-  const [CType, setCType] = useState("");
-  const [clickCLesson, setClickCLesson] = useState(false);
-  const [CLesson, setCLesson] = useState("");
-  const [clickOMod, setClickOMod] = useState(false);
-  const [OMod, setOMod] = useState("");
-  const [clickOType, setClickOType] = useState(false);
-  const [OType, setOType] = useState("");
   //const [imagesData, setImagesData] = useState([]);
   
   const timeOptions = ['0800', '0900', '1000', '1100', '1200', '1300', 
@@ -124,10 +105,18 @@ function Preference({username, setGenerationDone, setGenerationError, setImagesD
   }
 
   useEffect(() => {
+    if (moduleData.length === 0) {
+      fetch(`https://modswithfriends.onrender.com/sem${semesterTwo ? '2' : '1'}_data`)
+        .then(response => response.json())
+        .then(data => {setModuleData(data["sem_data"])});
+    }
+  }, [moduleData]);
+
+  useEffect(() => {
     console.log(semesterTwo);
     fetch(`https://modswithfriends.onrender.com/sem${semesterTwo ? '2' : '1'}_data`)
       .then(response => response.json())
-      .then(data => {console.log(data["sem_data"]); setModuleData(data["sem_data"])});
+      .then(data => {setModuleData(data["sem_data"])});
     
     function handleClickOutside(e) {
       const refs = [
@@ -214,7 +203,7 @@ function Preference({username, setGenerationDone, setGenerationError, setImagesD
     for (const key of Object.keys(modData)) {
         classes[key] = [];
         for (const number of Object.keys(modData[key])) {
-          classes[key].append(number);
+          classes[key].push(number);
         }
     }
 

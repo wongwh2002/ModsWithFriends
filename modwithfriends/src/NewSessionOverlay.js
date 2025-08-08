@@ -3,6 +3,7 @@ import { useState } from "react";
 import "./Overlay.css";
 import x from "./assets/x.png";
 import { Link } from "react-router-dom";
+import { useStateContext } from "./Context";
 
 function NewSessionOverlay({
   setBody,
@@ -14,6 +15,8 @@ function NewSessionOverlay({
   const [name, setName] = useState("");
   const [password, setPassword] = useState("");
   const [newSessionID, setNewSessionID] = useState(0);
+
+  const { resetStates } = useStateContext();
 
   useEffect(() => {
     const fetchNewSession = async () => {
@@ -38,6 +41,7 @@ function NewSessionOverlay({
 
   const generateID = async () => {
     //replace with generation of id
+    resetStates();
     setBody(newSessionID);
     setUsername(name);
     setCreateSession(false);

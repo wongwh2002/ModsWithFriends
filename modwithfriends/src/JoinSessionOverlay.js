@@ -3,6 +3,7 @@ import {useState} from 'react';
 import { useNavigate } from "react-router-dom";
 import './Overlay.css';
 import x from './assets/x.png';
+import { useStateContext } from './Context';
 
 function JoinSessionOverlay({setJoinSession, setBody, setUsername}) {
 
@@ -12,6 +13,8 @@ function JoinSessionOverlay({setJoinSession, setBody, setUsername}) {
   const [name, setName] = useState("");
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
+
+  const { resetStates } = useStateContext();
 
   const generateID = async () => {
     setLoading(true);
@@ -30,6 +33,7 @@ function JoinSessionOverlay({setJoinSession, setBody, setUsername}) {
       });
 
       if (response.ok) {
+        resetStates();
         setBody(sessionID);
         setUsername(name);
         setJoinSession(false);
