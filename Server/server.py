@@ -180,7 +180,10 @@ def get_login_info():
     data = request.get_json()
     name, password = data["name"], data["password"]
     session_id = data["session_id"]
-    semester_no = data["semester_no"]
+    if "semester_no" in data:
+      semester_no = data["semester_no"]
+    else:
+      semester_no = None
     return name, password, session_id, semester_no
 
 
