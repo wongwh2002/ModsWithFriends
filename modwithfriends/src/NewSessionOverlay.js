@@ -3,6 +3,7 @@ import { useState } from "react";
 import "./Overlay.css";
 import x from "./assets/x.png";
 import { Link } from "react-router-dom";
+import { useStateContext } from "./Context";
 
 function NewSessionOverlay({
   setBody,
@@ -14,6 +15,8 @@ function NewSessionOverlay({
   const [name, setName] = useState("");
   const [password, setPassword] = useState("");
   const [newSessionID, setNewSessionID] = useState(0);
+
+  const { resetStates } = useStateContext();
 
   useEffect(() => {
     const fetchNewSession = async () => {
@@ -33,12 +36,12 @@ function NewSessionOverlay({
         console.log("Error fetching new session:", error);
       }
     };
-
     fetchNewSession();
   }, []);
 
   const generateID = async () => {
     //replace with generation of id
+    resetStates();
     setBody(newSessionID);
     setUsername(name);
     setCreateSession(false);
@@ -51,10 +54,11 @@ function NewSessionOverlay({
         password: password,
       }),
       headers: {
-        "Content-type": "application/json; charset=UTF-8",
+        "Content-Type": "application/json"
       },
+      body: JSON.stringify({'name': name, 'password': password})
     });
-  };
+  }
 
   const closeOverlay = () => {
     setCreateSession(false);

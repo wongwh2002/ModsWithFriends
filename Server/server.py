@@ -13,7 +13,8 @@ from mod_db import mods_database
 csp_path = os.path.abspath(os.path.join(os.path.dirname(__file__), "./../csp"))
 sys.path.insert(0, csp_path)
 
-from generate import generate_timetable
+#from generate import generate_timetable
+from permutate_shared_mods import get_solutions
 
 app = Flask(__name__)
 CORS(app)
@@ -130,7 +131,8 @@ image_cache = {}
 @app.route("/generate", methods=["POST"])
 def generate():
     data = request.get_json()
-    generate_timetable(data)
+    solutions = get_solutions(data["config"])
+    user_solutions = solutions[data["user"]]
     screenshot_functions = []
     try:
         with open("./output.txt", "r") as f:
@@ -223,7 +225,7 @@ def join_session():
     success = db.join_session(name, password, session_id)
     if success:
         return "joined session", 200
-    return "wrong password", 400
+    return "wrong password", 401
 
 
 @app.route("/sem1_data", methods=["GET"])
@@ -235,7 +237,7 @@ def get_sem1_data():
 
 @app.route("/sem2_data", methods=["GET"])
 def get_sem2_data():
-    print("[GETTING SEM1 DATA]")
+    print("[GETTING SEM2 DATA]")
     sem2_data = db.get_sem2_data()
     return jsonify({"sem_data": sem2_data}), 200
 
