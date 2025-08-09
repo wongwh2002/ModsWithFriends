@@ -500,7 +500,7 @@ class mods_database:
                 FROM groups g
                 INNER JOIN student_groups s ON g.group_id = s.group_id
                 WHERE g.session_id = %s
-                ORDER BY g.moudle_id
+                ORDER BY g.module_id
             """
         self.cursor.execute(sql, (session_id,))
         rows = self.cursor.fetchall()
@@ -537,9 +537,8 @@ if __name__ == "__main__":
     db.list_sessions()
     # db.add_group("CG2023", "713-334Q")
     db.list_groups()
-    db.student_join_group("qp12345", "5ae16fc3-c54e-4be8-9127-446c5545a90c")
-    db.student_join_group("qp1234", "5ae16fc3-c54e-4be8-9127-446c5545a90c")
-    db.student_join_group("qp12345", "f90f3a02-5ba2-49ea-abe2-732bf0f63002")
-    db.list_session_groups()
-
+    # db.student_join_group("qp12345", "5ae16fc3-c54e-4be8-9127-446c5545a90c")
+    # db.student_join_group("qp1234", "5ae16fc3-c54e-4be8-9127-446c5545a90c")
+    # db.student_join_group("qp12345", "f90f3a02-5ba2-49ea-abe2-732bf0f63002")
+    pprint(db.get_session_groups("713-334Q"))
     db.close()
