@@ -59,7 +59,7 @@ export const StateProvider = ({ children }) => {
     setClickCMod(false);
     setCMod("");
     setClickCType(false);
-    setCType(false);
+    setCType("");
     setClickCLesson(false);
     setCLesson("");
     setClickOMod(false);
