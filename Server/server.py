@@ -181,9 +181,9 @@ def get_login_info():
     name, password = data["name"], data["password"]
     session_id = data["session_id"]
     if "semester_no" in data:
-      semester_no = data["semester_no"]
+        semester_no = data["semester_no"]
     else:
-      semester_no = None
+        semester_no = None
     return name, password, session_id, semester_no
 
 
@@ -259,6 +259,11 @@ def get_session_semester():
 @app.route("/Server/<filename>")
 def serve_file(filename):
     return send_from_directory(".", filename)
+
+
+@app.teardown_appcontext
+def close_db_connection(exception):
+    db.close()
 
 
 if __name__ == "__main__":

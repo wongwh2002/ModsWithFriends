@@ -490,6 +490,12 @@ class mods_database:
 
         pass
 
+    def close(self):
+        if self.cursor:
+            self.cursor.close()
+        if self.conn:
+            self.conn.close()
+
 
 def temp():
     sessionId = db.generate_session_id()
