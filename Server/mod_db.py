@@ -213,7 +213,7 @@ class mods_database:
 
     def _return_unique_group_id(self):
         while True:
-            new_group_id = uuid.uuid4()
+            new_group_id = str(uuid.uuid4())
             if not self._is_group_exists(new_group_id):
                 return new_group_id
 
@@ -382,14 +382,6 @@ class mods_database:
             self.sem2_data = self._get_sem_data(SEM2)
         return self.sem2_data
 
-    def add_group(self, module_id, session_id):
-        new_group_id = self.generate_group_id()
-        sql = """INSERT INTO groups (group_id, module_id, session_id)
-                VALUES (%s, %s, %s)"""
-        params = (new_group_id, module_id, session_id)
-        self.cursor.execute(sql, params)
-        return new_group_id
-
     def get_group_id(self, module_id, session_id):
         sql = """SELECT group_id FROM groups 
                 WHERE module_id = %s AND session_id = %s"""
@@ -442,16 +434,12 @@ class mods_database:
         return result[0] if (result and result[0]) else None
 
     def add_group(self, module_id, session_id):
-        new_group_id = str(uuid.uuid4())
+        new_group_id = self.generate_group_id()
         sql = """INSERT INTO groups (group_id, module_id, session_id)
-                    VALUES (%s, %s, %s)
-                    ON CONFLICT (group_id) DO NOTHING"""
-        params = (
-            new_group_id,
-            module_id,
-            session_id,
-        )
+                VALUES (%s, %s, %s)"""
+        params = (new_group_id, module_id, session_id)
         self.cursor.execute(sql, params)
+        return new_group_id
 
     def list_groups(self):
         sql = """SELECT * FROM groups"""
@@ -544,4 +532,6 @@ if __name__ == "__main__":
     sem1 = db.get_sem1_data()
     pprint(sem1.get("CDE3301"))
     pprint(sem1.get("CDE2605"))
+    group_id = db.add_group("CG2028", "713-334Q")
+    print(group_id)
     db.close()
