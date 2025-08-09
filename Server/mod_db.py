@@ -541,4 +541,7 @@ if __name__ == "__main__":
     # db.student_join_group("qp1234", "5ae16fc3-c54e-4be8-9127-446c5545a90c")
     # db.student_join_group("qp12345", "f90f3a02-5ba2-49ea-abe2-732bf0f63002")
     pprint(db.get_session_groups("713-334Q"))
+    sem1 = db.get_sem1_data()
+    pprint(sem1.get("CDE3301"))
+    pprint(sem1.get("CDE2605"))
     db.close()

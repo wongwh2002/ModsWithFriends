@@ -262,7 +262,7 @@ def get_session_groups():
     session_id = data.get("session_id")
     if not session_id:
         return jsonify({"error": "Missing session_id"}), 400
-    result = db.list_session_groups(session_id)
+    result = db.get_session_groups(session_id)
     return jsonify({"groups": result}), 200
 
 
