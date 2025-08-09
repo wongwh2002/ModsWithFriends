@@ -230,7 +230,7 @@ def join_session():
     success = db.join_session(name, password, session_id)
     if success:
         return "joined session", 200
-    return "wrong password", 401
+    return "wrong password", 400
 
 
 @app.route("/sem1_data", methods=["GET"])
@@ -273,8 +273,8 @@ def add_group():
     session_id = data.get("session_id")
     if not module_id or not session_id:
         return jsonify({"error": "Missing module_id or session_id"}), 400
-    group_id = db.generate_group_id()
-    db.add_group(module_id, session_id)
+
+    group_id = db.add_group(module_id, session_id)
     return jsonify({"group_id": str(group_id)}), 200
 
 

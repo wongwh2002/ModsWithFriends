@@ -178,7 +178,15 @@ class mods_database:
                 return False
         else:
             self.add_student(student_id, password)
-        self.add_student_sessions(student_id, session_id, json.dumps({}))
+
+        # Only add student_sessions with empty preferences if not already present
+        self.cursor.execute(
+            "SELECT 1 FROM student_sessions WHERE student_id = %s AND session_id = %s",
+            (student_id, session_id),
+        )
+        exists = self.cursor.fetchone()
+        if not exists:
+            self.add_student_sessions(student_id, session_id, json.dumps({}))
         return True
 
     def _generate_random_id(self):
