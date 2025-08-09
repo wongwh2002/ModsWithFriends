@@ -479,7 +479,7 @@ class mods_database:
 
     def list_session_groups(self, session_id):
         """
-        inner join groups table and student_groups table with a session_id
+        inner join groups table and student_groups table with a session_id as common key
         should return a dict of
         {
         module_code:

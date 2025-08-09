@@ -247,7 +247,7 @@ def get_sem2_data():
     return jsonify({"sem_data": sem2_data}), 200
 
 
-@app.route("/session_semester", methods=["POST"])
+@app.route("/get_session_semester", methods=["POST"])
 def get_session_semester():
     data = request.get_json()
     session_id = data["session_id"]
