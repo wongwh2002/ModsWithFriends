@@ -477,7 +477,7 @@ class mods_database:
             ),
         )
 
-    def list_session_groups(self, session_id):
+    def get_session_groups(self, session_id):
         """
         inner join groups table and student_groups table with a session_id as common key
         should return a dict of
@@ -487,8 +487,26 @@ class mods_database:
             students:
         }
         """
+        sql = """
+                SELECT g.module_id, g.group_id, s.student_id
+                FROM groups g
+                INNER JOIN student_groups s ON g.group_id = s.group_id
+                WHERE g.session_id = %s
+                ORDER BY g.moudle_id
+            """
+        self.cursor.execute(sql, (session_id,))
+        rows = self.cursor.fetchall()
 
-        pass
+        result = {}
+
+        for module_id, group_id, student_id in rows:
+            if module_id not in result:
+                result[module_id] = {}
+            if group_id not in result[module_id]:
+                result[module_id][group_id] = []
+            if student_id:
+                result[module_id][group_id].append(student_id)
+        return result
 
     def close(self):
         if self.cursor:
@@ -511,4 +529,9 @@ if __name__ == "__main__":
     db.list_sessions()
     # db.add_group("CG2023", "713-334Q")
     db.list_groups()
-    print(db.get_preference_from_student_sessions("qp12345", "713-334Q"))
+    db.student_join_group("qp12345", "5ae16fc3-c54e-4be8-9127-446c5545a90c")
+    db.student_join_group("qp1234", "5ae16fc3-c54e-4be8-9127-446c5545a90c")
+    db.student_join_group("qp12345", "f90f3a02-5ba2-49ea-abe2-732bf0f63002")
+    db.list_session_groups()
+
+    db.close()

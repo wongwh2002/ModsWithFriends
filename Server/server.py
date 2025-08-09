@@ -256,6 +256,70 @@ def get_session_semester():
     return jsonify({"semester_no": semester_no}), 200
 
 
+@app.route("/get_session_groups", methods=["POST"])
+def get_session_groups():
+    data = request.get_json()
+    session_id = data.get("session_id")
+    if not session_id:
+        return jsonify({"error": "Missing session_id"}), 400
+    result = db.list_session_groups(session_id)
+    return jsonify({"groups": result}), 200
+
+
+@app.route("/add_group", methods=["POST"])
+def add_group():
+    data = request.get_json()
+    module_id = data.get("module_id")
+    session_id = data.get("session_id")
+    if not module_id or not session_id:
+        return jsonify({"error": "Missing module_id or session_id"}), 400
+    group_id = db.generate_group_id()
+    db.add_group(module_id, session_id)
+    return jsonify({"group_id": str(group_id)}), 200
+
+
+@app.route("/delete_group", methods=["POST"])
+def delete_group():
+    data = request.get_json()
+    group_id = data.get("group_id")
+    if not group_id:
+        return jsonify({"error": "Missing group_id"}), 400
+    db.delete_group(group_id)
+    return jsonify({"status": "deleted"}), 200
+
+
+@app.route("/student_join_group", methods=["POST"])
+def student_join_group():
+    data = request.get_json()
+    student_id = data.get("student_id")
+    group_id = data.get("group_id")
+    if not student_id or not group_id:
+        return jsonify({"error": "Missing student_id or group_id"}), 400
+    db.student_join_group(student_id, group_id)
+    return jsonify({"status": "joined"}), 200
+
+
+@app.route("/student_leave_group", methods=["POST"])
+def student_leave_group():
+    data = request.get_json()
+    student_id = data.get("student_id")
+    group_id = data.get("group_id")
+    if not student_id or not group_id:
+        return jsonify({"error": "Missing student_id or group_id"}), 400
+    db.student_leave_group(student_id, group_id)
+    return jsonify({"status": "left"}), 200
+
+
+@app.route("/get_student_groups", methods=["POST"])
+def get_student_groups():
+    data = request.get_json()
+    student_id = data.get("student_id")
+    if not student_id:
+        return jsonify({"error": "Missing student_id"}), 400
+    groups = db.get_student_group(student_id)
+    return jsonify({"groups": groups}), 200
+
+
 @app.route("/Server/<filename>")
 def serve_file(filename):
     return send_from_directory(".", filename)
