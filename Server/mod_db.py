@@ -178,7 +178,15 @@ class mods_database:
                 return False
         else:
             self.add_student(student_id, password)
-        self.add_student_sessions(student_id, session_id, json.dumps({}))
+
+        # Only add student_sessions with empty preferences if not already present
+        self.cursor.execute(
+            "SELECT 1 FROM student_sessions WHERE student_id = %s AND session_id = %s",
+            (student_id, session_id),
+        )
+        exists = self.cursor.fetchone()
+        if not exists:
+            self.add_student_sessions(student_id, session_id, json.dumps({}))
         return True
 
     def _generate_random_id(self):
@@ -433,6 +441,87 @@ class mods_database:
         result = self.cursor.fetchone()
         return result[0] if (result and result[0]) else None
 
+    def add_group(self, module_id, session_id):
+        new_group_id = str(uuid.uuid4())
+        sql = """INSERT INTO groups (group_id, module_id, session_id)
+                    VALUES (%s, %s, %s)
+                    ON CONFLICT (group_id) DO NOTHING"""
+        params = (
+            new_group_id,
+            module_id,
+            session_id,
+        )
+        self.cursor.execute(sql, params)
+
+    def list_groups(self):
+        sql = """SELECT * FROM groups"""
+        self.cursor.execute(sql)
+        rows = self.cursor.fetchall()
+        for row in rows:
+            print(f"[List Groups] {row}")
+
+    def delete_group(self, group_id):
+        sql = """DELETE FROM groups WHERE group_id = %s"""
+        self.cursor.execute(sql, (group_id,))
+
+    def student_join_group(self, student_id, group_id):
+        sql = """INSERT INTO student_groups (student_id, group_id)
+                VALUES (%s, %s)"""
+        self.cursor.execute(
+            sql,
+            (
+                student_id,
+                group_id,
+            ),
+        )
+
+    def student_leave_group(self, student_id, group_id):
+        sql = """DELETE FROM student_groups WHERE student_id = %s AND group_id = %s"""
+        self.cursor.execute(
+            sql,
+            (
+                student_id,
+                group_id,
+            ),
+        )
+
+    def get_session_groups(self, session_id):
+        """
+        inner join groups table and student_groups table with a session_id as common key
+        should return a dict of
+        {
+        module_code:
+            group_id:
+            students:
+        }
+        """
+        sql = """
+                SELECT g.module_id, g.group_id, s.student_id
+                FROM groups g
+                INNER JOIN student_groups s ON g.group_id = s.group_id
+                WHERE g.session_id = %s
+                ORDER BY g.module_id
+            """
+        self.cursor.execute(sql, (session_id,))
+        rows = self.cursor.fetchall()
+
+        result = {}
+
+        for module_id, group_id, student_id in rows:
+            if module_id not in result:
+                result[module_id] = {}
+            if group_id not in result[module_id]:
+                result[module_id][group_id] = []
+            if student_id:
+                result[module_id][group_id].append(student_id)
+        return result
+
+    def close(self):
+        if self.cursor:
+            self.cursor.close()
+        if self.conn:
+            self.conn.close()
+
 
 def temp():
     sessionId = db.generate_session_id()
@@ -446,8 +535,10 @@ if __name__ == "__main__":
     # sem2 = db.get_sem2_data()
     # pprint(sem2["CG2023"])
     db.list_sessions()
-    sem1 = db.get_sem1_data()
-    print(sem1.get("CG2028"))
-    print(sem1.get("CG2023"))
-    sem2 = db.get_sem2_data()
-    print(sem2.get("CG2023"))
+    # db.add_group("CG2023", "713-334Q")
+    db.list_groups()
+    # db.student_join_group("qp12345", "5ae16fc3-c54e-4be8-9127-446c5545a90c")
+    # db.student_join_group("qp1234", "5ae16fc3-c54e-4be8-9127-446c5545a90c")
+    # db.student_join_group("qp12345", "f90f3a02-5ba2-49ea-abe2-732bf0f63002")
+    pprint(db.get_session_groups("713-334Q"))
+    db.close()

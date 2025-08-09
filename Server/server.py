@@ -13,7 +13,7 @@ from mod_db import mods_database
 csp_path = os.path.abspath(os.path.join(os.path.dirname(__file__), "./../csp"))
 sys.path.insert(0, csp_path)
 
-#from generate import generate_timetable
+# from generate import generate_timetable
 from permutate_shared_mods import get_solutions
 
 app = Flask(__name__)
@@ -181,9 +181,9 @@ def get_login_info():
     name, password = data["name"], data["password"]
     session_id = data["session_id"]
     if "semester_no" in data:
-      semester_no = data["semester_no"]
+        semester_no = data["semester_no"]
     else:
-      semester_no = None
+        semester_no = None
     return name, password, session_id, semester_no
 
 
@@ -230,7 +230,7 @@ def join_session():
     success = db.join_session(name, password, session_id)
     if success:
         return "joined session", 200
-    return "wrong password", 401
+    return "wrong password", 400
 
 
 @app.route("/sem1_data", methods=["GET"])
@@ -247,9 +247,87 @@ def get_sem2_data():
     return jsonify({"sem_data": sem2_data}), 200
 
 
+@app.route("/get_session_semester", methods=["POST"])
+def get_session_semester():
+    data = request.get_json()
+    session_id = data["session_id"]
+    print("[GETTING SESSION SEMESTER]")
+    semester_no = db.get_session_semester(session_id)
+    return jsonify({"semester_no": semester_no}), 200
+
+
+@app.route("/get_session_groups", methods=["POST"])
+def get_session_groups():
+    data = request.get_json()
+    session_id = data.get("session_id")
+    if not session_id:
+        return jsonify({"error": "Missing session_id"}), 400
+    result = db.list_session_groups(session_id)
+    return jsonify({"groups": result}), 200
+
+
+@app.route("/add_group", methods=["POST"])
+def add_group():
+    data = request.get_json()
+    module_id = data.get("module_id")
+    session_id = data.get("session_id")
+    if not module_id or not session_id:
+        return jsonify({"error": "Missing module_id or session_id"}), 400
+
+    group_id = db.add_group(module_id, session_id)
+    return jsonify({"group_id": str(group_id)}), 200
+
+
+@app.route("/delete_group", methods=["POST"])
+def delete_group():
+    data = request.get_json()
+    group_id = data.get("group_id")
+    if not group_id:
+        return jsonify({"error": "Missing group_id"}), 400
+    db.delete_group(group_id)
+    return jsonify({"status": "deleted"}), 200
+
+
+@app.route("/student_join_group", methods=["POST"])
+def student_join_group():
+    data = request.get_json()
+    student_id = data.get("student_id")
+    group_id = data.get("group_id")
+    if not student_id or not group_id:
+        return jsonify({"error": "Missing student_id or group_id"}), 400
+    db.student_join_group(student_id, group_id)
+    return jsonify({"status": "joined"}), 200
+
+
+@app.route("/student_leave_group", methods=["POST"])
+def student_leave_group():
+    data = request.get_json()
+    student_id = data.get("student_id")
+    group_id = data.get("group_id")
+    if not student_id or not group_id:
+        return jsonify({"error": "Missing student_id or group_id"}), 400
+    db.student_leave_group(student_id, group_id)
+    return jsonify({"status": "left"}), 200
+
+
+@app.route("/get_student_groups", methods=["POST"])
+def get_student_groups():
+    data = request.get_json()
+    student_id = data.get("student_id")
+    if not student_id:
+        return jsonify({"error": "Missing student_id"}), 400
+    groups = db.get_student_group(student_id)
+    return jsonify({"groups": groups}), 200
+
+
 @app.route("/Server/<filename>")
 def serve_file(filename):
     return send_from_directory(".", filename)
+
+
+# @app.teardown_appcontext
+# def close_db_connection(exception):
+#     db.close()
 
 
 if __name__ == "__main__":
