@@ -14,7 +14,7 @@ function SessionPage({createSession, setCreateSession, joinSession, setJoinSessi
       setShareSession={setShareSession} setBody={setBody} body={body}/>
       <Preference username={username} setGenerationDone={setGenerationDone} 
       setGenerationError={setGenerationError} setImagesData={setImagesData}
-      semesterTwo={semesterTwo}/>
+      semesterTwo={semesterTwo} body={body}/>
       {createSession ? <NewSessionOverlay setBody={setBody} 
       setCreateSession={setCreateSession} setUsername={setUsername}
       semseterTwo={semesterTwo} setSemesterTwo={setSemesterTwo}/>

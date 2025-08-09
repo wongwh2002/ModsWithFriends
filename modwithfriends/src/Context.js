@@ -34,6 +34,7 @@ export const StateProvider = ({ children }) => {
   const [OMod, setOMod] = useState("");
   const [clickOType, setClickOType] = useState(false);
   const [OType, setOType] = useState("");
+  const [newSession, setNewSession] = useState(false);
 
   const resetStates = () => {
     setModuleData({});
@@ -65,6 +66,7 @@ export const StateProvider = ({ children }) => {
     setOMod("");
     setClickOType(false);
     setOType("");
+    setNewSession(true);
   }
 
   return (
@@ -75,7 +77,8 @@ export const StateProvider = ({ children }) => {
       setLunchStart, lunchEnd, setLunchEnd, clickDuration, setClickDuration, duration, 
       setDuration, clickCMod, setClickCMod, CMod, setCMod, clickCType, setClickCType,
       CType, setCType, clickCLesson, setClickCLesson, CLesson, setCLesson, clickOMod,
-      setClickOMod, OMod, setOMod, clickOType, setClickOType, OType, setOType, resetStates}}>
+      setClickOMod, OMod, setOMod, clickOType, setClickOType, OType, setOType, resetStates, 
+      newSession, setNewSession}}>
         {children}
       </StateContext.Provider>
   )

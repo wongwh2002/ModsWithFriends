@@ -12,7 +12,10 @@ import RoomCard from './RoomCard';
 import { useStateContext } from './Context';
 
 function Preference({username, setGenerationDone, setGenerationError, setImagesData,
-  semesterTwo}) {
+  semesterTwo, body}) {
+
+  const preferenceChangedRef = useRef(false);
+  const intervalRef = useRef(null);
 
   const dropDownRef = useRef();
   const searchBarRef = useRef();
@@ -34,7 +37,8 @@ function Preference({username, setGenerationDone, setGenerationError, setImagesD
       setLunchStart, lunchEnd, setLunchEnd, clickDuration, setClickDuration, duration, 
       setDuration, clickCMod, setClickCMod, CMod, setCMod, clickCType, setClickCType,
       CType, setCType, clickCLesson, setClickCLesson, CLesson, setCLesson, clickOMod,
-      setClickOMod, OMod, setOMod, clickOType, setClickOType, OType, setOType} = useStateContext();
+      setClickOMod, OMod, setOMod, clickOType, setClickOType, OType, setOType,
+      newSession, setNewSession} = useStateContext();
 
   const [searchValue, setSearchValue] = useState("");
   const [ac, setAc] = useState([]);
@@ -111,12 +115,46 @@ function Preference({username, setGenerationDone, setGenerationError, setImagesD
     }
   }, [moduleData]);
 
-  useEffect(() => {
-    console.log(semesterTwo);
-    fetch(`https://modswithfriends.onrender.com/sem${semesterTwo ? '2' : '1'}_data`)
-      .then(response => response.json())
-      .then(data => {setModuleData(data["sem_data"])});
+  const inputPreferences = (preferences) => {
+    console.log(preferences);
+    setSelectedMods(preferences["selectedMods"]);
+    setLunchCheck(preferences["lunchCheck"]);
+    setLunchStart(preferences["lunchStart"]);
+    setLunchEnd(preferences["lunchEnd"]);
+    setStartTime(preferences["startTime"]);
+    setEndTime(preferences["endTime"]);
+    setDays(preferences["days"]);
+    setDuration(preferences["duration"]);
+  }
+
+  useEffect(() =>{
+    const get_preferences = async () => {await fetch("https://modswithfriends.onrender.com/get_preferences", {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({
+        "name" : usernameReference.current,
+        "session_id" : bodyReference.current,
+      })
+    }).then(response => response.json())
+    .then(data => inputPreferences(data.preferences))};
     
+    console.log(semesterTwo);
+    const get_mod_data = async () => {fetch(`https://modswithfriends.onrender.com/sem${semesterTwo ? '2' : '1'}_data`)
+      .then(response => response.json())
+      .then(data => {setModuleData(data["sem_data"])});};
+
+    if (newSession) {
+      usernameReference.current = username;
+      bodyReference.current = body;
+      get_preferences();
+      get_mod_data();
+      setNewSession(false);
+    }
+  }, [newSession])
+
+  useEffect(() => {
     function handleClickOutside(e) {
       const refs = [
         dropDownRef.current,
@@ -133,7 +171,7 @@ function Preference({username, setGenerationDone, setGenerationError, setImagesD
       ];
     
       const clickedInsideAny = refs
-        .filter(ref => ref) // Remove null or unmounted refs
+        .filter(ref => ref)
         .some(ref => ref.contains(e.target));
     
       if (!clickedInsideAny) {
@@ -160,9 +198,34 @@ function Preference({username, setGenerationDone, setGenerationError, setImagesD
     //getURL("https://nusmods.com/timetable/sem-2/share?CDE2000=TUT:A4&CDE2310=LEC:1,LAB:1&CDE3301=LEC:1,LAB:G10&CG2023=LEC:03,LAB:05&CG2271=LAB:02,LEC:01&CS3240=LEC:1,TUT:3&EE2026=TUT:05,LEC:01,LAB:03&EE4204=PLEC:01,PTUT:01&IE2141=TUT:09,LEC:2&ta=CDE2310(LAB:1),CG2271(LAB:02)")
     //.then(data => console.log(data))
 
+    if (!intervalRef.current) {
+      intervalRef.current = setInterval(() => {
+        //console.log("10 seconds triggered");
+        if (preferenceChangedRef.current) {
+          savePreferenceToBackend();
+          preferenceChangedRef.current = false;
+          /*fetch("https://modswithfriends.onrender.com/get_preferences", {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+              "name" : username,
+              "session_id" : body,
+            })
+          }).then(response => response.json())
+          .then(data => console.log(`Retrieved: ${JSON.stringify(data.preferences, null, 2)}`));*/
+        }
+      }, 10000)
+    }
+
     return () => {
       document.removeEventListener("mousedown", handleClickOutside);
       window.removeEventListener("keydown", handleKeyDown);
+      if (intervalRef.current) {
+        clearInterval(intervalRef.current);
+        intervalRef.current = null;
+      };
     }
   }, []);
 
@@ -225,6 +288,7 @@ function Preference({username, setGenerationDone, setGenerationError, setImagesD
       }, {});
       const uniqueOnce = matches.filter(code => counts[code] === 1);
       const pastedMods = Array.from(uniqueOnce).map(code => {
+        console.log(code);
         const mod = findModule(code);
         if (!mod) {
           console.warn("No module found for code:", code);
@@ -372,8 +436,69 @@ function Preference({username, setGenerationDone, setGenerationError, setImagesD
   }
 
   useEffect(() => {
-    console.log(preferencesToJson());
+    console.log(selectedMods);
   }, [selectedMods])
+
+  const savePreferenceToBackend = async () => {
+    console.log(JSON.stringify({
+        "session_id" : bodyReference.current,
+        "name" : usernameReference.current,
+        "preferences" : {
+          "selectedMods" : selectedModsReference.current,
+          "lunchCheck" : lunchCheckReference.current,
+          "lunchStart" : lunchStartReference.current,
+          "lunchEnd" : lunchEndReference.current,
+          "startTime" : startTimeReference.current,
+          "endTime" : endTimeReference.current,
+          "days" : daysReference.current,
+          "duration" : durationReference.current,
+        },
+      }));
+    await fetch('https://modswithfriends.onrender.com/save_preferences', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        "session_id" : bodyReference.current,
+        "name" : usernameReference.current,
+        "preferences" : {
+          "selectedMods" : selectedModsReference.current,
+          "lunchCheck" : lunchCheckReference.current,
+          "lunchStart" : lunchStartReference.current,
+          "lunchEnd" : lunchEndReference.current,
+          "startTime" : startTimeReference.current,
+          "endTime" : endTimeReference.current,
+          "days" : daysReference.current,
+          "duration" : durationReference.current,
+        },
+      }),
+    });
+  };
+
+  const selectedModsReference = useRef(selectedMods);
+  const lunchCheckReference = useRef(lunchCheck);
+  const lunchStartReference = useRef(lunchStart);
+  const lunchEndReference = useRef(lunchEnd);
+  const startTimeReference = useRef(startTime);
+  const endTimeReference = useRef(endTime);
+  const daysReference = useRef(days);
+  const durationReference = useRef(duration);
+  const usernameReference = useRef(username);
+  const bodyReference = useRef(body);
+
+  useEffect(() => {
+    // save preference
+    selectedModsReference.current = selectedMods;
+    lunchCheckReference.current = lunchCheck;
+    lunchStartReference.current = lunchStart;
+    lunchEndReference.current = lunchEnd;
+    startTimeReference.current = startTime;
+    endTimeReference.current = endTime;
+    daysReference.current = days;
+    durationReference.current = duration;
+    preferenceChangedRef.current = true;
+  }, [selectedMods, lunchCheck, lunchStart, lunchEnd, startTime, endTime, days, duration]);
 
   const addFixedMod = () => {
     if (CLesson === "") return;
