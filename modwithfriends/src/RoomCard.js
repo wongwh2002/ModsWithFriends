@@ -119,10 +119,11 @@ function RoomCard({roomID, moduleCode, userList, user, setRooms, body}) {
         </div>
       </div>*/}
       </div>
+      
       <div className='dividor'>
-        <div className='add-duplicate-container' onClick={() => addDuplicate()}>
+        {/*<div className='add-duplicate-container' onClick={() => addDuplicate()}>
           <p className='plus-sign'>+</p>
-        </div>
+        </div>*/}
       </div>
     </div>
   )

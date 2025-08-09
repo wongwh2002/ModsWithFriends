@@ -46,3 +46,7 @@ button.session:hover {
 img.logo {
   height: 150px;
 }
+
+img.logo:hover {
+  cursor: pointer;
+}

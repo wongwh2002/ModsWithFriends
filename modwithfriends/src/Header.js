@@ -1,9 +1,12 @@
 import React from 'react';
 import './Header.css';
+import { useNavigate } from "react-router-dom";
 import logo from './assets/MWF_logo.png';
 import { Link } from 'react-router-dom';
 
 function Header({setCreateSession, setJoinSession, setShareSession, setBody, body}) {
+
+  const navigate = useNavigate();
 
   const createSession = () => {
     setCreateSession(true);
@@ -17,11 +20,14 @@ function Header({setCreateSession, setJoinSession, setShareSession, setBody, bod
     setShareSession(true);
   }
 
+  const goToHome = () => {
+    setBody('-');
+    navigate('/');
+  }
+
   return (
     <div className='header'>
-      <Link to="/" onClick={() => setBody('-')}>
-        <img src={logo} className='logo'></img>
-      </Link>
+      <img src={logo} className='logo' onClick={() => goToHome()}></img>
       <div className='session-id'>
         <p className='bold'>
           Session ID: {body}
