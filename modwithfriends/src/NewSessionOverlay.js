@@ -52,6 +52,7 @@ function NewSessionOverlay({
         session_id: newSessionID,
         name: name,
         password: password,
+        semester_no: semesterTwo ? "2" : "1"
       }),
       headers: {
         "Content-Type": "application/json"

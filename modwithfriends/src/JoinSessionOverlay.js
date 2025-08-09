@@ -33,9 +33,9 @@ function JoinSessionOverlay({setJoinSession, setBody, setUsername}) {
       });
 
       if (response.ok) {
-        resetStates();
         setBody(sessionID);
         setUsername(name);
+        resetStates();
         setJoinSession(false);
         navigate('/session');
       } else {

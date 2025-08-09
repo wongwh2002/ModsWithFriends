@@ -1,7 +1,10 @@
 import React from 'react';
+import { useState } from 'react';
 import './DropdownItem.css';
 
 function DropdownItem({mod, selectedMods, setSelectedMods, focusInput}) {
+
+  const [loading, setLoading] = useState(false);
 
   const getModuleInfo = async (modCode) => {
     const encoded = encodeURIComponent(modCode);
@@ -11,7 +14,11 @@ function DropdownItem({mod, selectedMods, setSelectedMods, focusInput}) {
   }
   
   const addSelectedMods = async () => {
+    if (loading === true) {
+      return;
+    }
     if (!selectedMods.some(selectedMod => selectedMod["moduleCode"] == mod["moduleCode"])) {
+      setLoading(true);
       let classes = {};
       let data = await getModuleInfo(mod.moduleCode);
       console.log(data);
@@ -31,6 +38,7 @@ function DropdownItem({mod, selectedMods, setSelectedMods, focusInput}) {
 
       setSelectedMods(selectedMods => [...selectedMods, {...mod, 'classes': classes}]);
       focusInput();
+      setLoading(false);
       //console.log(selectedMods);
     }
   }
