@@ -210,7 +210,7 @@ def get_preference():
     data = request.get_json()
     session_id, name = (data["session_id"], data["name"])
     preferences = db.get_preference_from_student_sessions(name, session_id)
-    print(f"Retrieved preference for {name} : {preferences}")
+    print(f"Retrieved preference for {name} for sesstion {session_id} : {preferences}")
     return jsonify({"preferences": preferences}), 200
 
 
