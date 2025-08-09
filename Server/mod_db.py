@@ -433,6 +433,63 @@ class mods_database:
         result = self.cursor.fetchone()
         return result[0] if (result and result[0]) else None
 
+    def add_group(self, module_id, session_id):
+        new_group_id = str(uuid.uuid4())
+        sql = """INSERT INTO groups (group_id, module_id, session_id)
+                    VALUES (%s, %s, %s)
+                    ON CONFLICT (group_id) DO NOTHING"""
+        params = (
+            new_group_id,
+            module_id,
+            session_id,
+        )
+        self.cursor.execute(sql, params)
+
+    def list_groups(self):
+        sql = """SELECT * FROM groups"""
+        self.cursor.execute(sql)
+        rows = self.cursor.fetchall()
+        for row in rows:
+            print(f"[List Groups] {row}")
+
+    def delete_group(self, group_id):
+        sql = """DELETE FROM groups WHERE group_id = %s"""
+        self.cursor.execute(sql, (group_id,))
+
+    def student_join_group(self, student_id, group_id):
+        sql = """INSERT INTO student_groups (student_id, group_id)
+                VALUES (%s, %s)"""
+        self.cursor.execute(
+            sql,
+            (
+                student_id,
+                group_id,
+            ),
+        )
+
+    def student_leave_group(self, student_id, group_id):
+        sql = """DELETE FROM student_groups WHERE student_id = %s AND group_id = %s"""
+        self.cursor.execute(
+            sql,
+            (
+                student_id,
+                group_id,
+            ),
+        )
+
+    def list_session_groups(self, session_id):
+        """
+        inner join groups table and student_groups table with a session_id
+        should return a dict of
+        {
+        module_code:
+            group_id:
+            students:
+        }
+        """
+
+        pass
+
 
 def temp():
     sessionId = db.generate_session_id()
@@ -446,8 +503,6 @@ if __name__ == "__main__":
     # sem2 = db.get_sem2_data()
     # pprint(sem2["CG2023"])
     db.list_sessions()
-    sem1 = db.get_sem1_data()
-    print(sem1.get("CG2028"))
-    print(sem1.get("CG2023"))
-    sem2 = db.get_sem2_data()
-    print(sem2.get("CG2023"))
+    # db.add_group("CG2023", "713-334Q")
+    db.list_groups()
+    print(db.get_preference_from_student_sessions("qp12345", "713-334Q"))

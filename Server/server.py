@@ -13,7 +13,7 @@ from mod_db import mods_database
 csp_path = os.path.abspath(os.path.join(os.path.dirname(__file__), "./../csp"))
 sys.path.insert(0, csp_path)
 
-#from generate import generate_timetable
+# from generate import generate_timetable
 from permutate_shared_mods import get_solutions
 
 app = Flask(__name__)
@@ -240,6 +240,15 @@ def get_sem2_data():
     print("[GETTING SEM2 DATA]")
     sem2_data = db.get_sem2_data()
     return jsonify({"sem_data": sem2_data}), 200
+
+
+@app.route("/session_semester", methods=["POST"])
+def get_session_semester():
+    data = request.get_json()
+    session_id = data["session_id"]
+    print("[GETTING SESSION SEMESTER]")
+    semester_no = db.get_session_semester(session_id)
+    return jsonify({"semester_no": semester_no}), 200
 
 
 @app.route("/Server/<filename>")
