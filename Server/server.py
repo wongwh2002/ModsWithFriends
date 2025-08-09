@@ -180,13 +180,17 @@ def get_login_info():
     data = request.get_json()
     name, password = data["name"], data["password"]
     session_id = data["session_id"]
-    semester_no = data["semester_no"]
+    if "semester_no" in data:
+      semester_no = data["semester_no"]
+    else:
+      semester_no = None
     return name, password, session_id, semester_no
 
 
 @app.route("/save_preferences", methods=["POST"])
 def save_preference():
     session_id, name, preferences = get_preferences_data()
+    print(f"[Received preference for {name} : {preferences}]")
     db.add_student_sessions(name, session_id, json.dumps(preferences))
     return "updated student preference", 200
 
@@ -206,6 +210,7 @@ def get_preference():
     data = request.get_json()
     session_id, name = (data["session_id"], data["name"])
     preferences = db.get_preference_from_student_sessions(name, session_id)
+    print(f"Retrieved preference for {name} for sesstion {session_id} : {preferences}")
     return jsonify({"preferences": preferences}), 200
 
 
@@ -257,5 +262,5 @@ def serve_file(filename):
 
 
 if __name__ == "__main__":
-    port = int(os.getenv("PORT", 4000))
+    port = int(os.getenv("PORT", 4001))
     app.run(host="0.0.0.0", port=port)
