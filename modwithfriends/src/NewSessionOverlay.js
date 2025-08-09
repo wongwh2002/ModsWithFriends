@@ -15,6 +15,7 @@ function NewSessionOverlay({
   const [name, setName] = useState("");
   const [password, setPassword] = useState("");
   const [newSessionID, setNewSessionID] = useState(0);
+  const [loading, setLoading] = useState(false);
 
   const { resetStates } = useStateContext();
 
@@ -40,6 +41,7 @@ function NewSessionOverlay({
   }, []);
 
   const generateID = async () => {
+    setLoading(true);
     //replace with generation of id
     resetStates();
     setBody(newSessionID);
@@ -59,6 +61,7 @@ function NewSessionOverlay({
       },
       body: JSON.stringify({'name': name, 'password': password})
     });
+    setLoading(false);
   }
 
   const closeOverlay = () => {
@@ -111,8 +114,8 @@ function NewSessionOverlay({
         </div>
         <Link to="/session" className="link">
           <div className="create-session">
-            <button className="create-session" onClick={generateID}>
-              Create Session
+            <button className="create-session" disbaled={loading} onClick={generateID}>
+              { loading ? "Creating..." : "Create Session" }
             </button>
           </div>
         </Link>

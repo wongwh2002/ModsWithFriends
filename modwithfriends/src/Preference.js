@@ -38,13 +38,13 @@ function Preference({username, setGenerationDone, setGenerationError, setImagesD
       setDuration, clickCMod, setClickCMod, CMod, setCMod, clickCType, setClickCType,
       CType, setCType, clickCLesson, setClickCLesson, CLesson, setCLesson, clickOMod,
       setClickOMod, OMod, setOMod, clickOType, setClickOType, OType, setOType,
-      newSession, setNewSession} = useStateContext();
+      newSession, setNewSession, isPreference, setIsPreference} = useStateContext();
 
   const [searchValue, setSearchValue] = useState("");
   const [ac, setAc] = useState([]);
   const [createRoom, setCreateRoom] = useState(false);
   const [rooms, setRooms] = useState([])
-  const [isPreference, setIsPreference] = useState(true);
+  const [openNewRoomOverlay, setOpenNewRoomOverlay] = useState(false);
   //const [imagesData, setImagesData] = useState([]);
   
   const timeOptions = ['0800', '0900', '1000', '1100', '1200', '1300', 
@@ -230,14 +230,37 @@ function Preference({username, setGenerationDone, setGenerationError, setImagesD
   }, []);
 
   useEffect(() => {
-    let updatedRooms = [];
+    /*let updatedRooms = [];
     updatedRooms = selectedMods.map(mod => ({
       module : mod.moduleCode,
       users : [],
       isOriginal: true
     }));
     setRooms(updatedRooms);
-    console.log(rooms);
+    console.log(rooms);*/
+    const getRooms = async () => {
+      await fetch("https://modswithfriends.onrender.com/get_session_groups", {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          "session_id" : body,
+        })
+      }).then(request => request.json())
+      .then(data => {
+        //console.log(data["groups"]);
+        let mods = selectedMods.map(mod => mod.moduleCode);
+        Object.keys(data["groups"]).forEach(key => {
+          if (!mods.includes(key)) {
+            delete data["groups"][key];
+          }
+        });
+        //console.log(data["groups"]);
+        setRooms(data["groups"]);
+      })
+    }
+    getRooms();
   }, [isPreference]);
 
   const autocomplete = (value) => {
@@ -586,7 +609,7 @@ function Preference({username, setGenerationDone, setGenerationError, setImagesD
                 onPaste={e => handleLink(e)} ref={searchBarRef}></input>
               <div className={ac.length != 0 ? 'dropdown' : 'invisible dropdown'}>
                 {ac.map(mod => {
-                  return <DropdownItem mod={mod} selectedMods={selectedMods} setSelectedMods={setSelectedMods} focusInput={focusInput}/>
+                  return <DropdownItem mod={mod} selectedMods={selectedMods} setSelectedMods={setSelectedMods} focusInput={focusInput} body={body}/>
                 })}
               </div>
             </div>
@@ -784,14 +807,20 @@ function Preference({username, setGenerationDone, setGenerationError, setImagesD
             </div>
           </div> </> : <></>}
         </div> : 
-        <div className={rooms.length === 0 ? 'rooms-body': 'pad-top rooms-body'}>
-          { rooms.length === 0 ? 
+        <div className={Object.keys(rooms).length === 0 ? 'rooms-body': 'pad-top rooms-body'}>
+          <div className='right-justified'>
+            <button className='dark button' onClick={() => setOpenNewRoomOverlay(true)}>Create Room</button> 
+          </div>
+          { Object.keys(rooms).length === 0 ? 
           <div className='center-flex'>
-            <p className='no-room-msg'>Select modules to create rooms</p> 
+            <p className='no-room-msg'>There are currently no rooms you can join</p> 
           </div>  :
-            rooms.map((room, idx) => {
-              return <RoomCard roomInfo={room} setRoomInfo={setRooms} user={username} idx={idx} />
-            })
+          Object.entries(rooms).map(([moduleCode, roomList]) => {
+            return Object.entries(roomList).map(([roomID, userList]) => (
+              <RoomCard moduleCode ={moduleCode} roomID={roomID} userList={userList} 
+              user={username} setRooms={setRooms} body={body}/>
+            ))
+          })       
           }
           {/*{rooms.length === 0 ? 
           <button className='new-room-button button' onClick={() => setCreateRoom(true)}>
@@ -806,7 +835,7 @@ function Preference({username, setGenerationDone, setGenerationError, setImagesD
           </div>}
           {createRoom ? <NewRoomOverlay setCreateRoom={setCreateRoom} selectedMods={selectedMods}
             setRooms={setRooms} username={username}/> : <></>}*/}
-        </div>}
+        </div> }
       </div>
       <div className='generate-button-wrapper'>
         <div className='generate-button-container'>
@@ -815,6 +844,8 @@ function Preference({username, setGenerationDone, setGenerationError, setImagesD
           </Link>
         </div>
       </div>
+      {openNewRoomOverlay ? 
+      <NewRoomOverlay setCreateRoom={setOpenNewRoomOverlay} selectedMods={selectedMods} setRooms={setRooms} username={username} body={body}/> : <></>}
     </div>
   )
 }
