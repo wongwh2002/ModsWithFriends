@@ -325,9 +325,9 @@ def serve_file(filename):
     return send_from_directory(".", filename)
 
 
-@app.teardown_appcontext
-def close_db_connection(exception):
-    db.close()
+# @app.teardown_appcontext
+# def close_db_connection(exception):
+#     db.close()
 
 
 if __name__ == "__main__":
