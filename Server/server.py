@@ -21,6 +21,23 @@ CORS(app)
 
 db = mods_database()
 
+DEFAULT_INIT_PREF = {
+    "selectedMods": [],
+    "lunchCheck": False,
+    "lunchStart": "",
+    "lunchEnd": "",
+    "startTime": "",
+    "endTime": "",
+    "days": [
+        {"day": "Mon", "selected": False},
+        {"day": "Tues", "selected": False},
+        {"day": "Weds", "selected": False},
+        {"day": "Thurs", "selected": False},
+        {"day": "Fri", "selected": False},
+    ],
+    "duration": "",
+}
+
 
 @app.route("/", methods=["GET"])
 def index():
@@ -167,23 +184,37 @@ def get_image(index):
 def new_session_login():
     print("[Login]")
     name, password, session_id, semester_no = get_login_info()
-    success = db.add_student(name, password)
+    student_added = db.add_student(name, password)
     db.add_new_session(session_id, semester_no)
-    db.add_student_sessions(name, session_id, json.dumps({}))
-    if success:
-        return jsonify({"status": "success", "message": "Student added"}), 200
+    db.add_student_sessions(name, session_id, json.dumps(DEFAULT_INIT_PREF))
+    if student_added:
+        return (
+            jsonify(
+                {
+                    "status": "success",
+                    "message": "Student added, session created, and student added to session",
+                }
+            ),
+            200,
+        )
     else:
-        return jsonify({"status": "exists", "message": "Student already exists"}), 400
+        return (
+            jsonify(
+                {
+                    "status": "exists",
+                    "message": "Student already exists, session created, and student added to session",
+                }
+            ),
+            200,
+        )
 
 
 def get_login_info():
     data = request.get_json()
+    print(f"[Getting Login Info] {data}")
     name, password = data["name"], data["password"]
     session_id = data["session_id"]
-    if "semester_no" in data:
-        semester_no = data["semester_no"]
-    else:
-        semester_no = None
+    semester_no = data["semester_no"]
     return name, password, session_id, semester_no
 
 
