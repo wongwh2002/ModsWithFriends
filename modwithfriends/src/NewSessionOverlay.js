@@ -15,6 +15,7 @@ function NewSessionOverlay({
   const [name, setName] = useState("");
   const [password, setPassword] = useState("");
   const [newSessionID, setNewSessionID] = useState(0);
+  const [loading, setLoading] = useState(false);
 
   const { resetStates } = useStateContext();
 
@@ -40,25 +41,26 @@ function NewSessionOverlay({
   }, []);
 
   const generateID = async () => {
+    setLoading(true);
     //replace with generation of id
     resetStates();
     setBody(newSessionID);
     setUsername(name);
     setCreateSession(false);
     console.log("Creating session with name:");
-    await fetch("https://modswithfriends.onrender.com//new_session", {
+    await fetch("https://modswithfriends.onrender.com/new_session", {
       method: "POST",
+      headers: {
+        "Content-Type": "application/json"
+      },
       body: JSON.stringify({
         session_id: newSessionID,
         name: name,
         password: password,
         semester_no: semesterTwo ? "2" : "1"
-      }),
-      headers: {
-        "Content-Type": "application/json"
-      },
-      body: JSON.stringify({'name': name, 'password': password})
+      })
     });
+    setLoading(false);
   }
 
   const closeOverlay = () => {
@@ -111,8 +113,8 @@ function NewSessionOverlay({
         </div>
         <Link to="/session" className="link">
           <div className="create-session">
-            <button className="create-session" onClick={generateID}>
-              Create Session
+            <button className="create-session" disbaled={loading} onClick={generateID}>
+              { loading ? "Creating..." : "Create Session" }
             </button>
           </div>
         </Link>

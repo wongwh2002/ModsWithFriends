@@ -2,7 +2,7 @@ import React from 'react';
 import { useState } from 'react';
 import './DropdownItem.css';
 
-function DropdownItem({mod, selectedMods, setSelectedMods, focusInput}) {
+function DropdownItem({mod, selectedMods, setSelectedMods, focusInput, body}) {
 
   const [loading, setLoading] = useState(false);
 

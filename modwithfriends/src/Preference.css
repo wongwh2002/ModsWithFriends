@@ -417,3 +417,15 @@ p.no-room-msg {
   font-size: 15px;
   font-style: italic;
 }
+
+div.right-justified {
+  width: 100%;
+  display: flex;
+  flex-direction: row;
+  justify-content: right;
+  padding-top: 20px;
+}
+
+button.dark {
+  background-color: #DCC4BE;
+}

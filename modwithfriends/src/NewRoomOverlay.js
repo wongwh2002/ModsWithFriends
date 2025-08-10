@@ -3,10 +3,11 @@ import './Overlay.css';
 import x from './assets/x.png';
 import Days from './Days';
 
-function NewRoomOverlay({setCreateRoom, selectedMods, setRooms, username}) {
+function NewRoomOverlay({setCreateRoom, selectedMods, setRooms, username, body}) {
 
   const [modList, setModList] = useState([]);
   const [hasSelected, setHasSelected] = useState(false);
+  const [loading, setLoading] = useState(false);
 
   useEffect(() => {
     const moduleCodes = selectedMods.map(mod => ({
@@ -33,19 +34,66 @@ function NewRoomOverlay({setCreateRoom, selectedMods, setRooms, username}) {
     setCreateRoom(false);
   }
 
-  const createRoom = () => {
+  const createRoom = async () => {
+    setLoading(true);
     if (hasSelected == false) {
       return
     }
     const mods = modList.filter(mod => 
       mod["selected"] == true).map(selected => selected["day"])
-    const roomDetails = 
-    {
-      "modules": mods,
-      "users": [username]
+    
+    const add_module = async (moduleCode) => {
+      const groupData = await fetch("https://modswithfriends.onrender.com/add_group", {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          "session_id" : body,
+          "module_id" : moduleCode,
+        })
+      })
+      const groupID = await groupData.json();
+      console.log(groupID);
+      await fetch ("https://modswithfriends.onrender.com/student_join_group", {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          "group_id" : groupID["group_id"],
+          "student_id" : username,
+        })
+      })
     }
-    setRooms(rooms => [...rooms, roomDetails]);
+    
+    for (let mod of mods) {
+      await add_module(mod);
+    }
+
+    const getRoomData = async () => {
+      await fetch("https://modswithfriends.onrender.com/get_session_groups", {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          "session_id" : body,
+        })
+      }).then(request => request.json())
+      .then(data => {
+        let mods = selectedMods.map(mod => mod.moduleCode);
+        Object.keys(data["groups"]).forEach(key => {
+          if (!mods.includes(key)) {
+            delete data["groups"][key];
+          }
+        });
+        setRooms(data["groups"])
+      });
+    }
+    await getRoomData();
     setCreateRoom(false);
+    setLoading(false);
   }
 
   return (
@@ -64,7 +112,7 @@ function NewRoomOverlay({setCreateRoom, selectedMods, setRooms, username}) {
           </div>
         </div>
         <div className='create-room-container'>
-          <button className={hasSelected ? 'create-room' : 'greyed-out create-room'} onClick = {() => createRoom()}>Create Room</button>
+          <button className={hasSelected ? 'create-room' : 'greyed-out create-room'} disabled={loading} onClick = {() => createRoom()}>{loading ? "Creating..." : "Create Room"}</button>
         </div>
       </div>
     </div>

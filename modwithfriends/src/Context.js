@@ -35,6 +35,7 @@ export const StateProvider = ({ children }) => {
   const [clickOType, setClickOType] = useState(false);
   const [OType, setOType] = useState("");
   const [newSession, setNewSession] = useState(false);
+  const [isPreference, setIsPreference] = useState(true);
 
   const resetStates = () => {
     setModuleData({});
@@ -67,6 +68,7 @@ export const StateProvider = ({ children }) => {
     setClickOType(false);
     setOType("");
     setNewSession(true);
+    setIsPreference(true);
   }
 
   return (
@@ -78,7 +80,7 @@ export const StateProvider = ({ children }) => {
       setDuration, clickCMod, setClickCMod, CMod, setCMod, clickCType, setClickCType,
       CType, setCType, clickCLesson, setClickCLesson, CLesson, setCLesson, clickOMod,
       setClickOMod, OMod, setOMod, clickOType, setClickOType, OType, setOType, resetStates, 
-      newSession, setNewSession}}>
+      newSession, setNewSession, isPreference, setIsPreference}}>
         {children}
       </StateContext.Provider>
   )
