@@ -97,6 +97,7 @@ class mods_database:
         student_id VARCHAR REFERENCES students(student_id) ON DELETE CASCADE,
         session_id VARCHAR REFERENCES sessions(session_id) ON DELETE CASCADE,
         preference JSONB,
+        csp_timetable_json JSONB,
         PRIMARY KEY (student_id, session_id)
         )"""
         self.cursor.execute(sql)
@@ -510,6 +511,36 @@ class mods_database:
         if self.conn:
             self.conn.close()
 
+    def set_timetable(self, student_id, session_id, timetable_json):
+        sql = """
+        UPDATE student_sessions
+        SET csp_timetable_json = %s
+        WHERE student_id = %s AND session_id = %s
+        """
+        self.cursor.execute(
+            sql,
+            (
+                json.dumps(timetable_json),
+                student_id,
+                session_id,
+            ),
+        )
+
+    def get_timetable(self, student_id, session_id):
+        sql = """
+                SELECT csp_timetable_json FROM student_sessions
+                WHERE student_id = %s AND session_id = %s
+                """
+        self.cursor.execute(
+            sql,
+            (
+                student_id,
+                session_id,
+            ),
+        )
+        timetable_json = self.cursor.fetchone()
+        return timetable_json[0]
+
 
 def temp():
     sessionId = db.generate_session_id()
@@ -530,9 +561,12 @@ if __name__ == "__main__":
     # db.student_join_group("qp12345", "f90f3a02-5ba2-49ea-abe2-732bf0f63002")
     pprint(db.get_session_groups("713-334Q"))
     sem1 = db.get_sem1_data()
-    pprint(sem1.get("CDE3301"))
+    pprint(sem1.get("CG2028"))
     pprint(sem1.get("CDE2605"))
     # group_id = db.add_group("CG2028", "713-334Q")
     # print(group_id)
-    pprint(db.add_student("samething", "samething"))
+    # pprint(db.add_student("samething", "samething"))
+    # db.set_timetable("877-570K", "877-570K", {"yes": "no"})
+    timetable_json = db.get_timetable("877-570K", "877-570K")
+    pprint(timetable_json)
     db.close()

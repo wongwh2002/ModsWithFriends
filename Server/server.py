@@ -37,6 +37,10 @@ DEFAULT_INIT_PREF = {
     ],
     "duration": "",
 }
+DB_STUDENT_ID = "student_id"
+DB_SESSION_ID = "session_id"
+DB_MODULE_ID = "module_id"
+DB_GROUP_ID = "group_id"
 
 
 @app.route("/", methods=["GET"])
@@ -213,7 +217,7 @@ def get_login_info():
     data = request.get_json()
     print(f"[Getting Login Info] {data}")
     name, password = data["name"], data["password"]
-    session_id = data["session_id"]
+    session_id = data[DB_SESSION_ID]
     semester_no = data["semester_no"]
     return name, password, session_id, semester_no
 
@@ -229,7 +233,7 @@ def save_preference():
 def get_preferences_data():
     data = request.get_json()
     session_id, name, preferences = (
-        data["session_id"],
+        data[DB_SESSION_ID],
         data["name"],
         data["preferences"],
     )
@@ -239,9 +243,9 @@ def get_preferences_data():
 @app.route("/get_preferences", methods=["POST"])
 def get_preference():
     data = request.get_json()
-    session_id, name = (data["session_id"], data["name"])
+    session_id, name = (data[DB_SESSION_ID], data["name"])
     preferences = db.get_preference_from_student_sessions(name, session_id)
-    print(f"Retrieved preference for {name} for sesstion {session_id} : {preferences}")
+    print(f"Retrieved preference for {name} for session {session_id} : {preferences}")
     return jsonify({"preferences": preferences}), 200
 
 
@@ -281,7 +285,7 @@ def get_sem2_data():
 @app.route("/get_session_semester", methods=["POST"])
 def get_session_semester():
     data = request.get_json()
-    session_id = data["session_id"]
+    session_id = data[DB_SESSION_ID]
     print("[GETTING SESSION SEMESTER]")
     semester_no = db.get_session_semester(session_id)
     return jsonify({"semester_no": semester_no}), 200
@@ -290,7 +294,7 @@ def get_session_semester():
 @app.route("/get_session_groups", methods=["POST"])
 def get_session_groups():
     data = request.get_json()
-    session_id = data.get("session_id")
+    session_id = data.get(DB_SESSION_ID)
     if not session_id:
         return jsonify({"error": "Missing session_id"}), 400
     result = db.get_session_groups(session_id)
@@ -300,19 +304,19 @@ def get_session_groups():
 @app.route("/add_group", methods=["POST"])
 def add_group():
     data = request.get_json()
-    module_id = data.get("module_id")
-    session_id = data.get("session_id")
+    module_id = data.get(DB_MODULE_ID)
+    session_id = data.get(DB_SESSION_ID)
     if not module_id or not session_id:
         return jsonify({"error": "Missing module_id or session_id"}), 400
 
     group_id = db.add_group(module_id, session_id)
-    return jsonify({"group_id": str(group_id)}), 200
+    return jsonify({DB_GROUP_ID: str(group_id)}), 200
 
 
 @app.route("/delete_group", methods=["POST"])
 def delete_group():
     data = request.get_json()
-    group_id = data.get("group_id")
+    group_id = data.get(DB_GROUP_ID)
     if not group_id:
         return jsonify({"error": "Missing group_id"}), 400
     db.delete_group(group_id)
@@ -322,8 +326,8 @@ def delete_group():
 @app.route("/student_join_group", methods=["POST"])
 def student_join_group():
     data = request.get_json()
-    student_id = data.get("student_id")
-    group_id = data.get("group_id")
+    student_id = data.get(DB_STUDENT_ID)
+    group_id = data.get(DB_GROUP_ID)
     if not student_id or not group_id:
         return jsonify({"error": "Missing student_id or group_id"}), 400
     db.student_join_group(student_id, group_id)
@@ -333,8 +337,8 @@ def student_join_group():
 @app.route("/student_leave_group", methods=["POST"])
 def student_leave_group():
     data = request.get_json()
-    student_id = data.get("student_id")
-    group_id = data.get("group_id")
+    student_id = data.get(DB_STUDENT_ID)
+    group_id = data.get(DB_GROUP_ID)
     if not student_id or not group_id:
         return jsonify({"error": "Missing student_id or group_id"}), 400
     db.student_leave_group(student_id, group_id)
@@ -344,11 +348,40 @@ def student_leave_group():
 @app.route("/get_student_groups", methods=["POST"])
 def get_student_groups():
     data = request.get_json()
-    student_id = data.get("student_id")
+    student_id = data.get(DB_STUDENT_ID)
     if not student_id:
         return jsonify({"error": "Missing student_id"}), 400
     groups = db.get_student_group(student_id)
     return jsonify({"groups": groups}), 200
+
+
+@app.route("/get_timetable", methods=["POST"])
+def get_timetable():
+    data = request.get_json()
+    student_id, session_id = data[DB_STUDENT_ID], data[DB_SESSION_ID]
+    timetable_json = db.get_timetable(student_id, session_id)
+    return jsonify({"timetable": timetable_json}), 200
+
+
+@app.route("/set_timetable", methods=["POST"])
+def set_timetable():
+    data = request.get_json()
+    DB_TIMETABLE_JSON = "timetable_json"
+    student_id, session_id, timetable_json = (
+        data[DB_STUDENT_ID],
+        data[DB_SESSION_ID],
+        data[DB_TIMETABLE_JSON],
+    )
+    db.set_timetable(student_id, session_id, timetable_json)
+    return jsonify({"status": "set timetable"}), 200
+
+
+@app.route("is_session_exist", methods=["POST"])
+def is_session_exist():
+    data = request.get_json()
+    session_id = data[DB_SESSION_ID]
+    is_exist = db.is_session_exists(session_id)
+    return jsonify({"status": is_exist}), 200
 
 
 @app.route("/Server/<filename>")
