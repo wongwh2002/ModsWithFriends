@@ -45,6 +45,7 @@ function Preference({username, setGenerationDone, setGenerationError, setImagesD
   const [createRoom, setCreateRoom] = useState(false);
   const [rooms, setRooms] = useState([])
   const [openNewRoomOverlay, setOpenNewRoomOverlay] = useState(false);
+  const [refreshing, setRefreshing] = useState(false);
   //const [imagesData, setImagesData] = useState([]);
   
   const timeOptions = ['0800', '0900', '1000', '1100', '1200', '1300', 
@@ -231,6 +232,30 @@ function Preference({username, setGenerationDone, setGenerationError, setImagesD
     }
   }, []);
 
+  const getRooms = async () => {
+    await fetch("https://modswithfriends.onrender.com/get_session_groups", {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({
+        "session_id" : body,
+      })
+    }).then(request => request.json())
+    .then(data => {
+      //console.log(data["groups"]);
+      let mods = selectedMods.map(mod => mod.moduleCode);
+      Object.keys(data["groups"]).forEach(key => {
+        if (!mods.includes(key)) {
+          delete data["groups"][key];
+        }
+      });
+      //console.log(data["groups"]);
+      setRooms(data["groups"]);
+    })
+    setRefreshing(false);
+  }
+
   useEffect(() => {
     /*let updatedRooms = [];
     updatedRooms = selectedMods.map(mod => ({
@@ -240,28 +265,7 @@ function Preference({username, setGenerationDone, setGenerationError, setImagesD
     }));
     setRooms(updatedRooms);
     console.log(rooms);*/
-    const getRooms = async () => {
-      await fetch("https://modswithfriends.onrender.com/get_session_groups", {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({
-          "session_id" : body,
-        })
-      }).then(request => request.json())
-      .then(data => {
-        //console.log(data["groups"]);
-        let mods = selectedMods.map(mod => mod.moduleCode);
-        Object.keys(data["groups"]).forEach(key => {
-          if (!mods.includes(key)) {
-            delete data["groups"][key];
-          }
-        });
-        //console.log(data["groups"]);
-        setRooms(data["groups"]);
-      })
-    }
+    
     getRooms();
   }, [isPreference]);
 
@@ -283,10 +287,6 @@ function Preference({username, setGenerationDone, setGenerationError, setImagesD
       setAc(matches);
     }
   }
-
-  useEffect(() => {
-    console.log(moduleData);
-  }, [moduleData]);
 
   const findModule = (code) => {
     let modData = moduleData[code];
@@ -585,10 +585,6 @@ function Preference({username, setGenerationDone, setGenerationError, setImagesD
     searchBarRef.current?.focus();
   }
 
-  useEffect (() => {
-    console.log(selectedMods);
-  }, [selectedMods])
-
   return (
     <div className='preference-overall'>
       <div className='preference-wrapper'>
@@ -819,6 +815,7 @@ function Preference({username, setGenerationDone, setGenerationError, setImagesD
         <div className={Object.keys(rooms).length === 0 ? 'rooms-body': 'pad-top rooms-body'}>
           <div className='right-justified'>
             <button className='dark button' onClick={() => setOpenNewRoomOverlay(true)}>Create Room</button> 
+            <button className='dark button' disabled={refreshing} onClick={() => {getRooms(); setRefreshing(true);}}>{refreshing ? "Refreshing..." : "Refresh"}</button> 
           </div>
           { Object.keys(rooms).length === 0 ? 
           <div className='center-flex'>

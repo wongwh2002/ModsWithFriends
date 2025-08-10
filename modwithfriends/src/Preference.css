@@ -427,5 +427,6 @@ div.right-justified {
 }
 
 button.dark {
+  margin-left: 30px;
   background-color: #DCC4BE;
 }
