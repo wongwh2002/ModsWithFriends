@@ -50,16 +50,15 @@ function NewSessionOverlay({
     console.log("Creating session with name:");
     await fetch("https://modswithfriends.onrender.com/new_session", {
       method: "POST",
+      headers: {
+        "Content-Type": "application/json"
+      },
       body: JSON.stringify({
         session_id: newSessionID,
         name: name,
         password: password,
         semester_no: semesterTwo ? "2" : "1"
-      }),
-      headers: {
-        "Content-Type": "application/json"
-      },
-      body: JSON.stringify({'name': name, 'password': password})
+      })
     });
     setLoading(false);
   }

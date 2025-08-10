@@ -116,7 +116,9 @@ function Preference({username, setGenerationDone, setGenerationError, setImagesD
   }, [moduleData]);
 
   const inputPreferences = (preferences) => {
-    console.log(preferences);
+    if (preferences === null || preferences === undefined || preferences["selectedMods"] === undefined || preferences["selectedMods"] === null) {
+      return;
+    } 
     setSelectedMods(preferences["selectedMods"]);
     setLunchCheck(preferences["lunchCheck"]);
     setLunchStart(preferences["lunchStart"]);
@@ -458,10 +460,6 @@ function Preference({username, setGenerationDone, setGenerationError, setImagesD
     console.log("Done generating");
   }
 
-  useEffect(() => {
-    console.log(selectedMods);
-  }, [selectedMods])
-
   const savePreferenceToBackend = async () => {
     console.log(JSON.stringify({
         "session_id" : bodyReference.current,
@@ -579,6 +577,10 @@ function Preference({username, setGenerationDone, setGenerationError, setImagesD
   const focusInput = () => {
     searchBarRef.current?.focus();
   }
+
+  useEffect (() => {
+    console.log(selectedMods);
+  }, [selectedMods])
 
   return (
     <div className='preference-overall'>
