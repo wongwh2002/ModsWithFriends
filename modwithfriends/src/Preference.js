@@ -299,6 +299,7 @@ function Preference({username, setGenerationDone, setGenerationError, setImagesD
         for (const number of Object.keys(modData[key])) {
           classes[key].push(number);
         }
+        classes[key].sort();
     }
 
     return {'moduleCode': code, 'title': modData['title'], 'classes': classes};
@@ -578,11 +579,58 @@ function Preference({username, setGenerationDone, setGenerationError, setImagesD
   }
   
   const clearMods = () => {
-    setSelectedMods([]);
+    for (let selectedMod of selectedMods) {
+      removeMod(selectedMod);
+    }
   }
 
   const focusInput = () => {
     searchBarRef.current?.focus();
+  }
+
+  const removeMod = async (selectedMod) => {
+    setSelectedMods(selectedMods => selectedMods.filter(mod => mod != selectedMod));
+    await fetch("https://modswithfriends.onrender.com/get_session_groups", {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({
+        "session_id" : bodyReference.current,
+      })
+    }).then(response => response.json())
+    .then(data => {
+      const groupData = data["groups"];
+      if (selectedMod["moduleCode"] in groupData) {
+        const modGroupDict = groupData[selectedMod["moduleCode"]];
+        Object.entries(modGroupDict).forEach(([groupID, userList]) => {
+          if (userList.includes(usernameReference.current)) {
+            if (userList.length > 1) {
+              fetch("https://modswithfriends.onrender.com/student_leave_group", {
+                method: 'POST',
+                headers: {
+                  'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                  "group_id" : groupID,
+                  "student_id" : usernameReference.current,
+                })
+              })
+            } else {
+              fetch("https://modswithfriends.onrender.com/delete_group", {
+                method: 'POST',
+                headers: {
+                  'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                  "group_id" : groupID,
+                })
+              })
+            }
+          }
+        })
+      }
+    })
   }
 
   return (
@@ -719,7 +767,7 @@ function Preference({username, setGenerationDone, setGenerationError, setImagesD
           {selectedMods.length === 0 ? <></> :
           <div className='sm-container'>
             {selectedMods.map((selectedMod, index) => {
-              return <SelectedMods selectedMod={selectedMod} setSelectedMods={setSelectedMods}/>
+              return <SelectedMods selectedMod={selectedMod} setSelectedMods={setSelectedMods} removeMod={removeMod}/>
             })}
           </div>}
           <div className='attending-container flex-row'>

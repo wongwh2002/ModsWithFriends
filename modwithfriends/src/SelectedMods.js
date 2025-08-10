@@ -3,11 +3,7 @@ import { useEffect } from 'react';
 import './SelectedMods.css';
 import bin from './assets/bin.png';
 
-function SelectedMods({selectedMod, setSelectedMods}) {
-
-  const removeMod = () => {
-    setSelectedMods(selectedMods => selectedMods.filter(mod => mod != selectedMod));
-  }
+function SelectedMods({selectedMod, setSelectedMods, removeMod}) {
 
   const removeFixedMod = (key) => {
     setSelectedMods(selectedMods => 
@@ -64,7 +60,7 @@ function SelectedMods({selectedMod, setSelectedMods}) {
         }) : <></>
       }
       <div className='add-padd'></div>
-      <div className='bin-container' onClick={removeMod}>
+      <div className='bin-container' onClick={() => removeMod(selectedMod)}>
         <img className='bin' src={bin} />
       </div>
     </div>

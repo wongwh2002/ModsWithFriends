@@ -24,6 +24,7 @@ function DropdownItem({mod, selectedMods, setSelectedMods, focusInput, body, mod
         for (const number of Object.keys(modData[key])) {
           classes[key].push(number);
         }
+        classes[key].sort();
     }
 
     return {'moduleCode': code, 'title': modData['title'], 'classes': classes};
