@@ -284,10 +284,17 @@ function Preference({username, setGenerationDone, setGenerationError, setImagesD
     }
   }
 
+  useEffect(() => {
+    console.log(moduleData);
+  }, [moduleData]);
+
   const findModule = (code) => {
     let modData = moduleData[code];
     let classes = {};
     for (const key of Object.keys(modData)) {
+        if (key === 'title') {
+          continue;
+        }
         classes[key] = [];
         for (const number of Object.keys(modData[key])) {
           classes[key].push(number);
@@ -611,7 +618,7 @@ function Preference({username, setGenerationDone, setGenerationError, setImagesD
                 onPaste={e => handleLink(e)} ref={searchBarRef}></input>
               <div className={ac.length != 0 ? 'dropdown' : 'invisible dropdown'}>
                 {ac.map(mod => {
-                  return <DropdownItem mod={mod} selectedMods={selectedMods} setSelectedMods={setSelectedMods} focusInput={focusInput} body={body}/>
+                  return <DropdownItem mod={mod} selectedMods={selectedMods} setSelectedMods={setSelectedMods} focusInput={focusInput} body={body} moduleData={moduleData}/>
                 })}
               </div>
             </div>

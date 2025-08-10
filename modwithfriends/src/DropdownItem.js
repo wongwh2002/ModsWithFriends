@@ -2,7 +2,7 @@ import React from 'react';
 import { useState } from 'react';
 import './DropdownItem.css';
 
-function DropdownItem({mod, selectedMods, setSelectedMods, focusInput, body}) {
+function DropdownItem({mod, selectedMods, setSelectedMods, focusInput, body, moduleData}) {
 
   const [loading, setLoading] = useState(false);
 
@@ -12,6 +12,22 @@ function DropdownItem({mod, selectedMods, setSelectedMods, focusInput, body}) {
     const data = await response.json();
     return data.modInfo;
   }
+
+  const findModule = (code) => {
+    let modData = moduleData[code];
+    let classes = {};
+    for (const key of Object.keys(modData)) {
+        if (key === 'title') {
+          continue;
+        }
+        classes[key] = [];
+        for (const number of Object.keys(modData[key])) {
+          classes[key].push(number);
+        }
+    }
+
+    return {'moduleCode': code, 'title': modData['title'], 'classes': classes};
+  }
   
   const addSelectedMods = async () => {
     if (loading === true) {
@@ -20,6 +36,7 @@ function DropdownItem({mod, selectedMods, setSelectedMods, focusInput, body}) {
     if (!selectedMods.some(selectedMod => selectedMod["moduleCode"] == mod["moduleCode"])) {
       setLoading(true);
       let classes = {};
+      /*
       let data = await getModuleInfo(mod.moduleCode);
       console.log(data);
       for (const semester of data["semesterData"]) {
@@ -34,9 +51,11 @@ function DropdownItem({mod, selectedMods, setSelectedMods, focusInput, body}) {
             classes[lessonType].push(classNo);
           }
         }
-      }
+      }*/
+      
+      const moduleToAdd = findModule(mod.moduleCode);
 
-      setSelectedMods(selectedMods => [...selectedMods, {...mod, 'classes': classes}]);
+      setSelectedMods(selectedMods => [...selectedMods, moduleToAdd]);
       focusInput();
       setLoading(false);
       //console.log(selectedMods);
