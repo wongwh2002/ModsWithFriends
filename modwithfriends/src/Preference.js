@@ -539,8 +539,8 @@ function Preference({username, setGenerationDone, setGenerationError, setImagesD
     preferenceChangedRef.current = true;
   }, [selectedMods, lunchCheck, lunchStart, lunchEnd, startTime, endTime, days, duration]);
 
-  const addFixedMod = () => {
-    if (CLesson === "") return;
+  const addFixedMod = (lesson) => {
+    //if (CLesson === "") return;
     setSelectedMods(prevSelectedMods => 
       prevSelectedMods.map(mod => {
         if (mod.moduleCode === CMod) {
@@ -550,9 +550,9 @@ function Preference({username, setGenerationDone, setGenerationError, setImagesD
           const fixedIndex = mod['fixed'].findIndex(fixedMod => Object.keys(fixedMod)[0] === CType);
 
           if (fixedIndex !== -1) {
-            mod['fixed'][fixedIndex] = {[CType]: CLesson};
+            mod['fixed'][fixedIndex] = {[CType]: lesson};
           } else {
-            mod['fixed'].push({[CType]: CLesson});
+            mod['fixed'].push({[CType]: lesson});
           }
           return {
             ...mod,
@@ -568,16 +568,16 @@ function Preference({username, setGenerationDone, setGenerationError, setImagesD
     setCLesson("");
   }
 
-  const addOptionalMod = () => {
-    if (OType === "") return;
+  const addOptionalMod = (type) => {
+    //if (OType === "") return;
     setSelectedMods(prevSelectedMods => 
       prevSelectedMods.map(mod => {
         if (mod.moduleCode === OMod) {
           if (!mod['optional']) {
             mod['optional'] = [];
           }
-          if (!mod['optional'].includes(OType)) {
-            mod['optional'].push(OType);
+          if (!mod['optional'].includes(type)) {
+            mod['optional'].push(type);
           }
         }
         return mod;
@@ -717,7 +717,7 @@ function Preference({username, setGenerationDone, setGenerationError, setImagesD
                     if (module.moduleCode === CMod && CType !== '') {
                       return module["classes"][CType].map(lesson => {
                         return (
-                          <div className='time-container' onClick={() => setCLesson(lesson)}>
+                          <div className='time-container' onClick={() => {addFixedMod(lesson);}}>
                             <p className='time'>{lesson}</p>
                           </div>
                         )
@@ -728,9 +728,9 @@ function Preference({username, setGenerationDone, setGenerationError, setImagesD
                 <p className={CLesson === "" && !clickCLesson ? 'placeholder time' : 'time'}> {CLesson === "" && !clickCLesson ? "Select Class No." : CLesson} </p>
                 <img className='dd' src={dropdown} />
               </div>
-              <div className={CLesson === "" ? 'unclickable add-item-container' : 'add-item-container'} onClick={() => addFixedMod()}>
+              {/*<div className={CLesson === "" ? 'unclickable add-item-container' : 'add-item-container'} onClick={() => addFixedMod()}>
                 <p className='add'>Add Constraint</p>
-              </div>
+              </div>*/}
             </div>
             <div className='optional-mods-container'>
               <p className='om'>Classes you are skipping: </p>
@@ -753,7 +753,7 @@ function Preference({username, setGenerationDone, setGenerationError, setImagesD
                     if (module.moduleCode === OMod) {
                       return Object.keys(module["classes"]).map(type => {
                         return (
-                          <div className='time-container' onClick={() => setOType(type)}>
+                          <div className='time-container' onClick={() => {addOptionalMod(type)}}>
                             <p className='time'>{type}</p>
                           </div>
                         )
@@ -764,9 +764,9 @@ function Preference({username, setGenerationDone, setGenerationError, setImagesD
                 <p className={OType === "" && !clickOType ? 'placeholder time' : 'time'}> {OType === "" && !clickOType ? "Select Lesson Type" : OType} </p>
                 <img className='dd' src={dropdown} />
               </div>
-              <div className={OType === "" ? 'unclickable add-item-container' : 'add-item-container'} onClick={() => addOptionalMod()}>
+              {/*<div className={OType === "" ? 'unclickable add-item-container' : 'add-item-container'} onClick={() => addOptionalMod()}>
                 <p className='add'>Add Constraint</p>
-              </div>
+              </div>*/}
             </div> 
           </div>}
           {selectedMods.length === 0 ? <></> : <div className='clear-mods-container'>
@@ -877,7 +877,7 @@ function Preference({username, setGenerationDone, setGenerationError, setImagesD
           </div>
           { Object.keys(rooms).length === 0 ? 
           <div className='center-flex'>
-            <p className='no-room-msg'>There are currently no rooms you can join</p> 
+            <p className='no-room-msg'>T onKeyDown={handleEnterKeyForSearch}here are currently no rooms you can join</p> 
           </div>  :
           Object.entries(rooms).map(([moduleCode, roomList]) => {
             return Object.entries(roomList).map(([roomID, userList]) => (
