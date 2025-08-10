@@ -130,6 +130,16 @@ function Preference({username, setGenerationDone, setGenerationError, setImagesD
     setDuration(preferences["duration"]);
   }
 
+  const handleEnterKeyForSearch = (event) => {
+    if (event.key === "Enter") {
+      if (ac.length > 0) {
+        const selectedMod = ac[0];
+        const modToAdd = findModule(selectedMod["moduleCode"]);
+        setSelectedMods(mods => [...mods, modToAdd]);
+      }
+    }
+  };
+
   useEffect(() =>{
     const get_preferences = async () => {await fetch("https://modswithfriends.onrender.com/get_preferences", {
       method: 'POST',
@@ -659,7 +669,7 @@ function Preference({username, setGenerationDone, setGenerationError, setImagesD
             <div className='dropdown-container' ref={dropDownRef}>
               <input className='search-module' placeholder='Search Module / Paste NUSMODS link' 
                 value={searchValue} onChange={(e) => autocomplete(e.target.value)}
-                onPaste={e => handleLink(e)} ref={searchBarRef}></input>
+                onPaste={e => handleLink(e)} ref={searchBarRef} onKeyDown={handleEnterKeyForSearch}></input>
               <div className={ac.length != 0 ? 'dropdown' : 'invisible dropdown'}>
                 {ac.map(mod => {
                   return <DropdownItem mod={mod} selectedMods={selectedMods} setSelectedMods={setSelectedMods} focusInput={focusInput} body={body} moduleData={moduleData}/>
