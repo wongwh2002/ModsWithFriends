@@ -48,7 +48,7 @@ function NewSessionOverlay({
     setUsername(name);
     setCreateSession(false);
     console.log("Creating session with name:");
-    await fetch("https://modswithfriends.onrender.com//new_session", {
+    await fetch("https://modswithfriends.onrender.com/new_session", {
       method: "POST",
       body: JSON.stringify({
         session_id: newSessionID,
