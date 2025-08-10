@@ -59,6 +59,13 @@ function JoinSessionOverlay({setJoinSession, setBody, setUsername}) {
     }
   }
 
+  const handleKeyDown = (event) => {
+    if (event.key === "Enter") {
+      setLoading(true);
+      generateID();
+    }
+  };
+
   const closeOverlay = () => {
     setJoinSession(false);
   }
@@ -71,15 +78,15 @@ function JoinSessionOverlay({setJoinSession, setBody, setUsername}) {
         </div>
         <div className='form'>
           <p className={sessionID ? 'filled fill' : 'fill'}>Session ID</p>
-          <input className='input' value={sessionID} onChange={(e) => {setSessionID(e.target.value)}}></input>
+          <input className='input' value={sessionID} onChange={(e) => {setSessionID(e.target.value)}} onKeyDown={handleKeyDown}></input>
         </div>
         <div className='form'>
           <p className={name ? 'filled fill' : 'fill'}>Name</p>
-          <input className='input' value={name} onChange={(e) => {setName(e.target.value)}}></input>
+          <input className='input' value={name} onChange={(e) => {setName(e.target.value)}} onKeyDown={handleKeyDown}></input>
         </div>
         <div className='form'>
           <p className={password ? 'filled fill' : 'fill'}>Password</p>
-          <input className='input' type="password" value={password} onChange={(e) => {setPassword(e.target.value)}}></input>
+          <input className='input' type="password" value={password} onChange={(e) => {setPassword(e.target.value)}} onKeyDown={handleKeyDown}></input>
         </div>
         <div className='create-session'>
           <button className='create-session' onClick={generateID} disabled={loading}>{loading ? "Joining..." : "Join Session"}</button>

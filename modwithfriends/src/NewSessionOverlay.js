@@ -63,6 +63,13 @@ function NewSessionOverlay({
     setLoading(false);
   }
 
+  const handleKeyDown = (event) => {
+    if (event.key === "Enter") {
+      setLoading(true);
+      generateID();
+    }
+  };
+
   const closeOverlay = () => {
     setCreateSession(false);
   };
@@ -98,6 +105,7 @@ function NewSessionOverlay({
             onChange={(e) => {
               setName(e.target.value);
             }}
+            onKeyDown={handleKeyDown}
           ></input>
         </div>
         <div className="form">
@@ -109,6 +117,7 @@ function NewSessionOverlay({
             onChange={(e) => {
               setPassword(e.target.value);
             }}
+            onKeyDown={handleKeyDown}
           ></input>
         </div>
         <Link to="/session" className="link">
