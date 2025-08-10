@@ -660,7 +660,7 @@ function Preference({username, setGenerationDone, setGenerationError, setImagesD
               <div className='longer-dd select-time' ref={cLessonRef} onClick={() => {closeAll(); setClickCLesson(!clickCLesson);}}>
                 {clickCLesson ? <div className='extend-dd time-dd dropdown'>
                   {selectedMods.map(module => {
-                    if (module.moduleCode === CMod) {
+                    if (module.moduleCode === CMod && CType !== '') {
                       return module["classes"][CType].map(lesson => {
                         return (
                           <div className='time-container' onClick={() => setCLesson(lesson)}>
