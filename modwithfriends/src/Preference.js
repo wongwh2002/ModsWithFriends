@@ -134,9 +134,10 @@ function Preference({username, setGenerationDone, setGenerationError, setImagesD
     if (event.key === "Enter") {
       if (ac.length > 0) {
         const selectedMod = ac[0];
-        const modToAdd = findModule(selectedMod["moduleCode"]);
-        if (selectedMod.includes(modToAdd) === false) {
-          setSelectedMods(mods => [...mods, modToAdd]);
+        const exists = selectedMods.some(m => m.moduleCode === selectedMod["moduleCode"]);
+        if (exists === false) {
+          const modToAdd = findModule(selectedMod["moduleCode"]);
+          setSelectedMods(prevMods => [...prevMods, modToAdd]);
         }
       }
     }
