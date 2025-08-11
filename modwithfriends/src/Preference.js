@@ -135,7 +135,9 @@ function Preference({username, setGenerationDone, setGenerationError, setImagesD
       if (ac.length > 0) {
         const selectedMod = ac[0];
         const modToAdd = findModule(selectedMod["moduleCode"]);
-        setSelectedMods(mods => [...mods, modToAdd]);
+        if (selectedMod.includes(modToAdd) === false) {
+          setSelectedMods(mods => [...mods, modToAdd]);
+        }
       }
     }
   };
