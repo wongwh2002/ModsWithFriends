@@ -20,6 +20,7 @@ SEM2 = "sem2"
 
 
 class mods_database:
+
     def __init__(self):
         self.conn = self._init_con()
         self.cursor = self.conn.cursor()
@@ -264,29 +265,23 @@ class mods_database:
 
     def _load_mod_data(self, mod, year, semester) -> tuple[dict, dict, dict]:
         return_dict = {}
-
         # print(f"loading data for {mod} semester {semester}")
         data = requests.get(
             f"https://api.nusmods.com/v2/{year}-{year + 1}/modules/{mod}.json"
         ).json()
         semesters = data["semesterData"]
-        if len(semesters) == 1:
-            if semester != semesters[0]["semester"]:
-                return None
-
-        if semester == 2:
-            semester_timetable: list = (
-                data["semesterData"][0]["timetable"]
-                if data["semesterData"][0]["semester"] == 2
-                else data["semesterData"][1]["timetable"]
-            )
-        elif semester == 1:
-            semester_timetable: list = (
-                data["semesterData"][0]["timetable"]
-                if data["semesterData"][0]["semester"] == 1
-                else data["semesterData"][1]["timetable"]
-            )
-
+        # Find the semester object
+        sem_obj = None
+        for s in semesters:
+            if s["semester"] == semester:
+                sem_obj = s
+                break
+        if sem_obj is None:
+            return None  # Semester does not exist
+        semester_timetable = sem_obj.get("timetable", [])
+        # If timetable is empty, return dict with timetable: []
+        if not semester_timetable:
+            return {mod: {"timetable": []}}
         for lesson in semester_timetable:
             slot_info = {
                 "startTime": lesson["startTime"],
@@ -296,48 +291,102 @@ class mods_database:
             }
             lesson_type = lesson["lessonType"]
             class_no = lesson["classNo"]
-
             if mod not in return_dict:
                 return_dict[mod] = {}
-
             if lesson_type not in return_dict[mod]:
                 return_dict[mod][lesson_type] = {}
-
             if class_no not in return_dict[mod][lesson_type]:
                 return_dict[mod][lesson_type][class_no] = {"slots": []}
-
             return_dict[mod][lesson_type][class_no]["slots"].append(slot_info)
-
         # print(f"loaded data for {mod}")
         return return_dict
 
-    def _load_modules_data(self):
+    def _load_modules_data(self, start, end):
         SEM_1 = 1
         SEM_2 = 2
         year, _ = self._get_year_and_sem()
         all_modules = self._get_all_modules_names(year)
         print(f"[TOTAL MODULES] len: {len(all_modules)}")
         module_dict = {}
-        for module in all_modules[6400:]:  # has a limit, must do 800 at a time
+
+        for module in all_modules[start:end]:  # has a limit, must do 800 at a time
             modulecode = module["moduleCode"]
+            data = self._load_mods_data(modulecode, year)
+            sem1_json = data["sem1"]
+            sem2_json = data["sem2"]
+            # print(sem1_json)
             module_dict[modulecode] = {
                 "title": module["title"],
-                SEM1: self._load_mod_data(modulecode, year, SEM_1),
-                SEM2: self._load_mod_data(modulecode, year, SEM_2),
+                SEM1: sem1_json,
+                SEM2: sem2_json,
             }
         return module_dict
 
-    def _populate_modules_db(self):
-        all_modules_dict = self._load_modules_data()
+    def _load_mods_data(self, mod, year):
+        """
+        Loads both sem1 and sem2 data for a specific module and year, using a single requests.get call.
+        Returns:
+        {
+            'sem1': ...,
+            'sem2': ...
+        }
+        """
+        data = requests.get(
+            f"https://api.nusmods.com/v2/{year}-{year + 1}/modules/{mod}.json"
+        ).json()
+        semesters = data.get("semesterData", [])
+        sem1_obj = None
+        sem2_obj = None
+        for s in semesters:
+            if s.get("semester") == 1:
+                sem1_obj = s
+            elif s.get("semester") == 2:
+                sem2_obj = s
+
+        def process_sem_obj(sem_obj):
+            if sem_obj is None:
+                return None
+            timetable = sem_obj.get("timetable", [])
+            if not timetable:
+                return {mod: None}
+            return_dict = {}
+            for lesson in timetable:
+                slot_info = {
+                    "startTime": lesson["startTime"],
+                    "endTime": lesson["endTime"],
+                    "weeks": lesson["weeks"],
+                    "day": lesson["day"],
+                }
+                lesson_type = lesson["lessonType"]
+                class_no = lesson["classNo"]
+                if mod not in return_dict:
+                    return_dict[mod] = {}
+                if lesson_type not in return_dict[mod]:
+                    return_dict[mod][lesson_type] = {}
+                if class_no not in return_dict[mod][lesson_type]:
+                    return_dict[mod][lesson_type][class_no] = {"slots": []}
+                return_dict[mod][lesson_type][class_no]["slots"].append(slot_info)
+            return return_dict
+
+        return {"sem1": process_sem_obj(sem1_obj), "sem2": process_sem_obj(sem2_obj)}
+
+    def _populate_modules_db(self, start, end):
+        print(f"[Populating DB] STARTING...")
+        all_modules_dict = self._load_modules_data(start, end)
+        print(f"[Populating DB] GOT ALL DATA")
         for modulecode, module_info in all_modules_dict.items():
             title = module_info["title"]
             sem1 = module_info[SEM1]
+            # print(sem1)
             sem1_json = json.dumps(sem1) if sem1 else None
             sem2 = module_info[SEM2]
             sem2_json = json.dumps(sem2) if sem2 else None
             sql = """INSERT INTO MODULES (module_id, title, sem1_json, sem2_json) 
                 VALUES (%s, %s, %s, %s)
-                ON CONFLICT (module_id) DO NOTHING
+                ON CONFLICT (module_id) DO UPDATE SET
+                    title = EXCLUDED.title,
+                    sem1_json = EXCLUDED.sem1_json,
+                    sem2_json = EXCLUDED.sem2_json
                 """
             params = (
                 modulecode,
@@ -346,6 +395,7 @@ class mods_database:
                 sem2_json,
             )
             self.cursor.execute(sql, params)
+            print(f"[Populating DB] Done {modulecode}")
 
     def get_modules_db(self):
         sql = """SELECT * FROM modules"""
@@ -363,9 +413,16 @@ class mods_database:
         return_data = {}
         for module_code, mod_info in self.all_module_data.items():
             sem_data = mod_info.get(sem)
-            if not sem_data or sem_data == {}:
-                continue  # Skip modules with no sem_data
+            # print(f"[SEM DATA] {module_code}:{sem_data}")
+            if sem_data == {} or sem_data == None:
+                continue  # Skip modules with empty dict
+
             merged = {"title": mod_info.get("title")}
+            if sem_data[module_code] is None:
+                # Pass as {module_code: None}
+                # return_data[module_code] = {module_code: None}
+                return_data[module_code] = merged
+                continue
             if isinstance(sem_data, dict):
                 merged.update(
                     sem_data.get(module_code, {})
@@ -547,26 +604,38 @@ def temp():
     db.add_new_session(sessionId, 1)
 
 
+def get_module_data(year, mod):
+    data = requests.get(
+        f"https://api.nusmods.com/v2/{year}-{year + 1}/modules/{mod}.json"
+    ).json()
+    pprint(data)
+
+
 if __name__ == "__main__":
     db = mods_database()
     # module_data = db.get_modules_db()
     # print(db.generate_group_id())
     # sem2 = db.get_sem2_data()
     # pprint(sem2["CG2023"])
-    db.list_sessions()
+    # db.list_sessions()
     # db.add_group("CG2023", "713-334Q")
-    db.list_groups()
+    # db.list_groups()
     # db.student_join_group("qp12345", "5ae16fc3-c54e-4be8-9127-446c5545a90c")
     # db.student_join_group("qp1234", "5ae16fc3-c54e-4be8-9127-446c5545a90c")
     # db.student_join_group("qp12345", "f90f3a02-5ba2-49ea-abe2-732bf0f63002")
-    pprint(db.get_session_groups("713-334Q"))
+    # pprint(db.get_session_groups("713-334Q"))
     sem1 = db.get_sem1_data()
-    pprint(sem1.get("CG2028"))
-    pprint(sem1.get("CDE2605"))
+    # pprint("CDE3301")
+    # pprint(sem1.get("CDE3301"))
+    # pprint(sem1.get("CDE2605"))
     # group_id = db.add_group("CG2028", "713-334Q")
     # print(group_id)
     # pprint(db.add_student("samething", "samething"))
     # db.set_timetable("877-570K", "877-570K", {"yes": "no"})
-    timetable_json = db.get_timetable("877-570K", "877-570K")
-    pprint(timetable_json)
+    # timetable_json = db.get_timetable("new12345", "056-472K")
+    # pprint(timetable_json)
+    # print(db.is_session_exists("877-570"))
+    # print(db._load_mod_data("CDE3301", 2025, 1))
+    pprint(sem1.get("CDE3301"))
+    # get_module_data(2025, "CDE3301")
     db.close()
