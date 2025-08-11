@@ -376,7 +376,7 @@ def set_timetable():
     return jsonify({"status": "set timetable"}), 200
 
 
-@app.route("is_session_exist", methods=["POST"])
+@app.route("/is_session_exist", methods=["POST"])
 def is_session_exist():
     data = request.get_json()
     session_id = data[DB_SESSION_ID]
