@@ -1,20 +1,29 @@
 import React from 'react';
-import {useState} from 'react';
-import { useNavigate } from "react-router-dom";
+import {useState, useEffect} from 'react';
+import { useNavigate, useLocation } from "react-router-dom";
 import './Overlay.css';
 import x from './assets/x.png';
 import { useStateContext } from './Context';
 
-function JoinSessionOverlay({setJoinSession, setBody, setUsername}) {
+function JoinSessionOverlay({setJoinSession, body, setBody, setUsername}) {
 
   const navigate = useNavigate();
+  const location = useLocation();
   
   const [sessionID, setSessionID] = useState("");
   const [name, setName] = useState("");
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
 
-  const { resetStates } = useStateContext();
+  const { resetStates, setVerifiedURL, openFromHeader, setOpenFromHeader } = useStateContext();
+
+  useEffect(() => {
+    const params = new URLSearchParams(location.search);
+    const id = params.get("id");
+    if (id && body !== id) {
+      setSessionID(id);
+    }
+  }, []);
 
   const generateID = async () => {
     setLoading(true);
@@ -26,6 +35,7 @@ function JoinSessionOverlay({setJoinSession, setBody, setUsername}) {
           session_id: sessionID,
           name: name,
           password: password,
+          semester_no: null,
         }),
         headers: {
           "Content-Type": "application/json; charset=UTF-8",
@@ -36,8 +46,9 @@ function JoinSessionOverlay({setJoinSession, setBody, setUsername}) {
         setBody(sessionID);
         setUsername(name);
         resetStates();
+        setVerifiedURL(true);
         setJoinSession(false);
-        navigate('/session');
+        navigate(`/session?id=${sessionID}`);
       } else {
         if (response.status === 400) {
           console.log("No such session");
@@ -67,6 +78,10 @@ function JoinSessionOverlay({setJoinSession, setBody, setUsername}) {
   };
 
   const closeOverlay = () => {
+    if (openFromHeader === false) {
+      navigate('/');
+    }
+    setOpenFromHeader(false);
     setJoinSession(false);
   }
 

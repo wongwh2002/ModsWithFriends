@@ -3,8 +3,11 @@ import './Header.css';
 import { useNavigate } from "react-router-dom";
 import logo from './assets/MWF_logo.png';
 import { Link } from 'react-router-dom';
+import { useStateContext } from './Context';
 
 function Header({setCreateSession, setJoinSession, setShareSession, setBody, body}) {
+
+  const { setOpenFromHeader } = useStateContext();
 
   const navigate = useNavigate();
 
@@ -13,6 +16,7 @@ function Header({setCreateSession, setJoinSession, setShareSession, setBody, bod
   }
 
   const joinSession = () => {
+    setOpenFromHeader(true);
     setJoinSession(true);
   }
 

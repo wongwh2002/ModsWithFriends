@@ -21,7 +21,7 @@ function HomePage({body, setBody, createSession, setCreateSession, joinSession,
       setCreateSession={setCreateSession} setUsername={setUsername}
       semesterTwo={semesterTwo} setSemesterTwo={setSemesterTwo}/>
       : <></>}
-      {joinSession ? <JoinSessionOverlay setBody={setBody} setJoinSession={setJoinSession} setUsername={setUsername}/>
+      {joinSession ? <JoinSessionOverlay body={body} setBody={setBody} setJoinSession={setJoinSession} setUsername={setUsername}/>
       : <></>}
     </div>
   )

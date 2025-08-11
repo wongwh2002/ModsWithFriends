@@ -36,6 +36,8 @@ export const StateProvider = ({ children }) => {
   const [OType, setOType] = useState("");
   const [newSession, setNewSession] = useState(false);
   const [isPreference, setIsPreference] = useState(true);
+  const [verifiedURL, setVerifiedURL] = useState(false);
+  const [openFromHeader, setOpenFromHeader] = useState(false);
 
   const resetStates = () => {
     setModuleData({});
@@ -80,7 +82,8 @@ export const StateProvider = ({ children }) => {
       setDuration, clickCMod, setClickCMod, CMod, setCMod, clickCType, setClickCType,
       CType, setCType, clickCLesson, setClickCLesson, CLesson, setCLesson, clickOMod,
       setClickOMod, OMod, setOMod, clickOType, setClickOType, OType, setOType, resetStates, 
-      newSession, setNewSession, isPreference, setIsPreference}}>
+      newSession, setNewSession, isPreference, setIsPreference, verifiedURL, setVerifiedURL,
+      openFromHeader, setOpenFromHeader}}>
         {children}
       </StateContext.Provider>
   )

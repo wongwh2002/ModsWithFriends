@@ -877,7 +877,7 @@ function Preference({username, setGenerationDone, setGenerationError, setImagesD
           </div>
           { Object.keys(rooms).length === 0 ? 
           <div className='center-flex'>
-            <p className='no-room-msg'>T onKeyDown={handleEnterKeyForSearch}here are currently no rooms you can join</p> 
+            <p className='no-room-msg'>There are currently no rooms you can join</p> 
           </div>  :
           Object.entries(rooms).map(([moduleCode, roomList]) => {
             return Object.entries(roomList).map(([roomID, userList]) => (

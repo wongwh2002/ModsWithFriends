@@ -16,7 +16,7 @@ function GeneratePage({createSession, setCreateSession, joinSession, setJoinSess
       setCreateSession={setCreateSession} setUsername={setUsername}
       semesterTwo={semesterTwo} setSemesterTwo={setSemesterTwo}/>
       : <></>}
-      {joinSession ? <JoinSessionOverlay setBody={setBody} setJoinSession={setJoinSession} setUsername={setUsername}/>
+      {joinSession ? <JoinSessionOverlay body={body} setBody={setBody} setJoinSession={setJoinSession} setUsername={setUsername}/>
       : <></>}
       {shareSession ? <ShareSessionOverlay setShareSession={setShareSession} />
       : <></>}

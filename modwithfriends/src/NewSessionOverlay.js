@@ -17,7 +17,7 @@ function NewSessionOverlay({
   const [newSessionID, setNewSessionID] = useState(0);
   const [loading, setLoading] = useState(false);
 
-  const { resetStates } = useStateContext();
+  const { resetStates, setVerifiedURL } = useStateContext();
 
   useEffect(() => {
     const fetchNewSession = async () => {
@@ -46,6 +46,7 @@ function NewSessionOverlay({
     resetStates();
     setBody(newSessionID);
     setUsername(name);
+    setVerifiedURL(true);
     setCreateSession(false);
     console.log("Creating session with name:");
     await fetch("https://modswithfriends.onrender.com/new_session", {
@@ -120,7 +121,7 @@ function NewSessionOverlay({
             onKeyDown={handleKeyDown}
           ></input>
         </div>
-        <Link to="/session" className="link">
+        <Link to={`/session?id=${newSessionID}`} className="link">
           <div className="create-session">
             <button className="create-session" disbaled={loading} onClick={generateID}>
               { loading ? "Creating..." : "Create Session" }
